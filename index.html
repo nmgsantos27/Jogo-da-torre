@@ -270,7 +270,7 @@
 <script>
 "use strict";
 
-const SAVE_KEY = "torreProgressV32";
+const SAVE_KEY = "torreProgressV33";
 const TILE = 36;
 const MAX_RANKING = 20;
 
@@ -281,19 +281,19 @@ const WORLDS = [
 ];
 
 const TOWER_TYPES = {
-  archer:    { name:"Arqueiro",  ico:"🏹", cost:60,  dmg:1, range:130, rate:28, color:"#4ecdc4", special:null,        unlock:null },
-  cannon:    { name:"Canhão",    ico:"💣", cost:110, dmg:4, range:110, rate:70, color:"#ff9800", special:"splash",   splash:55,  unlock:null },
-  ice:       { name:"Gelo",      ico:"❄️", cost:90,  dmg:1, range:120, rate:40, color:"#81d4fa", special:"slow",     slow:0.5,   unlock:null },
-  lightning: { name:"Relâmpago", ico:"⚡", cost:150, dmg:3, range:140, rate:45, color:"#ffd700", special:"chain",    chain:3,    unlock:"lightning" },
-  poison:    { name:"Veneno",    ico:"☠️", cost:130, dmg:2, range:125, rate:35, color:"#9ccc65", special:"poison",   poisonDmg:1.5, unlock:"poison" }
+  archer:    { name:"Arqueiro",  ico:"🏹", cost:65,  dmg:1, range:130, rate:28, color:"#4ecdc4", special:null,        unlock:null },
+  cannon:    { name:"Canhão",    ico:"💣", cost:120, dmg:4, range:110, rate:70, color:"#ff9800", special:"splash",   splash:55,  unlock:null },
+  ice:       { name:"Gelo",      ico:"❄️", cost:95,  dmg:1, range:120, rate:40, color:"#81d4fa", special:"slow",     slow:0.5,   unlock:null },
+  lightning: { name:"Relâmpago", ico:"⚡", cost:160, dmg:3, range:140, rate:45, color:"#ffd700", special:"chain",    chain:3,    unlock:"lightning" },
+  poison:    { name:"Veneno",    ico:"☠️", cost:140, dmg:2, range:125, rate:35, color:"#9ccc65", special:"poison",   poisonDmg:1.5, unlock:"poison" }
 };
 
 const ENEMY_TYPES = {
-  goblin: { name:"Goblin", hp:3,  gold:6,  color:"#7cb342", speed:0.9,  radius:10 },
-  orc:    { name:"Orc",    hp:8,  gold:10, color:"#8d6e63", speed:0.75, radius:12 },
-  swift:  { name:"Veloz",  hp:5,  gold:8,  color:"#ffb74d", speed:1.35, radius:9  },
-  tank:   { name:"Tanque", hp:20, gold:18, color:"#b0bec5", speed:0.55, radius:14 },
-  boss:   { name:"Chefe",  hp:85, gold:50, color:"#e53935", speed:0.5,  radius:18, lives:5 }
+  goblin: { name:"Goblin", hp:4,  gold:5,  color:"#7cb342", speed:1.0,  radius:10 },
+  orc:    { name:"Orc",    hp:11, gold:9,  color:"#8d6e63", speed:0.85, radius:12 },
+  swift:  { name:"Veloz",  hp:6,  gold:7,  color:"#ffb74d", speed:1.50, radius:9  },
+  tank:   { name:"Tanque", hp:28, gold:15, color:"#b0bec5", speed:0.65, radius:14 },
+  boss:   { name:"Chefe",  hp:110,gold:40, color:"#e53935", speed:0.58, radius:18, lives:5 }
 };
 
 const TALENTS = [
@@ -447,8 +447,6 @@ function rebuildStrategicSlots(w, h) {
     }
   });
 
-  // Primeiro tenta manter cada torre na mesma célula; se a grelha mudou,
-  // coloca-a no espaço livre mais próximo, sem a apagar.
   previousTowers.forEach(item => {
     const t = item.tower;
     let slot = slots.find(s => s.buildable && !s.occupied && s.col === item.col && s.row === item.row);
@@ -596,10 +594,10 @@ function refreshPopup() {
 function spawnEnemy(type, waveNum, worldNum) {
   const base = ENEMY_TYPES[type];
   if (!base) return;
-  const worldFactor = 1 + (worldNum - 1) * 0.6;
-  const hpScale = (1 + (waveNum - 1) * 0.4) * worldFactor;
+  const worldFactor = 1 + (worldNum - 1) * 0.7;
+  const hpScale = (1 + (waveNum - 1) * 0.52) * worldFactor;
   const hp = Math.ceil(base.hp * hpScale);
-  const speed = base.speed * (1 + (worldNum - 1) * 0.08);
+  const speed = base.speed * (1 + (worldNum - 1) * 0.1);
 
   enemies.push({ 
     type, hp, maxHp: hp, gold: Math.ceil(base.gold * (1 + (worldNum-1)*0.2)), 
@@ -613,16 +611,16 @@ function startWave() {
   running = true; paused = false;
   spawnQueue = []; spawnTimer = 0;
   const isBoss = wave % 5 === 0;
-  const count = isBoss ? 6 + Math.floor(wave*0.6) : 6 + Math.floor(wave*0.9);
+  const count = isBoss ? 8 + Math.floor(wave*0.75) : 8 + Math.floor(wave*1.1);
   
   for (let i = 0; i < count; i++) {
     let type = "goblin";
-    if (wave >= 3 && Math.random() < 0.35) type = "orc";
-    if (wave >= 5 && Math.random() < 0.25) type = "swift";
-    if (wave >= 8 && Math.random() < 0.25) type = "tank";
-    spawnQueue.push({ type, delay: i === 0 ? 0 : Math.max(25, 45 - world * 3) });
+    if (wave >= 2 && Math.random() < 0.40) type = "orc";
+    if (wave >= 4 && Math.random() < 0.30) type = "swift";
+    if (wave >= 6 && Math.random() < 0.30) type = "tank";
+    spawnQueue.push({ type, delay: i === 0 ? 0 : Math.max(20, 40 - world * 3) });
   }
-  if (isBoss) spawnQueue.push({ type: "boss", delay: 30 });
+  if (isBoss) spawnQueue.push({ type: "boss", delay: 25 });
   startBtn.disabled = true;
   updateStartBtn();
 }
@@ -710,7 +708,7 @@ function update() {
     }
   } else if (enemies.length === 0 && running) {
     running = false;
-    const bonus = 15 + wave * 5 * world;
+    const bonus = 12 + wave * 4 * world;
     gold += bonus; score += bonus;
     persistent.essence += essencePerWave();
     if (wave % 5 === 0) {
@@ -1106,7 +1104,6 @@ function renderTalentList() {
 menuBtn.addEventListener("click", openTalents);
 talClose.addEventListener("click", closeTalents);
 
-// O indicador de pausa também permite retomar o jogo no telemóvel.
 function resumeGame() {
   if (talentScreen.classList.contains("show") || rankingScreen.classList.contains("show") || gameOverFlag) return;
   paused = false;
@@ -1301,7 +1298,6 @@ document.addEventListener("visibilitychange", () => {
       pauseBadge.classList.add("show");
     }
   } else if (document.visibilityState === "visible") {
-    // Se o jogo foi pausado apenas por ter mudado de aplicação, permite continuar.
     if (!talentScreen.classList.contains("show") &&
         !rankingScreen.classList.contains("show") && !gameOverFlag) {
       paused = false;
@@ -1335,7 +1331,7 @@ function initGame() {
     setTimeout(() => {
       resizeCanvas();
       if (Array.isArray(s.towers)) {
-        s.towers.forEach(st => {
+        s.towers.flat().forEach(st => {
           const slot = slots.find(x => x.col === st.col && x.row === st.row && x.buildable);
           if (slot && !slot.occupied) {
             slot.occupied = true;
