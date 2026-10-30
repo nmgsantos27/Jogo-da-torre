@@ -100,18 +100,19 @@
 #towerScroll { 
   flex: 1; 
   display: flex; 
-  gap: 8px; 
+  gap: 6px; /* Gap mais pequeno */
   overflow-x: auto; 
   overflow-y: hidden;
   scrollbar-width: none; 
   -webkit-overflow-scrolling: touch; 
+  padding: 2px 4px;
 }
 #towerScroll::-webkit-scrollbar { display: none; }
 
 .tbtn { 
   flex-shrink: 0; 
-  width: 68px; /* Largura fixa para caberem mais */
-  padding: 6px 4px; 
+  width: 62px; /* Mais estreito para caberem mais no ecrã */
+  padding: 6px 2px; 
   border-radius: 12px;
   background: #141c2e; 
   border: 1px solid rgba(255,255,255,0.08);
@@ -120,14 +121,14 @@
   display: flex; 
   flex-direction: column;
   align-items: center; 
-  justify-content: center; /* Centra o conteúdo na vertical */
+  justify-content: center; 
   gap: 2px; 
   position: relative; 
   transition: all .15s; 
 }
-.tbtn .ico { font-size: 22px; line-height: 1; }
-.tbtn .nm { font-size: 10px; font-weight: 700; color: #8fa3bd; white-space: nowrap; }
-.tbtn .cost { font-size: 11px; font-weight: 800; color: #ffd700; }
+.tbtn .ico { font-size: 20px; line-height: 1; }
+.tbtn .nm { font-size: 9px; font-weight: 700; color: #8fa3bd; white-space: nowrap; }
+.tbtn .cost { font-size: 10px; font-weight: 800; color: #ffd700; }
 .tbtn.sel { background: rgba(78,205,196,0.15); border-color: #4ecdc4; box-shadow: 0 0 10px rgba(78,205,196,0.2); }
 .tbtn.locked { opacity: 0.4; }
 .tbtn.locked::after { content: '🔒'; position: absolute; top: 4px; right: 4px; font-size: 11px; }
@@ -135,19 +136,20 @@
 /* Botão VAGA / CHEFE */
 #startBtn { 
   flex-shrink: 0; 
-  width: 90px; /* Largura fixa em vez de padding elástico */
+  width: 85px; 
   border-radius: 12px;
   background: #4ecdc4; 
   border: none; 
   color: #0a1020; 
   font-weight: 900; 
-  font-size: 13px;
+  font-size: 11px; /* Fonte mais pequena para caber "A decorrer" */
   cursor: pointer; 
   display: flex; 
   align-items: center; 
   justify-content: center;
   text-align: center;
   line-height: 1.2;
+  padding: 4px;
 }
 #startBtn.boss { background: #f44336; color: #fff; animation: pulse 1s infinite; }
 #startBtn:disabled { opacity: 0.5; background: #2d3a4f; color: #8fa3bd; }
@@ -945,7 +947,7 @@ function updateHUD() {
 
 function updateStartBtn() {
   if (running) {
-    startBtnTxt.textContent = "A decorrer...";
+    startBtnTxt.textContent = "⏳ A jogar";
     startBtn.classList.remove("boss");
     startBtn.disabled = true;
     return;
@@ -969,13 +971,26 @@ function buildTowerButtons() {
     const btn = document.createElement("button");
     btn.className = "tbtn";
     btn.dataset.type = type;
+    
     const locked = base.unlock && !persistent.unlocked[base.unlock];
-    if (locked) btn.classList.add("locked");
-    btn.innerHTML = '<div class="ico">' + base.ico + '</div>' +
-      '<div class="nm">' + base.name + '</div>' +
-      '<div class="cost">🪙 ' + base.cost + '</div>';
+    
+    if (locked) {
+      btn.classList.add("locked");
+      // Adiciona dica de como desbloquear no próprio botão
+      btn.innerHTML = '<div class="ico">' + base.ico + '</div>' +
+        '<div class="nm" style="color:#ff5252">Bloqueada</div>' +
+        '<div class="cost" style="color:#8fa3bd; font-size:9px;">Vai aos Talentos</div>';
+    } else {
+      btn.innerHTML = '<div class="ico">' + base.ico + '</div>' +
+        '<div class="nm">' + base.name + '</div>' +
+        '<div class="cost">🪙 ' + base.cost + '</div>';
+    }
+
     btn.addEventListener("click", () => {
-      if (locked) { showInfo("🔒 Bloqueada"); return; }
+      if (locked) { 
+        showInfo("🔒 " + base.name + " desbloqueia na Árvore de Talentos"); 
+        return; 
+      }
       if (selectedType === type) {
         selectedType = null; btn.classList.remove("sel"); hoverSlot = null;
       } else {
