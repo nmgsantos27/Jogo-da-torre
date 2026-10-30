@@ -270,11 +270,10 @@
 <script>
 "use strict";
 
-const SAVE_KEY = "torreProgressV30";
+const SAVE_KEY = "torreProgressV31";
 const TILE = 36;
 const MAX_RANKING = 20;
 
-// Configuração dos Mundos e Mudança de Cenário
 const WORLDS = [
   { id: 1, name: "Prado Verde",    bg: "#0a1020", path: "#4a3b2c", pathDash: "#7a6046", accent: "#4ecdc4" },
   { id: 2, name: "Deserto Árido",  bg: "#1a150a", path: "#5c4d32", pathDash: "#8c754d", accent: "#ff9800" },
@@ -298,8 +297,8 @@ const ENEMY_TYPES = {
 };
 
 const TALENTS = [
-  { id:"force",    ico:"⚔️", name:"Força",       desc:"+15% dano das torres por nível",        max:5, cost:n=>4+n*2 },
-  { id:"greed",    ico:"🪙", name:"Ganância",    desc:"+20% ouro obtido por nível",            max:5, cost:n=>3+n*2 },
+  { id:"force",    ico:"⚔️", name:"Força",       desc:"+15% dano das torres por nível (Nv.3 desbloqueia ⚡)", max:5, cost:n=>4+n*2 },
+  { id:"greed",    ico:"🪙", name:"Ganância",    desc:"+20% ouro obtido por nível (Nv.3 desbloqueia ☠️)", max:5, cost:n=>3+n*2 },
   { id:"vital",    ico:"❤️", name:"Vitalidade",  desc:"+2 vidas iniciais por nível",           max:5, cost:n=>3+n*2 },
   { id:"precision",ico:"🎯", name:"Precisão",    desc:"+8% alcance das torres por nível",      max:5, cost:n=>4+n*2 },
   { id:"speed",    ico:"⏱️", name:"Celeridade",  desc:"+10% cadência de tiro por nível",       max:5, cost:n=>5+n*2 },
@@ -327,6 +326,9 @@ function loadProgress() {
     persistent.essence = Math.max(0, Number(persistent.essence) || 0);
     persistent.talents = (persistent.talents && typeof persistent.talents === "object") ? persistent.talents : {};
     persistent.unlocked = Object.assign({ lightning:false, poison:false }, persistent.unlocked || {});
+    // Validação automática dos desbloqueios com base nos talentos atuais
+    if ((persistent.talents.force || 0) >= 3) persistent.unlocked.lightning = true;
+    if ((persistent.talents.greed || 0) >= 3) persistent.unlocked.poison = true;
     persistent.ranking = Array.isArray(persistent.ranking) ? persistent.ranking.slice(0, MAX_RANKING) : [];
     persistent.playerName = typeof persistent.playerName === "string" ? persistent.playerName.slice(0,16) : "";
     if (persistent.savedState && typeof persistent.savedState !== "object") persistent.savedState = null;
@@ -397,7 +399,8 @@ let COLS = 10, ROWS = 14, offX = 0, offY = 0;
 
 function resizeCanvas() {
   const wrap = $("gamewrap");
-  const w = wrap.clientWidth, h = wrap.clientHeight;
+  const w = wrap.clientWidth || window.innerWidth;
+  const h = wrap.clientHeight || (window.innerHeight - 150);
   if (!w || !h) return;
   const dpr = window.devicePixelRatio || 1;
   cv.width = Math.floor(w * dpr);
@@ -506,7 +509,7 @@ function towerSellValue(t)   { return Math.floor((TOWER_TYPES[t.type].cost + (t.
 function buildTower(slot, type) {
   const base = TOWER_TYPES[type];
   if (!base) return;
-  if (base.unlock && !persistent.unlocked[base.unlock]) { showInfo("🔒 Bloqueada"); return; }
+  if (base.unlock && !persistent.unlocked[base.unlock]) { showInfo("🔒 Bloqueada (Ver talentos)"); return; }
   if (gold < base.cost) { showInfo("🪙 Ouro insuficiente"); return; }
   if (slot.occupied || !slot.buildable) return;
   gold -= base.cost;
@@ -571,15 +574,14 @@ function refreshPopup() {
   sellBtn.disabled = false; sellVal.textContent = "🪙 " + sv;
 }
 
-/* Inimigos com Dificuldade Progressiva por Mundo */
+/* Inimigos */
 function spawnEnemy(type, waveNum, worldNum) {
   const base = ENEMY_TYPES[type];
   if (!base) return;
-  // A dificuldade escala progressivamente com a vaga e com o mundo atual
   const worldFactor = 1 + (worldNum - 1) * 0.6;
   const hpScale = (1 + (waveNum - 1) * 0.4) * worldFactor;
   const hp = Math.ceil(base.hp * hpScale);
-  const speed = base.speed * (1 + (worldNum - 1) * 0.08); // Inimigos ficam ligeiramente mais rápidos nos mundos avançados
+  const speed = base.speed * (1 + (worldNum - 1) * 0.08);
 
   enemies.push({ 
     type, hp, maxHp: hp, gold: Math.ceil(base.gold * (1 + (worldNum-1)*0.2)), 
@@ -695,9 +697,8 @@ function update() {
     persistent.essence += essencePerWave();
     if (wave % 5 === 0) {
       persistent.essence += 3;
-      // Avançar de Mundo a cada 5 vagas completadas!
       world++;
-      showInfo("🌍 Bem-vindo ao Mundo " + world + ": " + (WORLDS[world-1]?.name || "Desconhecido") + "!");
+      showInfo("🌍 Mundo " + world + ": " + (WORLDS[(world-1)%WORLDS.length]?.name || "Extra") + "!");
     } else {
       showInfo("✅ Vaga concluída! +" + bonus + " 🪙");
     }
@@ -761,20 +762,17 @@ function update() {
   });
 }
 
-/* Render com Mudança de Cenário Dinâmica */
+/* Render */
 function render() {
   const w = cv.width / (window.devicePixelRatio || 1);
   const h = cv.height / (window.devicePixelRatio || 1);
   ctx.clearRect(0, 0, w, h);
 
-  // Seleciona o tema do mundo atual (garante segurança caso passe do limite de mundos criados)
   const theme = WORLDS[(world - 1) % WORLDS.length];
 
-  // Fundo dinâmico do cenário atual
   ctx.fillStyle = theme.bg;
   ctx.fillRect(0, 0, w, h);
 
-  // Caminho dinâmico do cenário atual
   ctx.strokeStyle = theme.path;
   ctx.lineWidth = TILE * 0.9;
   ctx.lineCap = "round"; ctx.lineJoin = "round";
@@ -782,7 +780,6 @@ function render() {
   PATH.forEach((p, i) => { i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); });
   ctx.stroke();
 
-  // Linha central tracejada do caminho
   ctx.strokeStyle = theme.pathDash;
   ctx.lineWidth = 4;
   ctx.setLineDash([12, 16]);
@@ -955,7 +952,7 @@ function buildTowerButtons() {
 
     btn.addEventListener("click", () => {
       if (locked) { 
-        showInfo("🔒 " + base.name + " desbloqueia nos Talentos"); 
+        showInfo("🔒 " + base.name + " desbloqueia nos Talentos (Nv.3)"); 
         return; 
       }
       if (selectedType === type) {
@@ -1072,8 +1069,8 @@ function renderTalentList() {
       if (!canBuy) return;
       persistent.essence -= cost;
       persistent.talents[tal.id] = lvl + 1;
-      if (tal.id === "force" && lvl+1 >= 3) persistent.unlocked.lightning = true;
-      if (tal.id === "greed" && lvl+1 >= 3) persistent.unlocked.poison = true;
+      if (tal.id === "force" && persistent.talents[tal.id] >= 3) persistent.unlocked.lightning = true;
+      if (tal.id === "greed" && persistent.talents[tal.id] >= 3) persistent.unlocked.poison = true;
       vibrate(15);
       showInfo("✨ " + tal.name + " nível " + (lvl+1));
       renderTalentList();
@@ -1290,7 +1287,7 @@ function initGame() {
     selectedType = null; selectedTower = null; hoverSlot = null;
 
     setTimeout(() => {
-      rebuildStrategicSlots($("gamewrap").clientWidth, $("gamewrap").clientHeight);
+      resizeCanvas();
       if (Array.isArray(s.towers)) {
         s.towers.forEach(st => {
           const slot = slots.find(x => x.col === st.col && x.row === st.row && x.buildable);
@@ -1304,7 +1301,7 @@ function initGame() {
           }
         });
       }
-    }, 80);
+    }, 50);
   } else {
     gold = 100 + startGoldBonus();
     maxLives = 20 + startLivesBonus();
@@ -1318,15 +1315,16 @@ function initGame() {
     towers = [];
   }
 
+  // Garante redimensionamento imediato e múltiplos reforços para evitar ecrã preto
   resizeCanvas();
-  setTimeout(() => {
-    resizeCanvas();
-    buildTowerButtons();
-    updateHUD();
-    updateStartBtn();
-    renderTalentList();
-    ovName.value = persistent.playerName || "";
-  }, 60);
+  setTimeout(resizeCanvas, 50);
+  setTimeout(resizeCanvas, 200);
+
+  buildTowerButtons();
+  updateHUD();
+  updateStartBtn();
+  renderTalentList();
+  ovName.value = persistent.playerName || "";
 
   requestAnimationFrame(loop);
 }
