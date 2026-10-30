@@ -214,6 +214,8 @@
   #closeTalents { background:#3a5a8a; }
   #showRankFromTalents { background:linear-gradient(145deg,#ce93d8,#9c27b0); }
   #manualSaveBtn { background:linear-gradient(145deg,#3a9a5a,#2a7a3a); width:100%; }
+  #exportSaveBtn { background:linear-gradient(145deg,#2a72a4,#1a4a70); width:48%; }
+  #importSaveBtn { background:linear-gradient(145deg,#a46a2a,#704a1a); width:48%; }
 
   #overlay { position:absolute; inset:0; display:none; align-items:center;
              justify-content:center; background:rgba(0,0,0,0.85);
@@ -307,8 +309,11 @@
 
     <div class="talentActions">
       <button id="showRankFromTalents">🏆 Ranking</button>
-      <button id="closeTalents">Voltar ao Jogo</button>
-      <button id="manualSaveBtn">💾 Guardar Jogo</button>
+      <button id="closeTalents">Voltar</button>
+      <button id="manualSaveBtn">💾 Guardar Na Nuvem Local</button>
+      <button id="exportSaveBtn">📥 Exportar Ficheiro</button>
+      <button id="importSaveBtn">📤 Importar Ficheiro</button>
+      <input type="file" id="importFile" style="display:none" accept=".json">
     </div>
   </div>
 
@@ -388,15 +393,19 @@ let persistent = {
 };
 TALENT_DEFS.forEach(t => persistent.talents[t.id] = 0);
 
-const STORAGE_KEY = 'torreProgressV15_PT';
+const STORAGE_KEY = 'torreProgressV16_PT';
 
 function saveProgress(){
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(persistent)); } catch(e){}
+  try {
+    const data = JSON.stringify(persistent);
+    localStorage.setItem(STORAGE_KEY, data);
+    sessionStorage.setItem(STORAGE_KEY, data);
+  } catch(e){}
 }
 
 function loadProgress(){
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    let raw = localStorage.getItem(STORAGE_KEY) || sessionStorage.getItem(STORAGE_KEY);
     if (raw){
       const p = JSON.parse(raw);
       if (typeof p.essence === 'number') persistent.essence = p.essence;
@@ -550,7 +559,7 @@ function buildSlots(){
 }
 
 function updateTowerButtons(){
-  const totalEssenceAvailable = persistent.essence + Math.floor(essence * talentBonus('essbonus'));
+  const totalEssenceAvailable = persistent.essence;
 
   document.querySelectorAll('.tbtn').forEach(b => {
     b.classList.remove('sel', 'locked', 'can-unlock');
@@ -576,7 +585,7 @@ function updateTowerButtons(){
 
 function updateHUD(){
   goldEl.textContent = Math.floor(gold);
-  essEl.textContent = essence;
+  essEl.textContent = persistent.essence;
   livesEl.textContent = lives;
   waveEl.textContent = wave;
   scoreEl.textContent = score;
@@ -638,7 +647,6 @@ convertBtn.addEventListener('click', ()=>{
     return;
   }
   gold -= CONVERT_GOLD_COST;
-  essence += CONVERT_ESS_GAIN;
   persistent.essence += CONVERT_ESS_GAIN;
   saveProgress();
   burst(W/2, H/2, '#c77dff', 20);
@@ -652,7 +660,7 @@ document.querySelectorAll('.tbtn').forEach(b=>{
   b.addEventListener('click', ()=>{
     const type = b.dataset.type;
     const T = TOWER_TYPES[type];
-    const totalEssenceAvailable = persistent.essence + Math.floor(essence * talentBonus('essbonus'));
+    const totalEssenceAvailable = persistent.essence;
 
     if (T.unlockEssence > 0 && persistent.unlocked[type] !== true){
       if (totalEssenceAvailable < T.unlockEssence){
@@ -660,15 +668,7 @@ document.querySelectorAll('.tbtn').forEach(b=>{
         return;
       }
 
-      if (persistent.essence >= T.unlockEssence){
-        persistent.essence -= T.unlockEssence;
-      } else {
-        const rest = T.unlockEssence - persistent.essence;
-        persistent.essence = 0;
-        essence -= Math.ceil(rest / talentBonus('essbonus'));
-        if (essence < 0) essence = 0;
-      }
-
+      persistent.essence -= T.unlockEssence;
       persistent.unlocked[type] = true;
       saveProgress();
       vibrate(60);
@@ -720,6 +720,43 @@ document.getElementById('manualSaveBtn').addEventListener('click', ()=>{
   saveProgress();
   vibrate(50);
   showInfo('💾 Progresso guardado com sucesso!');
+});
+
+document.getElementById('exportSaveBtn').addEventListener('click', ()=>{
+  saveProgress();
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(persistent));
+  const dlAnchorElem = document.createElement('a');
+  dlAnchorElem.setAttribute("href", dataStr);
+  dlAnchorElem.setAttribute("download", "defenda_a_torre_save.json");
+  dlAnchorElem.click();
+  showInfo('📥 Ficheiro de salvamento descarregado!');
+});
+
+document.getElementById('importSaveBtn').addEventListener('click', ()=>{
+  document.getElementById('importFile').click();
+});
+
+document.getElementById('importFile').addEventListener('change', (event)=>{
+  const fileReader = new FileReader();
+  if (event.target.files[0]) {
+    fileReader.readAsText(event.target.files[0], "UTF-8");
+    fileReader.onload = (e) => {
+      try {
+        const parsed = JSON.parse(e.target.result);
+        if (parsed && typeof parsed.essence === 'number') {
+          persistent = parsed;
+          saveProgress();
+          updateHUD();
+          openTalents();
+          showInfo('📤 Progresso importado com sucesso!');
+        } else {
+          showInfo('❌ Ficheiro inválido!');
+        }
+      } catch (err) {
+        showInfo('❌ Erro ao ler o ficheiro!');
+      }
+    };
+  }
 });
 
 document.getElementById('backToGameBtn').addEventListener('click', ()=>{
@@ -811,7 +848,7 @@ function refreshPopup(){
   } else {
     evolveBtn.disabled = false;
     evolveBtn.textContent = '⭐ Evoluir (' + evolveEssCost + ' 💎)';
-    evolveBtn.style.opacity = essence >= evolveEssCost ? '1' : '.5';
+    evolveBtn.style.opacity = persistent.essence >= evolveEssCost ? '1' : '.5';
   }
 
   sellBtn.textContent = '💰 Vender (+' + sellVal + ' 🪙)';
@@ -837,8 +874,9 @@ evolveBtn.addEventListener('click', ()=>{
   if (t.level < MAX_LEVEL){ showInfo('⭐ Requer nível máximo!'); return; }
   if (t.stars >= MAX_STARS){ showInfo('🌟 Já está no máximo!'); return; }
   const cost = Math.floor(4 + t.stars * 4);
-  if (essence < cost){ showInfo('💎 Essência insuficiente!'); return; }
-  essence -= cost;
+  if (persistent.essence < cost){ showInfo('💎 Essência insuficiente!'); return; }
+  persistent.essence -= cost;
+  saveProgress();
   t.stars++;
   t.dmg *= 1.35; t.range += 12; t.fireRate *= 0.9;
   burst(t.x, t.y, '#c77dff', 24);
@@ -1036,7 +1074,6 @@ function update(dt){
     const bonus = 15 + Math.floor(wave * 5); 
     const essGain = wave % 5 === 0 ? 3 : 1;
     gold += bonus;
-    essence += essGain;
     score += wave*10; 
     
     persistent.essence += essGain;
@@ -1077,7 +1114,6 @@ function hitEnemy(e, dmg, color){
       gold += goldGain;
       score += e.isBoss ? 100 : 10;
       if (e.isBoss){
-        essence += 2;
         persistent.essence += 2;
         saveProgress();
       }
@@ -1092,9 +1128,6 @@ let scoreSubmitted = false;
 function endGame(){
   gameOverFlag = true; running = false;
   vibrate([100, 50, 100]);
-  const runEssence = Math.floor(essence * talentBonus('essbonus'));
-  persistent.essence += runEssence;
-  
   const goldBonusEss = Math.floor(gold * ENDGAME_GOLD_RATIO);
   persistent.essence += goldBonusEss;
   
@@ -1115,7 +1148,7 @@ function endGame(){
 
   document.getElementById('ovWave').textContent = wave;
   document.getElementById('ovScore').textContent = score;
-  document.getElementById('ovEss').textContent = runEssence;
+  document.getElementById('ovEss').textContent = goldBonusEss;
   
   const goldNote = document.getElementById('ovGoldNote');
   if (goldBonusEss > 0){
