@@ -388,11 +388,12 @@ let persistent = {
 };
 TALENT_DEFS.forEach(t => persistent.talents[t.id] = 0);
 
-const STORAGE_KEY = 'torreProgressV14_PT';
+const STORAGE_KEY = 'torreProgressV15_PT';
 
 function saveProgress(){
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(persistent)); } catch(e){}
 }
+
 function loadProgress(){
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -523,6 +524,7 @@ speedBtn.addEventListener('click', ()=>{
 });
 
 function initGame(){
+  loadProgress();
   gold = 150 + talentBonus('start');
   essence = 0;
   maxLives = 15 + talentBonus('life');
@@ -637,10 +639,12 @@ convertBtn.addEventListener('click', ()=>{
   }
   gold -= CONVERT_GOLD_COST;
   essence += CONVERT_ESS_GAIN;
+  persistent.essence += CONVERT_ESS_GAIN;
+  saveProgress();
   burst(W/2, H/2, '#c77dff', 20);
   floatText(W/2, H/2 - 20, '+' + CONVERT_ESS_GAIN + ' 💎', '#c77dff');
   vibrate(40);
-  showInfo('💎 +' + CONVERT_ESS_GAIN + ' Essência!');
+  showInfo('💎 +' + CONVERT_ESS_GAIN + ' Essência guardada!');
   updateHUD();
 });
 
@@ -1034,10 +1038,16 @@ function update(dt){
     gold += bonus;
     essence += essGain;
     score += wave*10; 
+    
+    persistent.essence += essGain;
+    if (wave > persistent.bestWave) persistent.bestWave = wave;
+    if (score > persistent.bestScore) persistent.bestScore = score;
+    saveProgress();
+
     floatText(W/2, H/2-20, '+' + bonus + ' 🪙', '#ffd700');
     floatText(W/2, H/2+10, '+' + essGain + ' 💎', '#c77dff');
     vibrate(50);
-    showInfo('✅ Vaga ' + wave + ' concluída!');
+    showInfo('✅ Vaga ' + wave + ' concluída & guardada!');
     updateHUD();
   }
 
@@ -1066,7 +1076,11 @@ function hitEnemy(e, dmg, color){
       floatText(e.x, e.y, '+' + goldGain + '🪙', '#ffd700');
       gold += goldGain;
       score += e.isBoss ? 100 : 10;
-      if (e.isBoss) essence += 2;
+      if (e.isBoss){
+        essence += 2;
+        persistent.essence += 2;
+        saveProgress();
+      }
       enemies.splice(idx,1);
       updateHUD();
     }
@@ -1139,7 +1153,7 @@ function renderRanking(){
 }
 
 function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;5'}[c]));
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 function submitScoreOnly(){
@@ -1163,16 +1177,10 @@ function submitScoreAndRestart(){
 
 function openTalents(){
   const screen = document.getElementById('talentScreen');
-  const runEssenceIfEnds = Math.floor(essence * talentBonus('essbonus'));
-  const total = persistent.essence + runEssenceIfEnds;
+  const total = persistent.essence;
 
   document.getElementById('essBig').textContent = total;
-  const noteEl = document.getElementById('essNote');
-  if (runEssenceIfEnds > 0){
-    noteEl.textContent = '(' + persistent.essence + ' guardada + ' + runEssenceIfEnds + ' desta vaga)';
-  } else {
-    noteEl.textContent = '';
-  }
+  document.getElementById('essNote').textContent = '';
 
   const exGold = document.getElementById('exGold');
   const exBtn = document.getElementById('exchangeBtn');
@@ -1219,19 +1227,11 @@ function openTalents(){
     const buy = (ev)=>{
       if (ev) { ev.preventDefault(); ev.stopPropagation(); }
       if (maxed) return;
-      const available = persistent.essence + Math.floor(essence * talentBonus('essbonus'));
-      if (available < cost){
+      if (persistent.essence < cost){
         showInfo('💎 Essência insuficiente!');
         return;
       }
-      if (persistent.essence >= cost){
-        persistent.essence -= cost;
-      } else {
-        const rest = cost - persistent.essence;
-        persistent.essence = 0;
-        essence -= Math.ceil(rest / talentBonus('essbonus'));
-        if (essence < 0) essence = 0;
-      }
+      persistent.essence -= cost;
       persistent.talents[td.id] = lvl + 1;
       saveProgress();
       vibrate(40);
@@ -1412,7 +1412,6 @@ function roundRect(x,y,w,h,r){
   ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
 }
 
-loadProgress();
 resize();
 initGame();
 requestAnimationFrame(loop);
