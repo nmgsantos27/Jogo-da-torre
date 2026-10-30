@@ -19,16 +19,16 @@
     padding-bottom:env(safe-area-inset-bottom); background:#0a1020; }
 
   /* HUD */
-  #hud { display:flex; align-items:center; gap:8px; padding:12px 14px;
+  #hud { display:flex; align-items:center; gap:6px; padding:10px 12px;
     background:#0f1626; border-bottom:1px solid rgba(255,255,255,0.05); flex-shrink:0; }
   .hstat { display:flex; flex-direction:column; align-items:center; line-height:1.1; }
-  .hstat .val { font-size:14px; font-weight:800; }
-  .hstat .lbl { font-size:9px; font-weight:700; color:#5a6b82; margin-top:2px; letter-spacing:0.5px; }
+  .hstat .val { font-size:13px; font-weight:800; }
+  .hstat .lbl { font-size:8px; font-weight:700; color:#5a6b82; margin-top:2px; letter-spacing:0.5px; }
   .hstat.gold .val { color:#ffd700; }
   .hstat.ess .val  { color:#c77dff; }
   .hstat.life .val { color:#ff5252; }
   .hstat.wave .val { color:#4ecdc4; }
-  .hstat.score .val{ color:#ce93d8; }
+  .hstat.world .val{ color:#ff9800; }
   .hspacer { flex:1; }
   .hbtn { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
     color:#e8ecf5; border-radius:8px; padding:6px 10px; font-size:12px;
@@ -84,47 +84,24 @@
   .pbtn:disabled { opacity:0.3; }
   .pbtn:active:not(:disabled) { transform:scale(0.95); }
 
-  /* Panel (Barra de baixo) */
+  /* Panel */
   #panel { 
-    display: flex; 
-    align-items: stretch; 
-    gap: 8px; 
-    padding: 8px 10px;
+    display: flex; align-items: stretch; gap: 8px; padding: 8px 10px;
     padding-bottom: calc(8px + env(safe-area-inset-bottom));
-    background: #0f1626; 
-    border-top: 1px solid rgba(255,255,255,0.05); 
-    flex-shrink: 0; 
-    height: 85px;
+    background: #0f1626; border-top: 1px solid rgba(255,255,255,0.05); 
+    flex-shrink: 0; height: 85px;
   }
-
   #towerScroll { 
-    flex: 1; 
-    display: flex; 
-    gap: 6px; 
-    overflow-x: auto; 
-    overflow-y: hidden;
-    scrollbar-width: none; 
-    -webkit-overflow-scrolling: touch; 
-    padding: 2px 4px;
+    flex: 1; display: flex; gap: 6px; overflow-x: auto; overflow-y: hidden;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 2px 4px;
   }
   #towerScroll::-webkit-scrollbar { display: none; }
 
   .tbtn { 
-    flex-shrink: 0; 
-    width: 62px; 
-    padding: 6px 2px; 
-    border-radius: 12px;
-    background: #141c2e; 
-    border: 1px solid rgba(255,255,255,0.08);
-    color: #e8ecf5; 
-    cursor: pointer; 
-    display: flex; 
-    flex-direction: column;
-    align-items: center; 
-    justify-content: center; 
-    gap: 2px; 
-    position: relative; 
-    transition: all .15s; 
+    flex-shrink: 0; width: 62px; padding: 6px 2px; border-radius: 12px;
+    background: #141c2e; border: 1px solid rgba(255,255,255,0.08);
+    color: #e8ecf5; cursor: pointer; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 2px; position: relative; transition: all .15s; 
   }
   .tbtn .ico { font-size: 20px; line-height: 1; }
   .tbtn .nm { font-size: 9px; font-weight: 700; color: #8fa3bd; white-space: nowrap; }
@@ -134,26 +111,15 @@
   .tbtn.locked::after { content: '🔒'; position: absolute; top: 4px; right: 4px; font-size: 11px; }
 
   #startBtn { 
-    flex-shrink: 0; 
-    width: 85px; 
-    border-radius: 12px;
-    background: #4ecdc4; 
-    border: none; 
-    color: #0a1020; 
-    font-weight: 900; 
-    font-size: 11px; 
-    cursor: pointer; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-    text-align: center;
-    line-height: 1.2;
-    padding: 4px;
+    flex-shrink: 0; width: 85px; border-radius: 12px;
+    background: #4ecdc4; border: none; color: #0a1020; font-weight: 900; 
+    font-size: 11px; cursor: pointer; display: flex; align-items: center; 
+    justify-content: center; text-align: center; line-height: 1.2; padding: 4px;
   }
   #startBtn.boss { background: #f44336; color: #fff; animation: pulse 1s infinite; }
   #startBtn:disabled { opacity: 0.5; background: #2d3a4f; color: #8fa3bd; }
 
-  /* Talent screen / Ranking Screen / Overlay */
+  /* Ecrãs e Menus */
   #talentScreen, #rankingScreen, #overlay { position:absolute; inset:0; z-index:50; background:#0a1020;
     display:flex; flex-direction:column; padding:20px; opacity:0; pointer-events:none;
     transition:opacity .2s; overflow-y:auto; }
@@ -180,7 +146,6 @@
   .tal-item .tinfo { flex:1; }
   .tal-item .tnm { font-size:15px; font-weight:800; }
   .tal-item .tdesc { font-size:11px; color:#8fa3bd; font-weight:600; margin-top:2px; }
-  .tal-item .tlvl { font-size:12px; font-weight:800; color:#c77dff; }
   .tal-buy { background:#7b42bc; border:none; color:#fff; padding:10px 14px;
     border-radius:10px; font-weight:900; font-size:13px; cursor:pointer; }
   .tal-buy:disabled { background:#2d1f3d; color:#8855aa; }
@@ -221,7 +186,7 @@
     <div class="hstat ess"><div class="val" id="essLbl">0</div><div class="lbl">ESSÊNCIA</div></div>
     <div class="hstat life"><div class="val" id="lifeLbl">20</div><div class="lbl">VIDAS</div></div>
     <div class="hstat wave"><div class="val" id="waveLbl">1</div><div class="lbl">VAGA</div></div>
-    <div class="hstat score"><div class="val" id="scoreLbl">0</div><div class="lbl">PONTOS</div></div>
+    <div class="hstat world"><div class="val" id="worldLbl">1</div><div class="lbl">MUNDO</div></div>
     <div class="hspacer"></div>
     <button class="hbtn" id="speedBtn">1x</button>
     <button class="hbtn" id="convBtn">🪙→💎</button>
@@ -305,9 +270,16 @@
 <script>
 "use strict";
 
-const SAVE_KEY = "torreProgressV29";
+const SAVE_KEY = "torreProgressV30";
 const TILE = 36;
 const MAX_RANKING = 20;
+
+// Configuração dos Mundos e Mudança de Cenário
+const WORLDS = [
+  { id: 1, name: "Prado Verde",    bg: "#0a1020", path: "#4a3b2c", pathDash: "#7a6046", accent: "#4ecdc4" },
+  { id: 2, name: "Deserto Árido",  bg: "#1a150a", path: "#5c4d32", pathDash: "#8c754d", accent: "#ff9800" },
+  { id: 3, name: "Vulcão Sombrio", bg: "#1a0a0a", path: "#422020", pathDash: "#733535", accent: "#ff5252" }
+];
 
 const TOWER_TYPES = {
   archer:    { name:"Arqueiro",  ico:"🏹", cost:60,  dmg:1, range:130, rate:28, color:"#4ecdc4", special:null,        unlock:null },
@@ -371,7 +343,7 @@ function saveProgress(force) {
 }
 
 /* Estado da ronda */
-let gold = 0, lives = 20, maxLives = 20, wave = 1, score = 0;
+let gold = 0, lives = 20, maxLives = 20, wave = 1, world = 1, score = 0;
 let running = false, gameOverFlag = false, paused = false;
 let selectedType = null, selectedTower = null;
 let towers = [], enemies = [], projectiles = [], particles = [], floats = [];
@@ -385,11 +357,12 @@ const $ = id => document.getElementById(id);
 const cv = $("cv");
 const ctx = cv.getContext("2d");
 const goldLbl = $("goldLbl"), essLbl = $("essLbl"), lifeLbl = $("lifeLbl"),
-      waveLbl = $("waveLbl"), scoreLbl = $("scoreLbl"), speedBtn = $("speedBtn"),
-      convBtn = $("convBtn"), menuBtn = $("menuBtn"), pauseBadge = $("pauseBadge"),
-      infoEl = $("info"), popup = $("popup"), popTitle = $("popTitle"),
-      popClose = $("popClose"), psDmg = $("psDmg"), psRng = $("psRng"), psRate = $("psRate"),
-      upgBtn = $("upgBtn"), upgCost = $("upgCost"), evoBtn = $("evoBtn"), evoCost = $("evoCost"),
+      waveLbl = $("waveLbl"), worldLbl = $("worldLbl"), scoreLbl = $("scoreLbl"), 
+      speedBtn = $("speedBtn"), convBtn = $("convBtn"), menuBtn = $("menuBtn"), 
+      pauseBadge = $("pauseBadge"), infoEl = $("info"), popup = $("popup"), 
+      popTitle = $("popTitle"), popClose = $("popClose"), psDmg = $("psDmg"), 
+      psRng = $("psRng"), psRate = $("psRate"), upgBtn = $("upgBtn"), 
+      upgCost = $("upgCost"), evoBtn = $("evoBtn"), evoCost = $("evoCost"),
       sellBtn = $("sellBtn"), sellVal = $("sellVal"), towerScroll = $("towerScroll"),
       startBtn = $("startBtn"), startBtnTxt = $("startBtnTxt"),
       talentScreen = $("talentScreen"), rankingScreen = $("rankingScreen"), talEss = $("talEss"), talConv = $("talConv"),
@@ -598,15 +571,21 @@ function refreshPopup() {
   sellBtn.disabled = false; sellVal.textContent = "🪙 " + sv;
 }
 
-/* Inimigos */
-function spawnEnemy(type, waveNum) {
+/* Inimigos com Dificuldade Progressiva por Mundo */
+function spawnEnemy(type, waveNum, worldNum) {
   const base = ENEMY_TYPES[type];
   if (!base) return;
-  const hpScale = 1 + (waveNum-1)*0.35;
+  // A dificuldade escala progressivamente com a vaga e com o mundo atual
+  const worldFactor = 1 + (worldNum - 1) * 0.6;
+  const hpScale = (1 + (waveNum - 1) * 0.4) * worldFactor;
   const hp = Math.ceil(base.hp * hpScale);
-  enemies.push({ type, hp, maxHp:hp, gold: base.gold, speed: base.speed,
-    radius: base.radius, color: base.color, x: PATH[0].x, y: PATH[0].y,
-    waypoint: 1, slow: 0, poison: 0, poisonDmg: 0, alive: true });
+  const speed = base.speed * (1 + (worldNum - 1) * 0.08); // Inimigos ficam ligeiramente mais rápidos nos mundos avançados
+
+  enemies.push({ 
+    type, hp, maxHp: hp, gold: Math.ceil(base.gold * (1 + (worldNum-1)*0.2)), 
+    speed, radius: base.radius, color: base.color, x: PATH[0].x, y: PATH[0].y,
+    waypoint: 1, slow: 0, poison: 0, poisonDmg: 0, alive: true 
+  });
 }
 
 function startWave() {
@@ -614,15 +593,16 @@ function startWave() {
   running = true; paused = false;
   spawnQueue = []; spawnTimer = 0;
   const isBoss = wave % 5 === 0;
-  const count = isBoss ? 6 + Math.floor(wave*0.5) : 6 + Math.floor(wave*0.8);
-  for (let i=0;i<count;i++) {
+  const count = isBoss ? 6 + Math.floor(wave*0.6) : 6 + Math.floor(wave*0.9);
+  
+  for (let i = 0; i < count; i++) {
     let type = "goblin";
-    if (wave >= 3 && Math.random() < 0.3) type = "orc";
-    if (wave >= 5 && Math.random() < 0.2) type = "swift";
-    if (wave >= 8 && Math.random() < 0.2) type = "tank";
-    spawnQueue.push({ type, delay: i===0 ? 0 : 45 });
+    if (wave >= 3 && Math.random() < 0.35) type = "orc";
+    if (wave >= 5 && Math.random() < 0.25) type = "swift";
+    if (wave >= 8 && Math.random() < 0.25) type = "tank";
+    spawnQueue.push({ type, delay: i === 0 ? 0 : Math.max(25, 45 - world * 3) });
   }
-  if (isBoss) spawnQueue.push({ type:"boss", delay: 30 });
+  if (isBoss) spawnQueue.push({ type: "boss", delay: 30 });
   startBtn.disabled = true;
   updateStartBtn();
 }
@@ -641,7 +621,7 @@ function killEnemy(e) {
   hudDirty = true;
   burst(e.x, e.y, e.color, 6);
   floatText(e.x, e.y-14, "+" + g, "#ffd700");
-  if (e.type === "boss") { persistent.essence += 2; saveProgress(false); }
+  if (e.type === "boss") { persistent.essence += 2 + world; saveProgress(false); }
 }
 function damageBase(e) {
   if (!e.alive) return;
@@ -706,18 +686,24 @@ function update() {
     if (spawnTimer >= spawnQueue[0].delay) {
       spawnTimer = 0;
       const s = spawnQueue.shift();
-      spawnEnemy(s.type, wave);
+      spawnEnemy(s.type, wave, world);
     }
   } else if (enemies.length === 0 && running) {
     running = false;
-    const bonus = 15 + wave * 5;
+    const bonus = 15 + wave * 5 * world;
     gold += bonus; score += bonus;
     persistent.essence += essencePerWave();
-    if (wave % 5 === 0) persistent.essence += 3;
+    if (wave % 5 === 0) {
+      persistent.essence += 3;
+      // Avançar de Mundo a cada 5 vagas completadas!
+      world++;
+      showInfo("🌍 Bem-vindo ao Mundo " + world + ": " + (WORLDS[world-1]?.name || "Desconhecido") + "!");
+    } else {
+      showInfo("✅ Vaga concluída! +" + bonus + " 🪙");
+    }
     wave++;
     hudDirty = true;
     vibrate(25);
-    showInfo("✅ Vaga concluída! +" + bonus + " 🪙");
     startBtn.disabled = false;
     updateStartBtn();
     saveProgress(false);
@@ -775,23 +761,29 @@ function update() {
   });
 }
 
-/* Render */
+/* Render com Mudança de Cenário Dinâmica */
 function render() {
   const w = cv.width / (window.devicePixelRatio || 1);
   const h = cv.height / (window.devicePixelRatio || 1);
   ctx.clearRect(0, 0, w, h);
 
-  ctx.fillStyle = "#0a1020";
+  // Seleciona o tema do mundo atual (garante segurança caso passe do limite de mundos criados)
+  const theme = WORLDS[(world - 1) % WORLDS.length];
+
+  // Fundo dinâmico do cenário atual
+  ctx.fillStyle = theme.bg;
   ctx.fillRect(0, 0, w, h);
 
-  ctx.strokeStyle = "#4a3b2c";
+  // Caminho dinâmico do cenário atual
+  ctx.strokeStyle = theme.path;
   ctx.lineWidth = TILE * 0.9;
   ctx.lineCap = "round"; ctx.lineJoin = "round";
   ctx.beginPath();
   PATH.forEach((p, i) => { i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); });
   ctx.stroke();
 
-  ctx.strokeStyle = "rgba(122,96,70,0.7)";
+  // Linha central tracejada do caminho
+  ctx.strokeStyle = theme.pathDash;
   ctx.lineWidth = 4;
   ctx.setLineDash([12, 16]);
   ctx.beginPath();
@@ -914,6 +906,7 @@ function updateHUD() {
   essLbl.textContent = persistent.essence;
   lifeLbl.textContent = Math.max(0, lives || 0);
   waveLbl.textContent = wave || 1;
+  worldLbl.textContent = world || 1;
   scoreLbl.textContent = Math.floor(score || 0);
   speedBtn.textContent = speedMul + "x";
   convGoldTxt.textContent = Math.floor(gold || 0);
@@ -1067,7 +1060,7 @@ function renderTalentList() {
     const div = document.createElement("div");
     div.className = "tal-item";
     div.innerHTML = '<div class="tico">' + tal.ico + '</div>' +
-      '<div class="tinfo">' +
+      '<div class="tal-item-info" style="flex:1;">' +
         '<div class="tnm">' + tal.name + ' <span style="color:#c77dff;font-weight:700;font-size:12px;">(' + lvl + '/' + tal.max + ')</span></div>' +
         '<div class="tdesc">' + tal.desc + '</div>' +
       '</div>' +
@@ -1200,7 +1193,7 @@ function startNewGame() {
   gold = 100 + startGoldBonus();
   maxLives = 20 + startLivesBonus();
   lives = maxLives;
-  wave = 1; score = 0; running = false;
+  wave = 1; world = 1; score = 0; running = false;
   selectedType = null; selectedTower = null; hoverSlot = null;
   enemies = []; projectiles = []; particles = []; floats = [];
   spawnQueue = []; spawnTimer = 0;
@@ -1253,7 +1246,7 @@ window.addEventListener("orientationchange", onResize);
 function forceSave() {
   if (gameOverFlag) return;
   persistent.savedState = {
-    wave, gold, lives, score,
+    wave, world, gold, lives, score,
     towers: towers.map(t => ({
       type: t.type, level: t.level, stars: t.stars, col: t.col, row: t.row
     }))
@@ -1282,6 +1275,7 @@ function initGame() {
   if (persistent.savedState) {
     const s = persistent.savedState;
     wave = s.wave || 1;
+    world = s.world || 1;
     gold = s.gold || 100;
     lives = s.lives || 20;
     score = s.score || 0;
@@ -1315,7 +1309,7 @@ function initGame() {
     gold = 100 + startGoldBonus();
     maxLives = 20 + startLivesBonus();
     lives = maxLives;
-    wave = 1; score = 0; running = false;
+    wave = 1; world = 1; score = 0; running = false;
     gameOverFlag = false; paused = false; scoreSubmitted = false;
     enemies = []; projectiles = []; particles = []; floats = [];
     spawnQueue = []; spawnTimer = 0;
