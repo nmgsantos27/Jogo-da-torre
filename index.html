@@ -19,19 +19,20 @@
     background:#0a1020; overflow:hidden; }
 
   /* HUD */
-  #hud { display:flex; align-items:center; gap:6px; padding:10px 12px;
+  #hud { display:flex; align-items:center; gap:5px; padding:8px 10px;
     background:#0f1626; border-bottom:1px solid rgba(255,255,255,0.05); flex-shrink:0; z-index:5; }
   .hstat { display:flex; flex-direction:column; align-items:center; line-height:1.1; }
-  .hstat .val { font-size:13px; font-weight:800; }
-  .hstat .lbl { font-size:8px; font-weight:700; color:#5a6b82; margin-top:2px; letter-spacing:0.5px; }
+  .hstat .val { font-size:12px; font-weight:800; }
+  .hstat .lbl { font-size:7px; font-weight:700; color:#5a6b82; margin-top:2px; letter-spacing:0.3px; }
   .hstat.gold .val { color:#ffd700; }
   .hstat.ess .val  { color:#c77dff; }
+  .hstat.score .val{ color:#4ecdc4; }
   .hstat.life .val { color:#ff5252; }
-  .hstat.wave .val { color:#4ecdc4; }
+  .hstat.wave .val { color:#64ffda; }
   .hstat.world .val{ color:#ff9800; }
   .hspacer { flex:1; }
   .hbtn { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
-    color:#e8ecf5; border-radius:8px; padding:6px 10px; font-size:12px;
+    color:#e8ecf5; border-radius:8px; padding:5px 8px; font-size:11px;
     font-weight:800; cursor:pointer; }
   .hbtn:active { transform:scale(0.95); }
 
@@ -184,6 +185,7 @@
   <div id="hud">
     <div class="hstat gold"><div class="val" id="goldLbl">0</div><div class="lbl">OURO</div></div>
     <div class="hstat ess"><div class="val" id="essLbl">0</div><div class="lbl">ESSÊNCIA</div></div>
+    <div class="hstat score"><div class="val" id="scoreLbl">0</div><div class="lbl">PONTOS</div></div>
     <div class="hstat life"><div class="val" id="lifeLbl">20</div><div class="lbl">VIDAS</div></div>
     <div class="hstat wave"><div class="val" id="waveLbl">1</div><div class="lbl">VAGA</div></div>
     <div class="hstat world"><div class="val" id="worldLbl">1</div><div class="lbl">MUNDO</div></div>
@@ -357,7 +359,7 @@ let hoverSlot = null, hoverPos = { x:-999, y:-999 };
 const $ = id => document.getElementById(id);
 const cv = $("cv");
 const ctx = cv.getContext("2d");
-const goldLbl = $("goldLbl"), essLbl = $("essLbl"), lifeLbl = $("lifeLbl"),
+const goldLbl = $("goldLbl"), essLbl = $("essLbl"), scoreLbl = $("scoreLbl"), lifeLbl = $("lifeLbl"),
       waveLbl = $("waveLbl"), worldLbl = $("worldLbl"), 
       speedBtn = $("speedBtn"), convBtn = $("convBtn"), menuBtn = $("menuBtn"), 
       pauseBadge = $("pauseBadge"), infoEl = $("info"), popup = $("popup"), 
@@ -723,7 +725,7 @@ function update() {
     vibrate(25);
     startBtn.disabled = false;
     updateStartBtn();
-    saveProgress(false);
+    saveProgress(true);
     return;
   }
 
@@ -922,6 +924,7 @@ function render() {
 function updateHUD() {
   goldLbl.textContent = Math.floor(gold || 0);
   essLbl.textContent = persistent.essence;
+  scoreLbl.textContent = Math.floor(score || 0);
   lifeLbl.textContent = Math.max(0, lives || 0);
   waveLbl.textContent = wave || 1;
   worldLbl.textContent = world || 1;
@@ -1067,6 +1070,7 @@ function closeTalents() {
 }
 
 function renderTalentList() {
+  loadProgress();
   talEss.textContent = persistent.essence;
   talList.innerHTML = "";
   TALENTS.forEach(tal => {
@@ -1086,16 +1090,18 @@ function renderTalentList() {
       '</button>';
     const btn = div.querySelector(".tal-buy");
     btn.addEventListener("click", () => {
-      if (!canBuy) return;
+      loadProgress();
+      if (persistent.essence < cost) { showInfo("💎 Essência insuficiente"); return; }
       persistent.essence -= cost;
       persistent.talents[tal.id] = lvl + 1;
       if (tal.id === "force" && persistent.talents[tal.id] >= 3) persistent.unlocked.lightning = true;
       if (tal.id === "greed" && persistent.talents[tal.id] >= 3) persistent.unlocked.poison = true;
       vibrate(15);
       showInfo("✨ " + tal.name + " nível " + (lvl+1));
+      saveProgress(true);
       renderTalentList();
       buildTowerButtons();
-      saveProgress(true);
+      updateHUD();
     });
     talList.appendChild(div);
   });
@@ -1362,6 +1368,7 @@ function initGame() {
   setTimeout(resizeCanvas, 200);
 
   buildTowerButtons();
+  loadProgress();
   updateHUD();
   updateStartBtn();
   renderTalentList();
