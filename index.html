@@ -847,8 +847,11 @@ function render() {
   ctx.clearRect(0, 0, w, h);
 
   // fundo da arena
-  ctx.fillStyle = "#0a1020";
-  ctx.fillRect(0, 0, w, h);
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+grad.addColorStop(0, "#0d1424");
+grad.addColorStop(1, "#070a14");
+ctx.fillStyle = grad;
+ctx.fillRect(0, 0, w, h);
 
   // caminho — base escura
   ctx.strokeStyle = "rgba(40,60,80,0.9)";
@@ -1298,8 +1301,10 @@ function startNewGame() {
   updateStartBtn();
   buildTowerButtons();
   hidePopup();
+  setTimeout(() => {
   resizeCanvas();
-  saveProgress(true);
+  buildTowerButtons();
+}, 50); // Dá 50ms para o layout assentar antes de desenhar
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1333,13 +1338,26 @@ function loop(now) {
 /* ══════════════════════════════════════════════════════════════
    RESIZE
    ══════════════════════════════════════════════════════════════ */
-let resizeTimer = 0;
-function onResize() {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => {
-    resizeCanvas();
-    buildTowerButtons();
-  }, 120);
+let resizeRAF = null;
+function resizeCanvas() {
+  if (resizeRAF) cancelAnimationFrame(resizeRAF);
+  resizeRAF = requestAnimationFrame(() => {
+    const wrap = $("gamewrap");
+    const w = wrap.clientWidth || window.innerWidth;
+    const h = wrap.clientHeight || window.innerHeight;
+    
+    // Garante que não fica com tamanho 0
+    if (w === 0 || h === 0) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    cv.width = Math.floor(w * dpr);
+    cv.height = Math.floor(h * dpr);
+    cv.style.width = w + "px";
+    cv.style.height = h + "px";
+    
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    rebuildStrategicSlots(w, h);
+  });
 }
 window.addEventListener("resize", onResize);
 window.addEventListener("orientationchange", onResize);
@@ -1350,11 +1368,38 @@ window.addEventListener("orientationchange", onResize);
 function initGame() {
   loadProgress();
 
-  gold = 100 + startGoldBonus();
+  // Tenta retomar o jogo anterior
+  if (persistent.currentWave > 0) {
+    wave = persistent.currentWave;
+    gold = persistent.currentGold;
+    lives = persistent.currentLives;
+    score = persistent.currentScore;
+    
+    // Reconstrói as torres que lá estavam
+    setTimeout(() => {
+      if (persistent.savedTowers && persistent.savedTowers.length > 0) {
+        persistent.savedTowers.forEach(st => {
+          const slot = slots.find(s => s.col === st.col && s.row === st.row);
+          if (slot && slot.buildable) {
+            slot.occupied = true;
+            towers.push({
+              type: st.type, level: st.level, stars: st.stars,
+              col: st.col, row: st.row, x: slot.x, y: slot.y,
+              slot, cooldown: 0, angle: 0
+            });
+          }
+        });
+      }
+    }, 100); // Espera o canvas reconstruir os slots
+  } else {
+    // Jogo novo
+    gold = 100 + startGoldBonus();
+    wave = 1;
+    score = 0;
+    lives = 20 + startLivesBonus();
+  }
+
   maxLives = 20 + startLivesBonus();
-  lives = maxLives;
-  wave = 1;
-  score = 0;
   running = false;
   gameOverFlag = false;
   scoreSubmitted = false;
@@ -1368,19 +1413,51 @@ function initGame() {
   particles = [];
   floats = [];
   spawnQueue = [];
-  towers = [];
-
-  resizeCanvas();
-  buildTowerButtons();
-  updateHUD();
-  updateStartBtn();
-  renderTalentList();
-
-  ovName.value = persistent.playerName || "";
+  
+  setTimeout(() => {
+    resizeCanvas();
+    buildTowerButtons();
+    updateHUD();
+    updateStartBtn();
+    renderTalentList();
+    ovName.value = persistent.playerName || "";
+  }, 60);
 
   requestAnimationFrame(loop);
 }
 
+/* ══════════════════════════════════════════════════════════════
+   AUTO-SAVE E PROTEÇÃO DE SAÍDA
+   ══════════════════════════════════════════════════════════════ */
+// Auto-save a cada 5 segundos (guarda ouro, vidas, vagas, torres)
+setInterval(() => {
+  if (gameOverFlag || !running) return; // Se morreu ou está pausado, já guardou
+  
+  persistent.currentWave = wave;
+  persistent.currentGold = gold;
+  persistent.currentLives = lives;
+  persistent.currentScore = score;
+  persistent.savedTowers = towers.map(t => ({
+    type: t.type, level: t.level, stars: t.stars, col: t.col, row: t.row
+  }));
+  saveProgress(true);
+}, 5000);
+
+// Guarda ao fechar/minimizar a aba
+window.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden" && !gameOverFlag) {
+    persistent.currentWave = wave;
+    persistent.currentGold = gold;
+    persistent.currentLives = lives;
+    persistent.currentScore = score;
+    persistent.savedTowers = towers.map(t => ({
+      type: t.type, level: t.level, stars: t.stars, col: t.col, row: t.row
+    }));
+    saveProgress(true);
+    paused = true; // Pausa o jogo se mudares de app
+    pauseBadge.classList.add("show");
+  }
+});
 initGame();
 </script>
 </body>
