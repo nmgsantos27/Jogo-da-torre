@@ -287,11 +287,11 @@ const WORLDS = [
 ];
 
 const TOWER_TYPES = {
-  archer:    { name:"Arqueiro",  ico:"🏹", cost:60,  dmg:1, range:130, rate:28, color:"#4ecdc4", special:null,        unlock:null },
-  cannon:    { name:"Canhão",    ico:"💣", cost:110, dmg:4, range:110, rate:70, color:"#ff9800", special:"splash",   splash:55,  unlock:null },
-  ice:       { name:"Gelo",      ico:"❄️", cost:90,  dmg:1, range:120, rate:40, color:"#81d4fa", special:"slow",     slow:0.5,   unlock:null },
-  lightning: { name:"Relâmpago", ico:"⚡", cost:150, dmg:3, range:140, rate:45, color:"#ffd700", special:"chain",    chain:3,    unlock:"lightning" },
-  poison:    { name:"Veneno",    ico:"☠️", cost:130, dmg:2, range:125, rate:35, color:"#9ccc65", special:"poison",   poisonDmg:1.5, unlock:"poison" }
+  archer:    { name:"Arqueiro",  ico:"🏹", cost:60,  dmg:1,  range:130, rate:28, color:"#4ecdc4", special:null,        unlock:null },
+  cannon:    { name:"Canhão",    ico:"💣", cost:240, dmg:9,  range:110, rate:70, color:"#ff9800", special:"splash",   splash:55,  unlock:null },
+  ice:       { name:"Gelo",      ico:"❄️", cost:90,  dmg:1,  range:120, rate:40, color:"#81d4fa", special:"slow",     slow:0.5,   unlock:null },
+  lightning: { name:"Relâmpago", ico:"⚡", cost:320, dmg:7,  range:140, rate:45, color:"#ffd700", special:"chain",    chain:3,    unlock:"lightning" },
+  poison:    { name:"Veneno",    ico:"☠️", cost:280, dmg:5,  range:125, rate:35, color:"#9ccc65", special:"poison",   poisonDmg:3.5, unlock:"poison" }
 };
 
 const ENEMY_TYPES = {
@@ -602,9 +602,8 @@ function spawnEnemy(type, waveNum, worldNum) {
   if (!base) return;
   const worldFactor = 1 + (worldNum - 1) * 0.5;
   
-  // Escalonamento focado: picos de dificuldade a cada 10 vagas e após cada boss (vagas % 5 === 0)
   let tierBonus = 1 + Math.floor(waveNum / 10) * 0.35;
-  if (waveNum % 5 === 0) tierBonus += 0.20; // Bónus extra logo após bosses
+  if (waveNum % 5 === 0) tierBonus += 0.20;
 
   const hpScale = (1 + (waveNum - 1) * 0.28 * tierBonus) * worldFactor;
   const hp = Math.ceil(base.hp * hpScale);
@@ -623,7 +622,6 @@ function startWave() {
   spawnQueue = []; spawnTimer = 0;
   const isBoss = wave % 5 === 0;
   
-  // A quantidade e pressão aumentam progressivamente a cada 10 vagas
   const waveTierMult = 1 + Math.floor(wave / 10) * 0.15;
   const count = isBoss ? (7 + Math.floor(wave * 0.5 * waveTierMult)) : (6 + Math.floor(wave * 0.7 * waveTierMult));
   
