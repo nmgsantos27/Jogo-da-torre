@@ -392,13 +392,17 @@ let persistent = {
 };
 TALENT_DEFS.forEach(t => persistent.talents[t.id] = 0);
 
-const STORAGE_KEY = 'torreProgressV22_PT';
+const STORAGE_KEY = 'torreProgressV23_PT';
 
 function saveProgress(){
   try {
     const data = JSON.stringify(persistent);
     localStorage.setItem(STORAGE_KEY, data);
     sessionStorage.setItem(STORAGE_KEY, data);
+    // Força escrita síncrona se suportada
+    if (localStorage.getItem(STORAGE_KEY) !== data) {
+      localStorage.setItem(STORAGE_KEY, data);
+    }
   } catch(e){}
 }
 
