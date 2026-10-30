@@ -85,80 +85,79 @@
   .pbtn:active:not(:disabled) { transform:scale(0.95); }
 
   /* Panel (Barra de baixo) */
-#panel { 
-  display: flex; 
-  align-items: stretch; 
-  gap: 8px; 
-  padding: 8px 10px;
-  padding-bottom: calc(8px + env(safe-area-inset-bottom));
-  background: #0f1626; 
-  border-top: 1px solid rgba(255,255,255,0.05); 
-  flex-shrink: 0; 
-  height: 85px; /* Altura fixa para não "esmagar" */
-}
+  #panel { 
+    display: flex; 
+    align-items: stretch; 
+    gap: 8px; 
+    padding: 8px 10px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    background: #0f1626; 
+    border-top: 1px solid rgba(255,255,255,0.05); 
+    flex-shrink: 0; 
+    height: 85px;
+  }
 
-#towerScroll { 
-  flex: 1; 
-  display: flex; 
-  gap: 6px; /* Gap mais pequeno */
-  overflow-x: auto; 
-  overflow-y: hidden;
-  scrollbar-width: none; 
-  -webkit-overflow-scrolling: touch; 
-  padding: 2px 4px;
-}
-#towerScroll::-webkit-scrollbar { display: none; }
+  #towerScroll { 
+    flex: 1; 
+    display: flex; 
+    gap: 6px; 
+    overflow-x: auto; 
+    overflow-y: hidden;
+    scrollbar-width: none; 
+    -webkit-overflow-scrolling: touch; 
+    padding: 2px 4px;
+  }
+  #towerScroll::-webkit-scrollbar { display: none; }
 
-.tbtn { 
-  flex-shrink: 0; 
-  width: 62px; /* Mais estreito para caberem mais no ecrã */
-  padding: 6px 2px; 
-  border-radius: 12px;
-  background: #141c2e; 
-  border: 1px solid rgba(255,255,255,0.08);
-  color: #e8ecf5; 
-  cursor: pointer; 
-  display: flex; 
-  flex-direction: column;
-  align-items: center; 
-  justify-content: center; 
-  gap: 2px; 
-  position: relative; 
-  transition: all .15s; 
-}
-.tbtn .ico { font-size: 20px; line-height: 1; }
-.tbtn .nm { font-size: 9px; font-weight: 700; color: #8fa3bd; white-space: nowrap; }
-.tbtn .cost { font-size: 10px; font-weight: 800; color: #ffd700; }
-.tbtn.sel { background: rgba(78,205,196,0.15); border-color: #4ecdc4; box-shadow: 0 0 10px rgba(78,205,196,0.2); }
-.tbtn.locked { opacity: 0.4; }
-.tbtn.locked::after { content: '🔒'; position: absolute; top: 4px; right: 4px; font-size: 11px; }
+  .tbtn { 
+    flex-shrink: 0; 
+    width: 62px; 
+    padding: 6px 2px; 
+    border-radius: 12px;
+    background: #141c2e; 
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #e8ecf5; 
+    cursor: pointer; 
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center; 
+    gap: 2px; 
+    position: relative; 
+    transition: all .15s; 
+  }
+  .tbtn .ico { font-size: 20px; line-height: 1; }
+  .tbtn .nm { font-size: 9px; font-weight: 700; color: #8fa3bd; white-space: nowrap; }
+  .tbtn .cost { font-size: 10px; font-weight: 800; color: #ffd700; }
+  .tbtn.sel { background: rgba(78,205,196,0.15); border-color: #4ecdc4; box-shadow: 0 0 10px rgba(78,205,196,0.2); }
+  .tbtn.locked { opacity: 0.4; }
+  .tbtn.locked::after { content: '🔒'; position: absolute; top: 4px; right: 4px; font-size: 11px; }
 
-/* Botão VAGA / CHEFE */
-#startBtn { 
-  flex-shrink: 0; 
-  width: 85px; 
-  border-radius: 12px;
-  background: #4ecdc4; 
-  border: none; 
-  color: #0a1020; 
-  font-weight: 900; 
-  font-size: 11px; /* Fonte mais pequena para caber "A decorrer" */
-  cursor: pointer; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  text-align: center;
-  line-height: 1.2;
-  padding: 4px;
-}
-#startBtn.boss { background: #f44336; color: #fff; animation: pulse 1s infinite; }
-#startBtn:disabled { opacity: 0.5; background: #2d3a4f; color: #8fa3bd; }
+  #startBtn { 
+    flex-shrink: 0; 
+    width: 85px; 
+    border-radius: 12px;
+    background: #4ecdc4; 
+    border: none; 
+    color: #0a1020; 
+    font-weight: 900; 
+    font-size: 11px; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    text-align: center;
+    line-height: 1.2;
+    padding: 4px;
+  }
+  #startBtn.boss { background: #f44336; color: #fff; animation: pulse 1s infinite; }
+  #startBtn:disabled { opacity: 0.5; background: #2d3a4f; color: #8fa3bd; }
 
-  /* Talent screen */
-  #talentScreen, #overlay { position:absolute; inset:0; z-index:50; background:#0a1020;
+  /* Talent screen / Ranking Screen / Overlay */
+  #talentScreen, #rankingScreen, #overlay { position:absolute; inset:0; z-index:50; background:#0a1020;
     display:flex; flex-direction:column; padding:20px; opacity:0; pointer-events:none;
     transition:opacity .2s; overflow-y:auto; }
-  #talentScreen.show, #overlay.show { opacity:1; pointer-events:auto; }
+  #talentScreen.show, #rankingScreen.show, #overlay.show { opacity:1; pointer-events:auto; }
 
   .tal-head { display:flex; align-items:center; gap:10px; margin-bottom:16px; color:#c77dff; }
   .tal-head h2 { font-size:22px; font-weight:900; flex:1; }
@@ -281,6 +280,15 @@
     <button class="tal-save" id="talSave">💾 Guardar Jogo</button>
   </div>
 
+  <!-- Ecrã dedicado para o Ranking (para não interferir com o Game Over) -->
+  <div id="rankingScreen">
+    <div class="tal-head">
+      <h2>🏆 Melhores Pontuações</h2>
+    </div>
+    <div class="ov-ranking" id="globalRankingList" style="max-width:100%; max-height:none; flex:1; margin:0 0 16px 0;"></div>
+    <button class="tal-close" id="rankClose" style="width:100%;">Voltar</button>
+  </div>
+
   <div id="overlay">
     <div class="ov-title">Fim de Jogo</div>
     <div class="ov-sub">A torre caiu na vaga <span id="ovWave">1</span>!</div>
@@ -385,9 +393,9 @@ const goldLbl = $("goldLbl"), essLbl = $("essLbl"), lifeLbl = $("lifeLbl"),
       upgBtn = $("upgBtn"), upgCost = $("upgCost"), evoBtn = $("evoBtn"), evoCost = $("evoCost"),
       sellBtn = $("sellBtn"), sellVal = $("sellVal"), towerScroll = $("towerScroll"),
       startBtn = $("startBtn"), startBtnTxt = $("startBtnTxt"),
-      talentScreen = $("talentScreen"), talEss = $("talEss"), talConv = $("talConv"),
+      talentScreen = $("talentScreen"), rankingScreen = $("rankingScreen"), talEss = $("talEss"), talConv = $("talConv"),
       talList = $("talList"), talClose = $("talClose"), talSave = $("talSave"),
-      btnRanking = $("btnRanking"), convGoldTxt = $("convGoldTxt"),
+      btnRanking = $("btnRanking"), rankClose = $("rankClose"), globalRankingList = $("globalRankingList"), convGoldTxt = $("convGoldTxt"),
       overlay = $("overlay"), ovWave = $("ovWave"), ovWave2 = $("ovWave2"),
       ovScore = $("ovScore"), ovKills = $("ovKills"), ovTowers = $("ovTowers"),
       ovName = $("ovName"), ovBtn = $("ovBtn"), ovRanking = $("ovRanking");
@@ -453,14 +461,12 @@ function rebuildStrategicSlots(w, h) {
 
   PATH = buildPath(offX, offY);
 
-  // Bloqueia slots a menos de TILE*0.8 do caminho
   slots.forEach(s => {
     for (let i=0;i<PATH.length-1;i++) {
       if (distToSegment(s, PATH[i], PATH[i+1]) < TILE*0.85) { s.buildable = false; break; }
     }
   });
 
-  // Restaura torres
   slots.forEach(s => {
     if (!s.buildable) return;
     const t = old[s.col + "," + s.row];
@@ -500,10 +506,7 @@ function buildPath(offX, offY) {
   }));
 }
 
-// CONTINUA NA PARTE 4/5
-/* ══════════════════════════════════════════════════════════════
-   TALENTOS — MULTIPLICADORES
-   ══════════════════════════════════════════════════════════════ */
+/* Talentos — Multiplicadores */
 function talentLvl(id) { return persistent.talents[id] || 0; }
 function dmgMul()       { return 1 + talentLvl("force")*0.15; }
 function goldMul()      { return 1 + talentLvl("greed")*0.20; }
@@ -513,9 +516,7 @@ function startGoldBonus(){ return talentLvl("heritage")*40; }
 function startLivesBonus(){ return talentLvl("vital")*2; }
 function essencePerWave(){ return 1 + talentLvl("channel"); }
 
-/* ══════════════════════════════════════════════════════════════
-   TORRES — STATS / CUSTOS
-   ══════════════════════════════════════════════════════════════ */
+/* Torres — Stats / Custos */
 function towerStats(t) {
   const base = TOWER_TYPES[t.type];
   const lvlMul = Math.pow(1.6, t.level-1);
@@ -529,9 +530,7 @@ function towerUpgradeCost(t) { return Math.floor(TOWER_TYPES[t.type].cost * 0.6 
 function towerEvolveCost(t)  { return 4 + t.stars * 4; }
 function towerSellValue(t)   { return Math.floor((TOWER_TYPES[t.type].cost + (t.level-1)*30) * 0.6); }
 
-/* ══════════════════════════════════════════════════════════════
-   CONSTRUÇÃO / GESTÃO DE TORRES
-   ══════════════════════════════════════════════════════════════ */
+/* Construção / Gestão de Torres */
 function buildTower(slot, type) {
   const base = TOWER_TYPES[type];
   if (!base) return;
@@ -580,9 +579,7 @@ function sellTower(t) {
   saveProgress(false);
 }
 
-/* ══════════════════════════════════════════════════════════════
-   POPUP
-   ══════════════════════════════════════════════════════════════ */
+/* Popup */
 function showPopup(t) { selectedTower = t; popup.classList.add("show"); refreshPopup(); }
 function hidePopup()  { popup.classList.remove("show"); selectedTower = null; }
 function refreshPopup() {
@@ -602,9 +599,7 @@ function refreshPopup() {
   sellBtn.disabled = false; sellVal.textContent = "🪙 " + sv;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   INIMIGOS
-   ══════════════════════════════════════════════════════════════ */
+/* Inimigos */
 function spawnEnemy(type, waveNum) {
   const base = ENEMY_TYPES[type];
   if (!base) return;
@@ -660,9 +655,7 @@ function damageBase(e) {
   if (lives <= 0) endGame();
 }
 
-/* ══════════════════════════════════════════════════════════════
-   PROJÉTEIS
-   ══════════════════════════════════════════════════════════════ */
+/* Projéteis */
 function fireProjectile(t, target) {
   const base = TOWER_TYPES[t.type];
   const st = towerStats(t);
@@ -705,9 +698,7 @@ function hitProjectile(p) {
   burst(p.x, p.y, p.color, 5);
 }
 
-/* ══════════════════════════════════════════════════════════════
-   UPDATE
-   ══════════════════════════════════════════════════════════════ */
+/* Update */
 function update() {
   if (paused || !running) return;
 
@@ -785,19 +776,15 @@ function update() {
   });
 }
 
-/* ══════════════════════════════════════════════════════════════
-   RENDER — visual premium (caminho terra + castelo)
-   ══════════════════════════════════════════════════════════════ */
+/* Render */
 function render() {
   const w = cv.width / (window.devicePixelRatio || 1);
   const h = cv.height / (window.devicePixelRatio || 1);
   ctx.clearRect(0, 0, w, h);
 
-  // Fundo
   ctx.fillStyle = "#0a1020";
   ctx.fillRect(0, 0, w, h);
 
-  // Caminho — terra batida
   ctx.strokeStyle = "#4a3b2c";
   ctx.lineWidth = TILE * 0.9;
   ctx.lineCap = "round"; ctx.lineJoin = "round";
@@ -805,7 +792,6 @@ function render() {
   PATH.forEach((p, i) => { i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); });
   ctx.stroke();
 
-  // Linha central tracejada
   ctx.strokeStyle = "rgba(122,96,70,0.7)";
   ctx.lineWidth = 4;
   ctx.setLineDash([12, 16]);
@@ -814,7 +800,6 @@ function render() {
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Slots tracejados
   slots.forEach(s => {
     if (!s.buildable) return;
     if (s.occupied) {
@@ -832,7 +817,6 @@ function render() {
     ctx.setLineDash([]);
   });
 
-  // Preview do alcance
   if (selectedType && hoverSlot) {
     const base = TOWER_TYPES[selectedType];
     if (base) {
@@ -849,14 +833,12 @@ function render() {
     }
   }
 
-  // Castelo no fim do caminho (vaga alvo)
   const last = PATH[PATH.length-1];
   ctx.font = "28px sans-serif";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText("🏰", last.x, last.y - TILE*0.6);
 
-  // Torres
   towers.forEach(t => {
     const base = TOWER_TYPES[t.type];
     if (t === selectedTower) {
@@ -885,7 +867,6 @@ function render() {
     ctx.fillText(base.ico, t.x, t.y + 1);
   });
 
-  // Inimigos
   enemies.forEach(e => {
     if (!e.alive) return;
     ctx.beginPath();
@@ -909,20 +890,17 @@ function render() {
     }
   });
 
-  // Projéteis
   projectiles.forEach(p => {
     ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
     ctx.fillStyle = p.color; ctx.fill();
   });
 
-  // Partículas
   particles.forEach(p => {
     ctx.globalAlpha = p.life; ctx.fillStyle = p.color;
     ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
   });
   ctx.globalAlpha = 1;
 
-  // Floats
   floats.forEach(f => {
     ctx.globalAlpha = f.life; ctx.fillStyle = f.color;
     ctx.font = "bold 13px sans-serif"; ctx.textAlign = "center";
@@ -931,9 +909,7 @@ function render() {
   ctx.globalAlpha = 1;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   HUD / BOTÕES
-   ══════════════════════════════════════════════════════════════ */
+/* HUD / Botões */
 function updateHUD() {
   goldLbl.textContent = Math.floor(gold || 0);
   essLbl.textContent = persistent.essence;
@@ -976,10 +952,9 @@ function buildTowerButtons() {
     
     if (locked) {
       btn.classList.add("locked");
-      // Adiciona dica de como desbloquear no próprio botão
       btn.innerHTML = '<div class="ico">' + base.ico + '</div>' +
         '<div class="nm" style="color:#ff5252">Bloqueada</div>' +
-        '<div class="cost" style="color:#8fa3bd; font-size:9px;">Vai aos Talentos</div>';
+        '<div class="cost" style="color:#8fa3bd; font-size:9px;">Talentos</div>';
     } else {
       btn.innerHTML = '<div class="ico">' + base.ico + '</div>' +
         '<div class="nm">' + base.name + '</div>' +
@@ -988,7 +963,7 @@ function buildTowerButtons() {
 
     btn.addEventListener("click", () => {
       if (locked) { 
-        showInfo("🔒 " + base.name + " desbloqueia na Árvore de Talentos"); 
+        showInfo("🔒 " + base.name + " desbloqueia nos Talentos"); 
         return; 
       }
       if (selectedType === type) {
@@ -1004,10 +979,7 @@ function buildTowerButtons() {
   });
 }
 
-// CONTINUA NA PARTE 5/5
-/* ══════════════════════════════════════════════════════════════
-   EVENTOS CANVAS
-   ══════════════════════════════════════════════════════════════ */
+/* Eventos Canvas */
 function canvasCoords(evt) {
   const r = cv.getBoundingClientRect();
   const pt = evt.touches ? evt.touches[0] : evt;
@@ -1046,17 +1018,11 @@ cv.addEventListener("pointerleave", () => {
   hoverPos = { x:-999, y:-999 };
 });
 
-/* ══════════════════════════════════════════════════════════════
-   POPUP — BOTÕES
-   ══════════════════════════════════════════════════════════════ */
 popClose.addEventListener("click", hidePopup);
 upgBtn.addEventListener("click", () => { if (selectedTower) upgradeTower(selectedTower); });
 evoBtn.addEventListener("click", () => { if (selectedTower) evolveTower(selectedTower); });
 sellBtn.addEventListener("click", () => { if (selectedTower) sellTower(selectedTower); });
 
-/* ══════════════════════════════════════════════════════════════
-   HUD — BOTÕES
-   ══════════════════════════════════════════════════════════════ */
 speedBtn.addEventListener("click", () => {
   speedMul = speedMul === 1 ? 2 : speedMul === 2 ? 3 : 1;
   vibrate(8);
@@ -1076,9 +1042,7 @@ convBtn.addEventListener("click", convertGold);
 talConv.addEventListener("click", convertGold);
 startBtn.addEventListener("click", () => { startWave(); });
 
-/* ══════════════════════════════════════════════════════════════
-   TALENT SCREEN
-   ══════════════════════════════════════════════════════════════ */
+/* Talent screen / Ranking management */
 function openTalents() {
   paused = true;
   pauseBadge.classList.add("show");
@@ -1137,36 +1101,42 @@ talSave.addEventListener("click", () => {
   vibrate(20);
 });
 
+// Botão de ranking na árvore de talentos abre o ecrã dedicado de ranking
+function renderGlobalRanking() {
+  globalRankingList.innerHTML = "";
+  const sorted = persistent.ranking.slice().sort((a,b) => b.score - a.score).slice(0, 10);
+  if (sorted.length === 0) {
+    globalRankingList.innerHTML = '<div style="text-align:center;color:#5a6b82;font-size:13px;padding:20px;">Ainda sem recordes</div>';
+    return;
+  }
+  sorted.forEach((r, i) => {
+    const d = document.createElement("div");
+    d.className = "rk-item";
+    d.innerHTML = '<div class="rk-pos">#' + (i+1) + '</div>' +
+      '<div class="rk-name">' + escapeHtml(r.name || "Anónimo") + '</div>' +
+      '<div class="rk-score">' + r.score + ' pts (vaga ' + r.wave + ')</div>';
+    globalRankingList.appendChild(d);
+  });
+}
+
 btnRanking.addEventListener("click", () => {
-  // Abre overlay a mostrar ranking (sem game over)
-  overlay.classList.add("show");
-  document.querySelector(".ov-title").textContent = "🏆 Ranking";
-  document.querySelector(".ov-sub").textContent = "Melhores pontuações";
-  ovWave.textContent = "-";
-  ovWave2.textContent = "-";
-  ovScore.textContent = "-";
-  ovKills.textContent = "-";
-  ovTowers.textContent = "-";
-  ovName.style.display = "none";
-  ovBtn.textContent = "Voltar";
-  ovBtn.onclick = () => {
-    overlay.classList.remove("show");
-    ovName.style.display = "block";
-    ovBtn.textContent = "Jogar Novamente";
-    ovBtn.onclick = defaultOvBtnHandler;
-  };
-  renderRanking();
+  talentScreen.classList.remove("show");
+  renderGlobalRanking();
+  rankingScreen.classList.add("show");
 });
 
-/* ══════════════════════════════════════════════════════════════
-   OVERLAY / RANKING
-   ══════════════════════════════════════════════════════════════ */
+rankClose.addEventListener("click", () => {
+  rankingScreen.classList.remove("show");
+  talentScreen.classList.add("show");
+});
+
+/* Overlay / Ranking do Game Over */
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   }[c]));
 }
-function renderRanking() {
+function renderGameOverRanking() {
   ovRanking.innerHTML = "";
   const sorted = persistent.ranking.slice().sort((a,b) => b.score - a.score).slice(0, 10);
   if (sorted.length === 0) {
@@ -1182,34 +1152,26 @@ function renderRanking() {
     ovRanking.appendChild(d);
   });
 }
+
 function showGameOver() {
   gameOverFlag = true;
   running = false;
   overlay.classList.add("show");
-  document.querySelector(".ov-title").textContent = "Fim de Jogo";
-  document.querySelector(".ov-sub").innerHTML = "A torre caiu na vaga <span id=\"ovWave\">1</span>!";
-  ovWave = $("ovWave");
   ovWave.textContent = Math.max(0, wave - 1);
   ovWave2.textContent = Math.max(0, wave - 1);
   ovScore.textContent = Math.floor(score);
   ovKills.textContent = killsThisRun;
   ovTowers.textContent = towersBuiltThisRun;
   ovName.value = persistent.playerName || "";
-  ovName.style.display = "block";
-  ovBtn.textContent = "Jogar Novamente";
-  renderRanking();
+  renderGameOverRanking();
 }
 
-function defaultOvBtnHandler() {
+ovBtn.addEventListener("click", () => {
   const name = (ovName.value || "").trim().replace(/[<>]/g, "").slice(0, 16);
   if (name) persistent.playerName = name;
   startNewGame();
-}
-ovBtn.addEventListener("click", defaultOvBtnHandler);
+});
 
-/* ══════════════════════════════════════════════════════════════
-   GAME OVER / NOVO JOGO
-   ══════════════════════════════════════════════════════════════ */
 function endGame() {
   if (gameOverFlag) return;
   gameOverFlag = true; running = false;
@@ -1257,9 +1219,7 @@ function startNewGame() {
   saveProgress(true);
 }
 
-/* ══════════════════════════════════════════════════════════════
-   LOOP PRINCIPAL
-   ══════════════════════════════════════════════════════════════ */
+/* Loop principal */
 let lastTime = 0, acc = 0;
 const FRAME = 1000 / 60;
 function loop(now) {
@@ -1281,9 +1241,6 @@ function loop(now) {
   render();
 }
 
-/* ══════════════════════════════════════════════════════════════
-   RESIZE
-   ══════════════════════════════════════════════════════════════ */
 let resizeTimer = 0;
 function onResize() {
   clearTimeout(resizeTimer);
@@ -1295,9 +1252,6 @@ function onResize() {
 window.addEventListener("resize", onResize);
 window.addEventListener("orientationchange", onResize);
 
-/* ══════════════════════════════════════════════════════════════
-   AUTO-SAVE
-   ══════════════════════════════════════════════════════════════ */
 function forceSave() {
   if (gameOverFlag) return;
   persistent.savedState = {
@@ -1309,12 +1263,10 @@ function forceSave() {
   saveProgress(true);
 }
 
-// 1. Guarda a cada 5 segundos
 setInterval(() => {
   if (running && !paused) forceSave();
 }, 5000);
 
-// 2. Guarda quando a página é escondida/fechada
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") {
     forceSave();
@@ -1326,14 +1278,10 @@ document.addEventListener("visibilitychange", () => {
 });
 window.addEventListener("pagehide", forceSave);
 
-/* ══════════════════════════════════════════════════════════════
-   INIT
-   ══════════════════════════════════════════════════════════════ */
 function initGame() {
   loadProgress();
 
   if (persistent.savedState) {
-    // Retoma jogo guardado
     const s = persistent.savedState;
     wave = s.wave || 1;
     gold = s.gold || 100;
@@ -1349,7 +1297,6 @@ function initGame() {
     killsThisRun = 0; towersBuiltThisRun = 0; speedMul = 1;
     selectedType = null; selectedTower = null; hoverSlot = null;
 
-    // Reconstrói torres após o canvas ter slots
     setTimeout(() => {
       rebuildStrategicSlots($("gamewrap").clientWidth, $("gamewrap").clientHeight);
       if (Array.isArray(s.towers)) {
@@ -1367,7 +1314,6 @@ function initGame() {
       }
     }, 80);
   } else {
-    // Novo jogo
     gold = 100 + startGoldBonus();
     maxLives = 20 + startLivesBonus();
     lives = maxLives;
