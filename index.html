@@ -9,6 +9,7 @@
 <title>Defenda a Torre — Evolução</title>
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" type="image/png" href="icon.png">
+<link rel="manifest" href="manifest.json">
 <style>
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; }
   html, body { 
@@ -213,7 +214,6 @@
                           pointer-events:auto; touch-action:manipulation; }
   #closeTalents { background:#3a5a8a; }
   #showRankFromTalents { background:linear-gradient(145deg,#ce93d8,#9c27b0); }
-  #manualSaveBtn { background:linear-gradient(145deg,#3a9a5a,#2a7a3a); width:100%; }
   #exportSaveBtn { background:linear-gradient(145deg,#2a72a4,#1a4a70); width:48%; }
   #importSaveBtn { background:linear-gradient(145deg,#a46a2a,#704a1a); width:48%; }
 
@@ -310,7 +310,6 @@
     <div class="talentActions">
       <button id="showRankFromTalents">🏆 Ranking</button>
       <button id="closeTalents">Voltar</button>
-      <button id="manualSaveBtn">💾 Guardar Jogo</button>
       <button id="exportSaveBtn">📥 Exportar Ficheiro</button>
       <button id="importSaveBtn">📤 Importar Ficheiro</button>
       <input type="file" id="importFile" style="display:none" accept=".json">
@@ -393,7 +392,7 @@ let persistent = {
 };
 TALENT_DEFS.forEach(t => persistent.talents[t.id] = 0);
 
-const STORAGE_KEY = 'torreProgressV21_PT';
+const STORAGE_KEY = 'torreProgressV22_PT';
 
 function saveProgress(){
   try {
@@ -519,7 +518,6 @@ function initGame(){
   loadProgress();
   resize();
 
-  // Partida começa sempre limpa de raiz (vaga 0, ouro base, vidas máximas)
   wave = 0;
   gold = 150 + talentBonus('start');
   maxLives = 15 + talentBonus('life');
