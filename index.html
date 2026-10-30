@@ -3,194 +3,184 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#070a14">
+<meta name="theme-color" content="#0a1020">
 <title>Defenda a Torre</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.png">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html, body { height:100%; overflow:hidden; background:#070a14; color:#e8ecf5;
+  html, body { height:100%; overflow:hidden; background:#0a1020; color:#e8ecf5;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     touch-action:none; user-select:none; -webkit-user-select:none; }
-  body { display:flex; justify-content:center; align-items:center;
-    background:linear-gradient(180deg,#152238 0%,#070a14 100%); }
+  body { display:flex; justify-content:center; align-items:center; }
   #app { width:100%; max-width:500px; height:100%; height:100dvh;
     display:flex; flex-direction:column; position:relative;
     padding-top:env(safe-area-inset-top);
-    padding-bottom:env(safe-area-inset-bottom); }
+    padding-bottom:env(safe-area-inset-bottom); background:#0a1020; }
 
-  #hud { display:flex; align-items:center; gap:6px; padding:8px 10px;
-    background:rgba(10,16,30,0.92); border-bottom:1px solid rgba(78,205,196,0.15);
-    font-size:12px; font-weight:700; flex-shrink:0; }
-  .hstat { display:flex; align-items:center; gap:3px; }
-  .hstat.gold { color:#ffd700; }
-  .hstat.ess  { color:#c77dff; }
-  .hstat.life { color:#ff5252; }
-  .hstat.wave { color:#4ecdc4; }
-  .hstat.score{ color:#ce93d8; }
+  /* HUD */
+  #hud { display:flex; align-items:center; gap:8px; padding:12px 14px;
+    background:#0f1626; border-bottom:1px solid rgba(255,255,255,0.05); flex-shrink:0; }
+  .hstat { display:flex; flex-direction:column; align-items:center; line-height:1.1; }
+  .hstat .val { font-size:14px; font-weight:800; }
+  .hstat .lbl { font-size:9px; font-weight:700; color:#5a6b82; margin-top:2px; letter-spacing:0.5px; }
+  .hstat.gold .val { color:#ffd700; }
+  .hstat.ess .val  { color:#c77dff; }
+  .hstat.life .val { color:#ff5252; }
+  .hstat.wave .val { color:#4ecdc4; }
+  .hstat.score .val{ color:#ce93d8; }
   .hspacer { flex:1; }
-  .hbtn { background:rgba(78,205,196,0.12); border:1px solid rgba(78,205,196,0.35);
-    color:#4ecdc4; border-radius:8px; padding:5px 8px; font-size:11px;
-    font-weight:800; cursor:pointer; min-width:32px; }
-  .hbtn:active { transform:scale(0.94); }
-  .hbtn.gold { color:#ffd700; border-color:rgba(255,215,0,0.35);
-    background:rgba(255,215,0,0.1); }
+  .hbtn { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+    color:#e8ecf5; border-radius:8px; padding:6px 10px; font-size:12px;
+    font-weight:800; cursor:pointer; }
+  .hbtn:active { transform:scale(0.95); }
 
-  #gamewrap { flex:1; position:relative; overflow:hidden;
-    display:flex; align-items:center; justify-content:center;
-    background:#0a1020; }
-  canvas#cv { display:block; touch-action:none; }
+  /* Arena */
+  #gamewrap { flex:1; position:relative; overflow:hidden; background:#0a1020; }
+  canvas#cv { display:block; width:100%; height:100%; touch-action:none; }
 
-  #menuBtn { position:absolute; top:10px; left:10px; z-index:5;
-    width:42px; height:42px; border-radius:12px;
-    background:rgba(199,125,255,0.16); border:1px solid rgba(199,125,255,0.4);
-    color:#c77dff; font-size:20px; cursor:pointer;
+  #menuBtn { position:absolute; top:12px; right:12px; z-index:5;
+    width:44px; height:44px; border-radius:12px;
+    background:rgba(78,205,196,0.1); border:1px solid rgba(78,205,196,0.3);
+    color:#4ecdc4; font-size:22px; cursor:pointer;
     display:flex; align-items:center; justify-content:center; }
   #menuBtn:active { transform:scale(0.92); }
 
-  #pauseBadge { position:absolute; top:10px; right:10px; z-index:5;
-    display:none; align-items:center; gap:6px;
-    padding:7px 12px; border-radius:10px;
-    background:rgba(255,215,0,0.14); border:1px solid rgba(255,215,0,0.5);
-    color:#ffd700; font-size:12px; font-weight:800;
-    animation:pulse 1.6s ease-in-out infinite; }
-  #pauseBadge.show { display:flex; }
-  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.55;} }
+  #pauseBadge { position:absolute; top:12px; left:12px; z-index:5;
+    display:none; padding:6px 12px; border-radius:8px;
+    background:rgba(255,215,0,0.15); border:1px solid rgba(255,215,0,0.4);
+    color:#ffd700; font-size:12px; font-weight:800; }
+  #pauseBadge.show { display:block; }
 
-  #info { position:absolute; top:60px; left:50%; transform:translateX(-50%) translateY(-10px);
-    background:rgba(13,20,36,0.96); border:1px solid rgba(78,205,196,0.45);
-    color:#e8ecf5; padding:9px 16px; border-radius:12px; font-size:13px;
+  #info { position:absolute; top:20%; left:50%; transform:translateX(-50%);
+    background:rgba(15,22,38,0.95); border:1px solid rgba(78,205,196,0.4);
+    color:#fff; padding:10px 20px; border-radius:20px; font-size:14px;
     font-weight:700; white-space:nowrap; pointer-events:none;
-    opacity:0; transition:opacity .25s, transform .25s; z-index:8;
-    box-shadow:0 6px 24px rgba(0,0,0,0.5); }
-  #info.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    opacity:0; transition:opacity .2s; z-index:8; }
+  #info.show { opacity:1; }
 
-  #popup { position:absolute; bottom:12px; left:50%; transform:translateX(-50%) translateY(20px);
+  /* Popup torre */
+  #popup { position:absolute; bottom:12px; left:50%; transform:translate(-50%,20px);
     width:calc(100% - 24px); max-width:400px;
-    background:rgba(13,20,36,0.98); border:1px solid rgba(78,205,196,0.4);
-    border-radius:16px; padding:14px; z-index:10;
-    opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;
-    box-shadow:0 10px 40px rgba(0,0,0,0.7); }
-  #popup.show { opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
-  .popup-head { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
-  .popup-title { font-size:15px; font-weight:800; flex:1; }
-  .popup-close { width:30px; height:30px; border-radius:8px; background:rgba(255,82,82,0.15);
-    border:1px solid rgba(255,82,82,0.4); color:#ff5252; font-size:16px; cursor:pointer; }
-  .popup-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:10px; }
-  .pstat { background:rgba(78,205,196,0.08); border-radius:8px; padding:6px 4px; text-align:center; }
-  .pstat .v { font-size:13px; font-weight:800; color:#4ecdc4; }
-  .pstat .l { font-size:9px; color:#8fa3bd; font-weight:600; text-transform:uppercase; }
-  .popup-btns { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
-  .pbtn { padding:10px 4px; border-radius:10px; font-size:12px; font-weight:800;
-    cursor:pointer; border:1px solid; text-align:center; line-height:1.3; }
-  .pbtn small { display:block; font-size:10px; opacity:0.85; font-weight:700; }
-  .pbtn.upg { background:rgba(78,205,196,0.16); border-color:rgba(78,205,196,0.5); color:#4ecdc4; }
-  .pbtn.evo { background:rgba(199,125,255,0.16); border-color:rgba(199,125,255,0.5); color:#c77dff; }
-  .pbtn.sell{ background:rgba(255,82,82,0.14); border-color:rgba(255,82,82,0.45); color:#ff5252; }
-  .pbtn:disabled { opacity:0.35; cursor:not-allowed; }
+    background:#0f1626; border:1px solid rgba(255,255,255,0.1);
+    border-radius:16px; padding:16px; z-index:10;
+    opacity:0; pointer-events:none; transition:all .2s; box-shadow:0 10px 30px rgba(0,0,0,0.8); }
+  #popup.show { opacity:1; transform:translate(-50%,0); pointer-events:auto; }
+  .popup-head { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .popup-title { font-size:16px; font-weight:800; flex:1; }
+  .popup-close { width:32px; height:32px; border-radius:8px; background:rgba(255,82,82,0.1);
+    border:1px solid rgba(255,82,82,0.3); color:#ff5252; font-size:16px; cursor:pointer; }
+  .popup-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+  .pstat { background:rgba(255,255,255,0.03); border-radius:10px; padding:8px; text-align:center; }
+  .pstat .v { font-size:14px; font-weight:800; color:#4ecdc4; }
+  .pstat .l { font-size:10px; color:#5a6b82; font-weight:700; text-transform:uppercase; margin-top:2px; }
+  .popup-btns { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  .pbtn { padding:12px 4px; border-radius:10px; font-size:13px; font-weight:800;
+    cursor:pointer; border:none; text-align:center; line-height:1.2; color:#fff; }
+  .pbtn small { display:block; font-size:11px; opacity:0.9; margin-top:4px; font-weight:700; }
+  .pbtn.upg { background:#2d8a84; }
+  .pbtn.evo { background:#7b42bc; }
+  .pbtn.sell{ background:#c62828; }
+  .pbtn:disabled { opacity:0.3; }
   .pbtn:active:not(:disabled) { transform:scale(0.95); }
 
-  #panel { display:flex; align-items:stretch; gap:6px; padding:8px 10px;
-    background:rgba(10,16,30,0.96); border-top:1px solid rgba(78,205,196,0.15);
-    flex-shrink:0; }
-  #towerScroll { flex:1; display:flex; gap:6px; overflow-x:auto; overflow-y:hidden;
-    scrollbar-width:none; padding-bottom:2px; }
+  /* Panel */
+  #panel { display:flex; align-items:stretch; gap:8px; padding:12px;
+    background:#0f1626; border-top:1px solid rgba(255,255,255,0.05); flex-shrink:0; }
+  #towerScroll { flex:1; display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }
   #towerScroll::-webkit-scrollbar { display:none; }
-  .tbtn { flex-shrink:0; width:64px; padding:6px 4px; border-radius:10px;
-    background:rgba(78,205,196,0.07); border:1px solid rgba(78,205,196,0.25);
+  .tbtn { flex-shrink:0; width:70px; padding:10px 6px; border-radius:12px;
+    background:#141c2e; border:1px solid rgba(255,255,255,0.08);
     color:#e8ecf5; cursor:pointer; display:flex; flex-direction:column;
-    align-items:center; gap:2px; position:relative; transition:all .15s; }
-  .tbtn .ico { font-size:20px; line-height:1; }
-  .tbtn .nm { font-size:9px; font-weight:700; }
-  .tbtn .cost { font-size:10px; font-weight:800; color:#ffd700; }
-  .tbtn.sel { background:rgba(78,205,196,0.22); border-color:#4ecdc4;
-    box-shadow:0 0 0 2px rgba(78,205,196,0.4); }
+    align-items:center; gap:4px; position:relative; transition:all .15s; }
+  .tbtn .ico { font-size:24px; line-height:1; }
+  .tbtn .nm { font-size:11px; font-weight:700; color:#8fa3bd; }
+  .tbtn .cost { font-size:11px; font-weight:800; color:#ffd700; }
+  .tbtn.sel { background:rgba(78,205,196,0.15); border-color:#4ecdc4; }
   .tbtn.locked { opacity:0.4; }
-  .tbtn.locked::after { content:'🔒'; position:absolute; top:2px; right:2px; font-size:10px; }
-  .tbtn:disabled { opacity:0.35; cursor:not-allowed; }
-  .tbtn:active:not(:disabled) { transform:scale(0.95); }
+  .tbtn.locked::after { content:'🔒'; position:absolute; top:6px; right:6px; font-size:12px; }
+  .tbtn:active { transform:scale(0.95); }
 
-  #startBtn { flex-shrink:0; padding:0 14px; border-radius:12px;
-    background:linear-gradient(135deg,#4ecdc4,#3aa8a0); border:none;
-    color:#04121a; font-weight:900; font-size:13px; cursor:pointer;
-    min-width:90px; line-height:1.2; }
-  #startBtn.boss { background:linear-gradient(135deg,#ff5252,#c62828); color:#fff; }
-  #startBtn:active { transform:scale(0.96); }
-  #startBtn:disabled { opacity:0.4; cursor:not-allowed; }
+  #startBtn { flex-shrink:0; padding:0 20px; border-radius:12px;
+    background:#f44336; border:none; color:#fff; font-weight:900; font-size:14px;
+    cursor:pointer; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; line-height:1.2; min-width:96px; }
+  #startBtn.boss { background:#d32f2f; animation:pulse 1s infinite; }
+  #startBtn:disabled { opacity:0.5; }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.7;} }
 
-  #talentScreen { position:absolute; inset:0; z-index:50;
-    background:linear-gradient(180deg,#0d1424 0%,#070a14 100%);
-    display:flex; flex-direction:column; padding:14px;
-    opacity:0; pointer-events:none; transition:opacity .25s; }
-  #talentScreen.show { opacity:1; pointer-events:auto; }
-  .tal-head { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-  .tal-head h2 { font-size:18px; font-weight:900; flex:1; color:#c77dff; }
-  .tal-ess { display:flex; align-items:center; gap:4px; color:#c77dff;
-    font-weight:800; font-size:14px; }
-  .tal-conv { padding:8px 12px; border-radius:10px; background:rgba(255,215,0,0.1);
-    border:1px solid rgba(255,215,0,0.4); color:#ffd700; font-weight:800;
-    font-size:12px; cursor:pointer; }
-  .tal-list { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:8px; }
-  .tal-item { display:flex; align-items:center; gap:10px; padding:10px 12px;
-    background:rgba(78,205,196,0.06); border:1px solid rgba(78,205,196,0.2);
-    border-radius:12px; }
-  .tal-item .tico { font-size:22px; }
+  /* Talent screen */
+  #talentScreen, #overlay { position:absolute; inset:0; z-index:50; background:#0a1020;
+    display:flex; flex-direction:column; padding:20px; opacity:0; pointer-events:none;
+    transition:opacity .2s; overflow-y:auto; }
+  #talentScreen.show, #overlay.show { opacity:1; pointer-events:auto; }
+
+  .tal-head { display:flex; align-items:center; gap:10px; margin-bottom:16px; color:#c77dff; }
+  .tal-head h2 { font-size:22px; font-weight:900; flex:1; }
+  .tal-ess { font-size:14px; font-weight:800; color:#c77dff; text-align:center; margin-bottom:16px; }
+
+  .tal-conv-box { background:#221c33; border:1px solid #c77dff; border-radius:12px;
+    padding:16px; display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+  .tal-conv-box .icon-box { background:#3d2b59; padding:10px; border-radius:50%; font-size:20px; }
+  .tal-conv-box .info { flex:1; }
+  .tal-conv-box .info b { font-weight:800; color:#ffd700; display:block; font-size:14px; }
+  .tal-conv-box .info span { font-size:12px; color:#8fa3bd; }
+  .tal-conv-box button { background:#3d2b59; border:1px solid #5a3d82; color:#ffd700;
+    padding:8px 12px; border-radius:8px; font-weight:800; font-size:12px; cursor:pointer; }
+  .tal-conv-box button:disabled { opacity:0.4; }
+
+  .tal-list { flex:1; display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
+  .tal-item { display:flex; align-items:center; gap:12px; padding:14px;
+    background:#141c2e; border:1px solid rgba(255,255,255,0.08); border-radius:16px; }
+  .tal-item .tico { font-size:28px; }
   .tal-item .tinfo { flex:1; }
-  .tal-item .tnm { font-size:13px; font-weight:800; }
-  .tal-item .tdesc { font-size:10px; color:#8fa3bd; font-weight:600; }
-  .tal-item .tlvl { font-size:11px; font-weight:800; color:#4ecdc4;
-    background:rgba(78,205,196,0.15); padding:3px 8px; border-radius:6px; }
-  .tal-buy { padding:8px 12px; border-radius:10px; font-weight:900; font-size:12px;
-    background:rgba(199,125,255,0.16); border:1px solid rgba(199,125,255,0.5);
-    color:#c77dff; cursor:pointer; white-space:nowrap; }
-  .tal-buy:disabled { opacity:0.35; cursor:not-allowed; }
-  .tal-buy:active:not(:disabled) { transform:scale(0.94); }
-  .tal-close { margin-top:10px; padding:12px; border-radius:12px;
-    background:rgba(78,205,196,0.14); border:1px solid rgba(78,205,196,0.4);
-    color:#4ecdc4; font-weight:900; font-size:14px; cursor:pointer; }
+  .tal-item .tnm { font-size:15px; font-weight:800; }
+  .tal-item .tdesc { font-size:11px; color:#8fa3bd; font-weight:600; margin-top:2px; }
+  .tal-item .tlvl { font-size:12px; font-weight:800; color:#c77dff; }
+  .tal-buy { background:#7b42bc; border:none; color:#fff; padding:10px 14px;
+    border-radius:10px; font-weight:900; font-size:13px; cursor:pointer; }
+  .tal-buy:disabled { background:#2d1f3d; color:#8855aa; }
 
-  #overlay { position:absolute; inset:0; z-index:60;
-    background:rgba(4,8,16,0.94); backdrop-filter:blur(6px);
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    padding:20px; opacity:0; pointer-events:none; transition:opacity .3s; }
-  #overlay.show { opacity:1; pointer-events:auto; }
-  .ov-title { font-size:26px; font-weight:900; margin-bottom:6px; color:#ff5252; }
-  .ov-sub { font-size:13px; color:#8fa3bd; font-weight:700; margin-bottom:16px; }
-  .ov-stats { display:grid; grid-template-columns:1fr 1fr; gap:8px;
-    width:100%; max-width:320px; margin-bottom:16px; }
-  .ov-stat { background:rgba(78,205,196,0.08); border-radius:10px;
-    padding:10px; text-align:center; }
-  .ov-stat .v { font-size:18px; font-weight:900; color:#4ecdc4; }
-  .ov-stat .l { font-size:9px; color:#8fa3bd; font-weight:700; text-transform:uppercase; }
-  .ov-input { width:100%; max-width:320px; padding:12px; border-radius:10px;
-    background:rgba(78,205,196,0.08); border:1px solid rgba(78,205,196,0.35);
-    color:#e8ecf5; font-size:14px; font-weight:700; margin-bottom:10px;
-    text-align:center; outline:none; }
-  .ov-input::placeholder { color:#5a6b82; }
-  .ov-btn { width:100%; max-width:320px; padding:14px; border-radius:12px;
-    background:linear-gradient(135deg,#4ecdc4,#3aa8a0); border:none;
-    color:#04121a; font-weight:900; font-size:15px; cursor:pointer; }
-  .ov-btn:active { transform:scale(0.97); }
-  .ov-ranking { width:100%; max-width:320px; max-height:160px; overflow-y:auto;
-    margin-top:14px; display:flex; flex-direction:column; gap:4px; }
-  .rk-item { display:flex; align-items:center; gap:8px; padding:8px 10px;
-    background:rgba(78,205,196,0.06); border-radius:8px; font-size:12px; }
-  .rk-pos { font-weight:900; color:#ffd700; min-width:20px; }
-  .rk-name { flex:1; font-weight:700; }
+  .tal-bottom { display:flex; gap:10px; margin-top:10px; }
+  .tal-close, .tal-rank { flex:1; padding:16px; border-radius:14px; border:none;
+    font-weight:900; font-size:15px; color:#fff; cursor:pointer; text-align:center; }
+  .tal-close { background:#3a506b; }
+  .tal-rank { background:#ab47bc; }
+  .tal-save { width:100%; padding:16px; margin-top:10px; border-radius:14px; border:none;
+    font-weight:900; font-size:15px; background:#2e7d32; color:#fff; cursor:pointer; }
+
+  /* Overlay game over */
+  #overlay { background:rgba(10,16,32,0.98); justify-content:center; align-items:center; text-align:center; }
+  .ov-title { font-size:32px; font-weight:900; color:#ff5252; margin-bottom:10px; }
+  .ov-sub { color:#8fa3bd; font-weight:700; font-size:14px; }
+  .ov-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; max-width:300px; margin:20px 0; }
+  .ov-stat { background:#141c2e; padding:12px; border-radius:12px; }
+  .ov-stat .v { font-size:20px; font-weight:900; color:#4ecdc4; }
+  .ov-stat .l { font-size:10px; color:#8fa3bd; font-weight:700; text-transform:uppercase; }
+  .ov-input { width:100%; max-width:300px; padding:14px; border-radius:12px;
+    background:#141c2e; border:1px solid #3a506b; color:#fff; font-size:16px; font-weight:700;
+    text-align:center; margin-bottom:10px; outline:none; }
+  .ov-btn { width:100%; max-width:300px; padding:16px; border-radius:12px;
+    background:#4ecdc4; border:none; color:#0a1020; font-weight:900; font-size:16px; cursor:pointer; }
+  .ov-ranking { width:100%; max-width:300px; max-height:140px; overflow-y:auto; margin-top:16px; }
+  .rk-item { display:flex; gap:8px; padding:8px 10px; background:#141c2e;
+    border-radius:8px; font-size:12px; margin-bottom:4px; }
+  .rk-pos { font-weight:900; color:#ffd700; min-width:22px; }
+  .rk-name { flex:1; font-weight:700; text-align:left; }
   .rk-score { font-weight:900; color:#4ecdc4; }
 </style>
 </head>
 <body>
 <div id="app">
   <div id="hud">
-    <div class="hstat gold">🪙 <span id="goldLbl">0</span></div>
-    <div class="hstat ess">💎 <span id="essLbl">0</span></div>
-    <div class="hstat life">❤️ <span id="lifeLbl">20</span></div>
-    <div class="hstat wave">🌊 <span id="waveLbl">1</span></div>
-    <div class="hstat score">🏆 <span id="scoreLbl">0</span></div>
+    <div class="hstat gold"><div class="val" id="goldLbl">0</div><div class="lbl">OURO</div></div>
+    <div class="hstat ess"><div class="val" id="essLbl">0</div><div class="lbl">ESSÊNCIA</div></div>
+    <div class="hstat life"><div class="val" id="lifeLbl">20</div><div class="lbl">VIDAS</div></div>
+    <div class="hstat wave"><div class="val" id="waveLbl">1</div><div class="lbl">VAGA</div></div>
+    <div class="hstat score"><div class="val" id="scoreLbl">0</div><div class="lbl">PONTOS</div></div>
     <div class="hspacer"></div>
     <button class="hbtn" id="speedBtn">1x</button>
-    <button class="hbtn gold" id="convBtn">🪙→💎</button>
+    <button class="hbtn" id="convBtn">🪙→💎</button>
   </div>
 
   <div id="gamewrap">
@@ -198,44 +188,59 @@
     <button id="menuBtn">🌳</button>
     <div id="pauseBadge">⏸ PAUSA</div>
     <div id="info"></div>
+
     <div id="popup">
       <div class="popup-head">
         <div class="popup-title" id="popTitle">Torre</div>
         <button class="popup-close" id="popClose">✕</button>
       </div>
       <div class="popup-stats">
-        <div class="pstat"><div class="v" id="psDmg">1</div><div class="l">Dano</div></div>
-        <div class="pstat"><div class="v" id="psRng">130</div><div class="l">Alcance</div></div>
-        <div class="pstat"><div class="v" id="psRate">28</div><div class="l">Cadência</div></div>
+        <div class="pstat"><div class="v" id="psDmg">0</div><div class="l">Dano</div></div>
+        <div class="pstat"><div class="v" id="psRng">0</div><div class="l">Alcance</div></div>
+        <div class="pstat"><div class="v" id="psRate">0</div><div class="l">Velocidade</div></div>
       </div>
       <div class="popup-btns">
-        <button class="pbtn upg" id="upgBtn">Melhorar<small id="upgCost">-</small></button>
-        <button class="pbtn evo" id="evoBtn">Evoluir<small id="evoCost">-</small></button>
-        <button class="pbtn sell" id="sellBtn">Vender<small id="sellVal">-</small></button>
+        <button class="pbtn upg" id="upgBtn">Melhorar<small id="upgCost">0</small></button>
+        <button class="pbtn evo" id="evoBtn">Evoluir<small id="evoCost">0</small></button>
+        <button class="pbtn sell" id="sellBtn">Vender<small id="sellVal">0</small></button>
       </div>
     </div>
   </div>
 
   <div id="panel">
     <div id="towerScroll"></div>
-    <button id="startBtn">VAGA 1</button>
+    <button id="startBtn"><span id="startBtnTxt">VAGA 1</span></button>
   </div>
 
   <div id="talentScreen">
     <div class="tal-head">
-      <h2>🌳 Talentos</h2>
-      <div class="tal-ess">💎 <span id="talEss">0</span></div>
-      <button class="tal-conv" id="talConv">🪙→💎</button>
+      <h2>🌳 Árvore de Talentos</h2>
     </div>
+    <div class="tal-ess">Essência total: <span id="talEss">0</span> 💎</div>
+
+    <div class="tal-conv-box">
+      <div class="icon-box">🪙</div>
+      <div class="info">
+        <b><span id="convGoldTxt">0</span> 🪙 disponíveis</b>
+        <span>250 🪙 = 1 💎</span>
+      </div>
+      <button id="talConv">Converter</button>
+    </div>
+
     <div class="tal-list" id="talList"></div>
-    <button class="tal-close" id="talClose">Fechar</button>
+
+    <div class="tal-bottom">
+      <button class="tal-rank" id="btnRanking">🏆 Ranking</button>
+      <button class="tal-close" id="talClose">Voltar ao Jogo</button>
+    </div>
+    <button class="tal-save" id="talSave">💾 Guardar Jogo</button>
   </div>
 
   <div id="overlay">
-    <div class="ov-title" id="ovTitle">Fim de Jogo</div>
-    <div class="ov-sub" id="ovSub">A torre caiu!</div>
+    <div class="ov-title">Fim de Jogo</div>
+    <div class="ov-sub">A torre caiu na vaga <span id="ovWave">1</span>!</div>
     <div class="ov-stats">
-      <div class="ov-stat"><div class="v" id="ovWave">0</div><div class="l">Vaga</div></div>
+      <div class="ov-stat"><div class="v" id="ovWave2">0</div><div class="l">Vagas</div></div>
       <div class="ov-stat"><div class="v" id="ovScore">0</div><div class="l">Pontos</div></div>
       <div class="ov-stat"><div class="v" id="ovKills">0</div><div class="l">Abates</div></div>
       <div class="ov-stat"><div class="v" id="ovTowers">0</div><div class="l">Torres</div></div>
@@ -248,11 +253,8 @@
 <script>
 "use strict";
 
-/* ══════════════════════════════════════════════════════════════
-   CONSTANTES
-   ══════════════════════════════════════════════════════════════ */
-const SAVE_KEY = "torreProgressV28_PT";
-const TILE = 32;
+const SAVE_KEY = "torreProgressV29";
+const TILE = 36;
 const MAX_RANKING = 20;
 
 const TOWER_TYPES = {
@@ -264,45 +266,31 @@ const TOWER_TYPES = {
 };
 
 const ENEMY_TYPES = {
-  goblin: { name:"Goblin", hp:3,  gold:6,  color:"#7cb342", speed:0.9,  radius:9  },
-  orc:    { name:"Orc",    hp:8,  gold:10, color:"#8d6e63", speed:0.75, radius:11 },
-  swift:  { name:"Veloz",  hp:5,  gold:8,  color:"#ffb74d", speed:1.35, radius:8  },
-  tank:   { name:"Tanque", hp:20, gold:18, color:"#b0bec5", speed:0.55, radius:13 },
-  boss:   { name:"Chefe",  hp:85, gold:50, color:"#e53935", speed:0.5,  radius:17, lives:5 }
+  goblin: { name:"Goblin", hp:3,  gold:6,  color:"#7cb342", speed:0.9,  radius:10 },
+  orc:    { name:"Orc",    hp:8,  gold:10, color:"#8d6e63", speed:0.75, radius:12 },
+  swift:  { name:"Veloz",  hp:5,  gold:8,  color:"#ffb74d", speed:1.35, radius:9  },
+  tank:   { name:"Tanque", hp:20, gold:18, color:"#b0bec5", speed:0.55, radius:14 },
+  boss:   { name:"Chefe",  hp:85, gold:50, color:"#e53935", speed:0.5,  radius:18, lives:5 }
 };
 
 const TALENTS = [
-  { id:"force",    ico:"⚔️", name:"Força",       desc:"+8% dano por nível",        max:10, cost:n=>3+n*2 },
-  { id:"greed",    ico:"🪙", name:"Ganância",    desc:"+10% ouro por nível",       max:10, cost:n=>3+n*2 },
-  { id:"vital",    ico:"❤️", name:"Vitalidade",  desc:"+2 vidas iniciais",         max:10, cost:n=>3+n*2 },
-  { id:"precision",ico:"🎯", name:"Precisão",    desc:"+6% alcance por nível",     max:10, cost:n=>2+n*2 },
-  { id:"speed",    ico:"⏱️", name:"Celeridade",  desc:"+5% cadência por nível",    max:10, cost:n=>2+n*2 },
-  { id:"heritage", ico:"💰", name:"Herança",     desc:"+20 ouro inicial por nível",max:10, cost:n=>2+n*2 },
-  { id:"channel",  ico:"🔮", name:"Canalização", desc:"+1 essência por vaga",      max:5,  cost:n=>5+n*3 }
+  { id:"force",    ico:"⚔️", name:"Força",       desc:"+15% dano das torres por nível",        max:5, cost:n=>4+n*2 },
+  { id:"greed",    ico:"🪙", name:"Ganância",    desc:"+20% ouro obtido por nível",            max:5, cost:n=>3+n*2 },
+  { id:"vital",    ico:"❤️", name:"Vitalidade",  desc:"+2 vidas iniciais por nível",           max:5, cost:n=>3+n*2 },
+  { id:"precision",ico:"🎯", name:"Precisão",    desc:"+8% alcance das torres por nível",      max:5, cost:n=>4+n*2 },
+  { id:"speed",    ico:"⏱️", name:"Celeridade",  desc:"+10% cadência de tiro por nível",       max:5, cost:n=>5+n*2 },
+  { id:"heritage", ico:"💰", name:"Herança",     desc:"+40 ouro inicial por nível",            max:3, cost:n=>6+n*2 },
+  { id:"channel",  ico:"🔮", name:"Canalização", desc:"+1 essência extra por vaga",            max:5, cost:n=>5+n*3 }
 ];
 
-/* ══════════════════════════════════════════════════════════════
-   ESTADO PERSISTENTE
-   ══════════════════════════════════════════════════════════════ */
+/* Estado persistente */
 function defaultPersistent() {
   return {
-    essence: 0,
-    talents: {},
-    unlocked: { lightning:false, poison:false },
-    bestWave: 0,
-    bestScore: 0,
-    totalKills: 0,
-    totalGames: 0,
-    ranking: [],
-    currentWave: 0,
-    currentGold: 0,
-    currentLives: 20,
-    currentScore: 0,
-    savedTowers: [],
-    playerName: ""
+    essence: 0, talents: {}, unlocked: { lightning:false, poison:false },
+    bestWave: 0, bestScore: 0, totalKills: 0, totalGames: 0,
+    ranking: [], savedState: null, playerName: ""
   };
 }
-
 let persistent = defaultPersistent();
 
 function loadProgress() {
@@ -316,128 +304,76 @@ function loadProgress() {
     persistent.talents = (persistent.talents && typeof persistent.talents === "object") ? persistent.talents : {};
     persistent.unlocked = Object.assign({ lightning:false, poison:false }, persistent.unlocked || {});
     persistent.ranking = Array.isArray(persistent.ranking) ? persistent.ranking.slice(0, MAX_RANKING) : [];
-    persistent.savedTowers = Array.isArray(persistent.savedTowers) ? persistent.savedTowers : [];
     persistent.playerName = typeof persistent.playerName === "string" ? persistent.playerName.slice(0,16) : "";
-    persistent.bestWave = Math.max(0, Number(persistent.bestWave) || 0);
-    persistent.bestScore = Math.max(0, Number(persistent.bestScore) || 0);
-    persistent.totalKills = Math.max(0, Number(persistent.totalKills) || 0);
-    persistent.totalGames = Math.max(0, Number(persistent.totalGames) || 0);
-  } catch(e) {
-    console.warn("load falhou", e);
-    persistent = defaultPersistent();
-  }
+    if (persistent.savedState && typeof persistent.savedState !== "object") persistent.savedState = null;
+  } catch(e) { console.warn("load falhou", e); persistent = defaultPersistent(); }
 }
 
-let saveDirty = false;
-let lastSaveTime = 0;
+let saveDirty = false, lastSaveTime = 0;
 function saveProgress(force) {
   const now = performance.now();
   if (!force && now - lastSaveTime < 1000) { saveDirty = true; return; }
-  lastSaveTime = now;
-  saveDirty = false;
+  lastSaveTime = now; saveDirty = false;
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(persistent)); }
   catch(e) { console.warn("save falhou", e); }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   ESTADO DA RONDA
-   ══════════════════════════════════════════════════════════════ */
-let gold, lives, maxLives, wave, score, running, gameOverFlag;
+/* Estado da ronda */
+let gold = 0, lives = 20, maxLives = 20, wave = 1, score = 0;
+let running = false, gameOverFlag = false, paused = false;
 let selectedType = null, selectedTower = null;
 let towers = [], enemies = [], projectiles = [], particles = [], floats = [];
-let spawnQueue = [], spawnTimer = 0;
-let slots = [], PATH = [];
+let spawnQueue = [], spawnTimer = 0, slots = [], PATH = [];
 let killsThisRun = 0, towersBuiltThisRun = 0;
-let speedMul = 1;
-let scoreSubmitted = false;
-let paused = false;
-let hudDirty = true;
-let hoverSlot = null;
-let hoverPos = { x:-999, y:-999 };
+let speedMul = 1, scoreSubmitted = false, hudDirty = true;
+let hoverSlot = null, hoverPos = { x:-999, y:-999 };
 
-/* ══════════════════════════════════════════════════════════════
-   DOM REFS
-   ══════════════════════════════════════════════════════════════ */
+/* DOM refs */
 const $ = id => document.getElementById(id);
-
 const cv = $("cv");
 const ctx = cv.getContext("2d");
-const goldLbl = $("goldLbl");
-const essLbl = $("essLbl");
-const lifeLbl = $("lifeLbl");
-const waveLbl = $("waveLbl");
-const scoreLbl = $("scoreLbl");
-const speedBtn = $("speedBtn");
-const convBtn = $("convBtn");
-const menuBtn = $("menuBtn");
-const pauseBadge = $("pauseBadge");
-const infoEl = $("info");
-const popup = $("popup");
-const popTitle = $("popTitle");
-const popClose = $("popClose");
-const psDmg = $("psDmg");
-const psRng = $("psRng");
-const psRate = $("psRate");
-const upgBtn = $("upgBtn");
-const upgCost = $("upgCost");
-const evoBtn = $("evoBtn");
-const evoCost = $("evoCost");
-const sellBtn = $("sellBtn");
-const sellVal = $("sellVal");
-const towerScroll = $("towerScroll");
-const startBtn = $("startBtn");
-const talentScreen = $("talentScreen");
-const talEss = $("talEss");
-const talConv = $("talConv");
-const talList = $("talList");
-const talClose = $("talClose");
-const overlay = $("overlay");
-const ovTitle = $("ovTitle");
-const ovSub = $("ovSub");
-const ovWave = $("ovWave");
-const ovScore = $("ovScore");
-const ovKills = $("ovKills");
-const ovTowers = $("ovTowers");
-const ovName = $("ovName");
-const ovBtn = $("ovBtn");
-const ovRanking = $("ovRanking");
+const goldLbl = $("goldLbl"), essLbl = $("essLbl"), lifeLbl = $("lifeLbl"),
+      waveLbl = $("waveLbl"), scoreLbl = $("scoreLbl"), speedBtn = $("speedBtn"),
+      convBtn = $("convBtn"), menuBtn = $("menuBtn"), pauseBadge = $("pauseBadge"),
+      infoEl = $("info"), popup = $("popup"), popTitle = $("popTitle"),
+      popClose = $("popClose"), psDmg = $("psDmg"), psRng = $("psRng"), psRate = $("psRate"),
+      upgBtn = $("upgBtn"), upgCost = $("upgCost"), evoBtn = $("evoBtn"), evoCost = $("evoCost"),
+      sellBtn = $("sellBtn"), sellVal = $("sellVal"), towerScroll = $("towerScroll"),
+      startBtn = $("startBtn"), startBtnTxt = $("startBtnTxt"),
+      talentScreen = $("talentScreen"), talEss = $("talEss"), talConv = $("talConv"),
+      talList = $("talList"), talClose = $("talClose"), talSave = $("talSave"),
+      btnRanking = $("btnRanking"), convGoldTxt = $("convGoldTxt"),
+      overlay = $("overlay"), ovWave = $("ovWave"), ovWave2 = $("ovWave2"),
+      ovScore = $("ovScore"), ovKills = $("ovKills"), ovTowers = $("ovTowers"),
+      ovName = $("ovName"), ovBtn = $("ovBtn"), ovRanking = $("ovRanking");
 
-/* ══════════════════════════════════════════════════════════════
-   UTILITÁRIOS
-   ══════════════════════════════════════════════════════════════ */
+/* Utilitários */
 function vibrate(ms) { if (navigator.vibrate) { try { navigator.vibrate(ms); } catch(_){} } }
 function rand(a,b) { return a + Math.random()*(b-a); }
 function dist(a,b) { const dx=a.x-b.x, dy=a.y-b.y; return Math.hypot(dx,dy); }
 
 let infoTimer = 0;
 function showInfo(msg) {
-  infoEl.textContent = msg;
-  infoEl.classList.add("show");
+  infoEl.textContent = msg; infoEl.classList.add("show");
   clearTimeout(infoTimer);
   infoTimer = setTimeout(()=>infoEl.classList.remove("show"), 1600);
 }
-
 function burst(x, y, color, n) {
   for (let i=0;i<n;i++) {
-    const a = Math.random()*Math.PI*2;
-    const s = rand(1.2,3.4);
+    const a = Math.random()*Math.PI*2, s = rand(1.2,3.4);
     particles.push({ x, y, vx:Math.cos(a)*s, vy:Math.sin(a)*s,
       life:1, decay:rand(0.02,0.05), color, size:rand(2,4) });
   }
 }
-function floatText(x, y, txt, color) {
-  floats.push({ x, y, txt, color, life:1, vy:-0.8 });
-}
+function floatText(x, y, txt, color) { floats.push({ x, y, txt, color, life:1, vy:-0.8 }); }
 
-/* ══════════════════════════════════════════════════════════════
-   CANVAS / GRELHA
-   ══════════════════════════════════════════════════════════════ */
-let COLS = 10, ROWS = 14;
+/* Canvas / grelha */
+let COLS = 10, ROWS = 14, offX = 0, offY = 0;
 
 function resizeCanvas() {
   const wrap = $("gamewrap");
-  const w = wrap.clientWidth;
-  const h = wrap.clientHeight;
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  if (!w || !h) return;
   const dpr = window.devicePixelRatio || 1;
   cv.width = Math.floor(w * dpr);
   cv.height = Math.floor(h * dpr);
@@ -448,47 +384,38 @@ function resizeCanvas() {
 }
 
 function rebuildStrategicSlots(w, h) {
-  const margin = 12;
-  const usableW = w - margin * 2;
-  const usableH = h - margin * 2;
-
-  COLS = Math.max(8, Math.floor(usableW / TILE));
-  ROWS = Math.max(10, Math.floor(usableH / TILE));
-
-  const offX = Math.floor((w - COLS * TILE) / 2);
-  const offY = Math.floor((h - ROWS * TILE) / 2);
+  const margin = 8;
+  COLS = Math.max(7, Math.floor((w - margin*2) / TILE));
+  ROWS = Math.max(10, Math.floor((h - margin*2) / TILE));
+  offX = Math.floor((w - COLS*TILE) / 2);
+  offY = Math.floor((h - ROWS*TILE) / 2);
 
   const old = {};
   towers.forEach(t => { old[t.col + "," + t.row] = t; });
 
   slots = [];
   towers = [];
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
+  for (let r=0;r<ROWS;r++) {
+    for (let c=0;c<COLS;c++) {
       slots.push({
-        col: c, row: r,
-        x: offX + c * TILE + TILE / 2,
-        y: offY + r * TILE + TILE / 2,
-        occupied: false, buildable: true
+        col:c, row:r,
+        x: offX + c*TILE + TILE/2,
+        y: offY + r*TILE + TILE/2,
+        occupied:false, buildable:true
       });
     }
   }
 
   PATH = buildPath(offX, offY);
-  const pathSet = new Set();
-  PATH.forEach(p => {
-    const c = Math.round((p.x - offX - TILE / 2) / TILE);
-    const r = Math.round((p.y - offY - TILE / 2) / TILE);
-    if (c >= 0 && c < COLS && r >= 0 && r < ROWS) pathSet.add(c + "," + r);
-  });
-  pathSet.forEach(k => {
-    const parts = k.split(",");
-    const c = Number(parts[0]);
-    const r = Number(parts[1]);
-    const s = slots.find(s => s.col === c && s.row === r);
-    if (s) s.buildable = false;
+
+  // Bloqueia slots a menos de TILE*0.8 do caminho
+  slots.forEach(s => {
+    for (let i=0;i<PATH.length-1;i++) {
+      if (distToSegment(s, PATH[i], PATH[i+1]) < TILE*0.85) { s.buildable = false; break; }
+    }
   });
 
+  // Restaura torres
   slots.forEach(s => {
     if (!s.buildable) return;
     const t = old[s.col + "," + s.row];
@@ -501,12 +428,19 @@ function rebuildStrategicSlots(w, h) {
   });
 }
 
+function distToSegment(p, v, w) {
+  const l2 = (w.x-v.x)**2 + (w.y-v.y)**2;
+  if (l2 === 0) return Math.hypot(p.x-v.x, p.y-v.y);
+  let t = ((p.x-v.x)*(w.x-v.x) + (p.y-v.y)*(w.y-v.y)) / l2;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(p.x - (v.x + t*(w.x-v.x)), p.y - (v.y + t*(w.y-v.y)));
+}
+
 function buildPath(offX, offY) {
   const c1 = Math.max(1, Math.floor(COLS * 0.15));
   const c2 = COLS - 1 - Math.max(1, Math.floor(COLS * 0.15));
   const r1 = Math.max(1, Math.floor(ROWS * 0.30));
   const r2 = Math.max(r1 + 2, Math.floor(ROWS * 0.65));
-
   const pts = [
     { col: c1, row: 0 },
     { col: c1, row: r1 },
@@ -516,21 +450,21 @@ function buildPath(offX, offY) {
     { col: c1, row: ROWS - 1 }
   ];
   return pts.map(p => ({
-    x: offX + p.col * TILE + TILE / 2,
-    y: offY + p.row * TILE + TILE / 2
+    x: offX + p.col * TILE + TILE/2,
+    y: offY + p.row * TILE + TILE/2
   }));
 }
 
-// ⏸ CONTINUA NA PARTE 4/5
+// CONTINUA NA PARTE 4/5
 /* ══════════════════════════════════════════════════════════════
    TALENTOS — MULTIPLICADORES
    ══════════════════════════════════════════════════════════════ */
 function talentLvl(id) { return persistent.talents[id] || 0; }
-function dmgMul()       { return 1 + talentLvl("force")*0.08; }
-function goldMul()      { return 1 + talentLvl("greed")*0.10; }
-function rangeMul()     { return 1 + talentLvl("precision")*0.06; }
-function rateMul()      { return 1 - talentLvl("speed")*0.05; }
-function startGoldBonus(){ return talentLvl("heritage")*20; }
+function dmgMul()       { return 1 + talentLvl("force")*0.15; }
+function goldMul()      { return 1 + talentLvl("greed")*0.20; }
+function rangeMul()     { return 1 + talentLvl("precision")*0.08; }
+function rateMul()      { return 1 - talentLvl("speed")*0.10; }
+function startGoldBonus(){ return talentLvl("heritage")*40; }
 function startLivesBonus(){ return talentLvl("vital")*2; }
 function essencePerWave(){ return 1 + talentLvl("channel"); }
 
@@ -556,9 +490,7 @@ function towerSellValue(t)   { return Math.floor((TOWER_TYPES[t.type].cost + (t.
 function buildTower(slot, type) {
   const base = TOWER_TYPES[type];
   if (!base) return;
-  if (base.unlock && !persistent.unlocked[base.unlock]) {
-    showInfo("🔒 Bloqueada — desbloqueia na árvore de talentos"); return;
-  }
+  if (base.unlock && !persistent.unlocked[base.unlock]) { showInfo("🔒 Bloqueada"); return; }
   if (gold < base.cost) { showInfo("🪙 Ouro insuficiente"); return; }
   if (slot.occupied || !slot.buildable) return;
   gold -= base.cost;
@@ -570,28 +502,26 @@ function buildTower(slot, type) {
   hudDirty = true;
   vibrate(15);
   burst(t.x, t.y, base.color, 8);
-  floatText(t.x, t.y-18, base.ico, base.color);
   saveProgress(false);
 }
+
 function upgradeTower(t) {
-  if (t.level >= 3) { showInfo("⭐ Nível máximo — evolui!"); return; }
+  if (t.level >= 3) { showInfo("⭐ Nível máximo"); return; }
   const cost = towerUpgradeCost(t);
   if (gold < cost) { showInfo("🪙 Ouro insuficiente"); return; }
   gold -= cost; t.level++;
   hudDirty = true; vibrate(12);
   burst(t.x, t.y, "#4ecdc4", 10);
-  showInfo("⬆️ " + TOWER_TYPES[t.type].name + " nível " + t.level);
   refreshPopup(); saveProgress(false);
 }
 function evolveTower(t) {
-  if (t.level < 3) { showInfo("⬆️ Precisas de nível 3 para evoluir"); return; }
+  if (t.level < 3) { showInfo("⬆️ Precisas de nível 3"); return; }
   if (t.stars >= 5) { showInfo("🌟 Estrela máxima!"); return; }
   const cost = towerEvolveCost(t);
   if (persistent.essence < cost) { showInfo("💎 Essência insuficiente"); return; }
   persistent.essence -= cost; t.stars++;
   hudDirty = true; vibrate(20);
   burst(t.x, t.y, "#c77dff", 16);
-  showInfo("🌟 " + TOWER_TYPES[t.type].name + " evoluída! (" + t.stars + "★)");
   refreshPopup(); saveProgress(false);
 }
 function sellTower(t) {
@@ -602,7 +532,7 @@ function sellTower(t) {
   selectedTower = null; hidePopup(); hudDirty = true;
   burst(t.x, t.y, "#ffd700", 10);
   floatText(t.x, t.y-16, "+" + val, "#ffd700");
-  showInfo("💰 Vendida por " + val + " ouro"); saveProgress(false);
+  saveProgress(false);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -615,19 +545,16 @@ function refreshPopup() {
   if (!t) return;
   const base = TOWER_TYPES[t.type];
   const st = towerStats(t);
-  popTitle.textContent = base.ico + " " + base.name + " ⭐".repeat(t.stars) + " · Nv." + t.level;
+  popTitle.textContent = base.ico + " " + base.name + " " + "⭐".repeat(t.stars) + " · Nv." + t.level;
   psDmg.textContent = st.dmg.toFixed(1);
   psRng.textContent = Math.round(st.range);
   psRate.textContent = Math.round(st.rate) + "f";
-  const upCost = towerUpgradeCost(t);
-  const evCost = towerEvolveCost(t);
-  const sv = towerSellValue(t);
+  const upCost = towerUpgradeCost(t), evCost = towerEvolveCost(t), sv = towerSellValue(t);
   if (t.level >= 3) { upgBtn.disabled = true; upgCost.textContent = "MAX"; }
   else { upgBtn.disabled = gold < upCost; upgCost.textContent = "🪙 " + upCost; }
   if (t.stars >= 5) { evoBtn.disabled = true; evoCost.textContent = "MAX"; }
   else { evoBtn.disabled = t.level < 3 || persistent.essence < evCost; evoCost.textContent = "💎 " + evCost; }
-  sellBtn.disabled = false;
-  sellVal.textContent = "🪙 " + sv;
+  sellBtn.disabled = false; sellVal.textContent = "🪙 " + sv;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -648,7 +575,7 @@ function startWave() {
   running = true; paused = false;
   spawnQueue = []; spawnTimer = 0;
   const isBoss = wave % 5 === 0;
-  const count = isBoss ? 6 + Math.floor(wave * 0.5) : 6 + Math.floor(wave * 0.8);
+  const count = isBoss ? 6 + Math.floor(wave*0.5) : 6 + Math.floor(wave*0.8);
   for (let i=0;i<count;i++) {
     let type = "goblin";
     if (wave >= 3 && Math.random() < 0.3) type = "orc";
@@ -675,11 +602,7 @@ function killEnemy(e) {
   hudDirty = true;
   burst(e.x, e.y, e.color, 6);
   floatText(e.x, e.y-14, "+" + g, "#ffd700");
-  if (e.type === "boss") {
-    persistent.essence += 2;
-    showInfo("👑 Chefe derrotado! +2 💎");
-    saveProgress(false);
-  }
+  if (e.type === "boss") { persistent.essence += 2; saveProgress(false); }
 }
 function damageBase(e) {
   if (!e.alive) return;
@@ -698,13 +621,11 @@ function damageBase(e) {
 function fireProjectile(t, target) {
   const base = TOWER_TYPES[t.type];
   const st = towerStats(t);
-  const ang = Math.atan2(target.y - t.y, target.x - t.x);
-  t.angle = ang;
+  t.angle = Math.atan2(target.y - t.y, target.x - t.x);
   projectiles.push({ x:t.x, y:t.y, target, speed:8, dmg:st.dmg,
     color:base.color, type:t.type, special:base.special,
     splash:base.splash || 0, slow:base.slow || 0,
-    chain:base.chain || 0, poisonDmg:base.poisonDmg || 0,
-    hit:false });
+    chain:base.chain || 0, poisonDmg:base.poisonDmg || 0, hit:false });
 }
 function hitProjectile(p) {
   if (p.hit) return;
@@ -714,10 +635,7 @@ function hitProjectile(p) {
   if (p.special === "splash") {
     enemies.forEach(e => {
       if (!e.alive) return;
-      if (dist(e, tgt) <= p.splash) {
-        hitEnemy(e, p.dmg);
-        if (e.alive) burst(e.x, e.y, p.color, 4);
-      }
+      if (dist(e, tgt) <= p.splash) { hitEnemy(e, p.dmg); if (e.alive) burst(e.x, e.y, p.color, 4); }
     });
   } else if (p.special === "chain") {
     hitEnemy(tgt, p.dmg);
@@ -726,8 +644,7 @@ function hitProjectile(p) {
       let next = null, bestD = 90;
       enemies.forEach(e => {
         if (!e.alive || chained.includes(e)) return;
-        const d = dist(e, last);
-        if (d < bestD) { bestD = d; next = e; }
+        const d = dist(e, last); if (d < bestD) { bestD = d; next = e; }
       });
       if (!next) break;
       hitEnemy(next, p.dmg * 0.7);
@@ -739,9 +656,7 @@ function hitProjectile(p) {
   } else if (p.special === "poison") {
     hitEnemy(tgt, p.dmg);
     if (tgt.alive) { tgt.poison = 90; tgt.poisonDmg = p.poisonDmg; }
-  } else {
-    hitEnemy(tgt, p.dmg);
-  }
+  } else { hitEnemy(tgt, p.dmg); }
   burst(p.x, p.y, p.color, 5);
 }
 
@@ -761,14 +676,13 @@ function update() {
   } else if (enemies.length === 0 && running) {
     running = false;
     const bonus = 15 + wave * 5;
-    gold += bonus;
-    score += bonus;
+    gold += bonus; score += bonus;
     persistent.essence += essencePerWave();
     if (wave % 5 === 0) persistent.essence += 3;
     wave++;
     hudDirty = true;
     vibrate(25);
-    showInfo("✅ Vaga concluída! +" + bonus + " 🪙 · +" + essencePerWave() + " 💎");
+    showInfo("✅ Vaga concluída! +" + bonus + " 🪙");
     startBtn.disabled = false;
     updateStartBtn();
     saveProgress(false);
@@ -779,8 +693,7 @@ function update() {
     const e = enemies[i];
     if (!e.alive) continue;
     if (e.poison > 0) {
-      e.poison--;
-      e.hp -= e.poisonDmg;
+      e.poison--; e.hp -= e.poisonDmg;
       if (e.hp <= 0) { killEnemy(e); continue; }
     }
     let sp = e.speed;
@@ -790,10 +703,8 @@ function update() {
       const dx = wp.x - e.x, dy = wp.y - e.y;
       const d = Math.hypot(dx, dy);
       if (d < 4) e.waypoint++;
-      else { e.x += (dx/d) * sp; e.y += (dy/d) * sp; }
-    } else {
-      damageBase(e);
-    }
+      else { e.x += (dx/d)*sp; e.y += (dy/d)*sp; }
+    } else { damageBase(e); }
   }
 
   towers.forEach(t => {
@@ -806,10 +717,7 @@ function update() {
       const d = dist(e, t);
       if (d < bestD) { bestD = d; target = e; }
     });
-    if (target) {
-      fireProjectile(t, target);
-      t.cooldown = st.rate;
-    }
+    if (target) { fireProjectile(t, target); t.cooldown = st.rate; }
   });
 
   projectiles = projectiles.filter(p => {
@@ -819,73 +727,67 @@ function update() {
     const dx = tgt.x - p.x, dy = tgt.y - p.y;
     const d = Math.hypot(dx, dy);
     if (d < p.speed) { hitProjectile(p); return false; }
-    p.x += (dx/d) * p.speed;
-    p.y += (dy/d) * p.speed;
+    p.x += (dx/d)*p.speed; p.y += (dy/d)*p.speed;
     return true;
   });
 
   particles = particles.filter(p => {
-    p.x += p.vx; p.y += p.vy;
-    p.vx *= 0.94; p.vy *= 0.94;
-    p.life -= p.decay;
-    return p.life > 0;
+    p.x += p.vx; p.y += p.vy; p.vx *= 0.94; p.vy *= 0.94;
+    p.life -= p.decay; return p.life > 0;
   });
-
   floats = floats.filter(f => {
-    f.y += f.vy;
-    f.life -= 0.02;
-    return f.life > 0;
+    f.y += f.vy; f.life -= 0.02; return f.life > 0;
   });
 }
 
 /* ══════════════════════════════════════════════════════════════
-   RENDER
+   RENDER — visual premium (caminho terra + castelo)
    ══════════════════════════════════════════════════════════════ */
 function render() {
   const w = cv.width / (window.devicePixelRatio || 1);
   const h = cv.height / (window.devicePixelRatio || 1);
   ctx.clearRect(0, 0, w, h);
 
-  // fundo da arena
-  const grad = ctx.createLinearGradient(0, 0, 0, h);
-grad.addColorStop(0, "#0d1424");
-grad.addColorStop(1, "#070a14");
-ctx.fillStyle = grad;
-ctx.fillRect(0, 0, w, h);
+  // Fundo
+  ctx.fillStyle = "#0a1020";
+  ctx.fillRect(0, 0, w, h);
 
-  // caminho — base escura
-  ctx.strokeStyle = "rgba(40,60,80,0.9)";
-  ctx.lineWidth = TILE * 0.85;
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
+  // Caminho — terra batida
+  ctx.strokeStyle = "#4a3b2c";
+  ctx.lineWidth = TILE * 0.9;
+  ctx.lineCap = "round"; ctx.lineJoin = "round";
   ctx.beginPath();
   PATH.forEach((p, i) => { i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); });
   ctx.stroke();
 
-  // caminho — contorno luminoso
-  ctx.strokeStyle = "rgba(78,205,196,0.55)";
-  ctx.lineWidth = 3;
-  ctx.setLineDash([8, 10]);
+  // Linha central tracejada
+  ctx.strokeStyle = "rgba(122,96,70,0.7)";
+  ctx.lineWidth = 4;
+  ctx.setLineDash([12, 16]);
   ctx.beginPath();
   PATH.forEach((p, i) => { i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); });
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // slots
+  // Slots tracejados
   slots.forEach(s => {
     if (!s.buildable) return;
     if (s.occupied) {
-      ctx.strokeStyle = "rgba(255,215,0,0.18)";
+      ctx.strokeStyle = "rgba(255,215,0,0.15)";
       ctx.lineWidth = 1;
-      ctx.strokeRect(s.x-TILE/2+5, s.y-TILE/2+5, TILE-10, TILE-10);
+      ctx.setLineDash([4, 6]);
+      ctx.strokeRect(s.x-TILE*0.4, s.y-TILE*0.4, TILE*0.8, TILE*0.8);
+      ctx.setLineDash([]);
       return;
     }
-    ctx.strokeStyle = "rgba(78,205,196,0.10)";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(s.x-TILE/2+5, s.y-TILE/2+5, TILE-10, TILE-10);
+    ctx.strokeStyle = "rgba(255,255,255,0.18)";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.strokeRect(s.x-TILE*0.4, s.y-TILE*0.4, TILE*0.8, TILE*0.8);
+    ctx.setLineDash([]);
   });
 
-  // preview do alcance — SÓ no slot sob o dedo/rato
+  // Preview do alcance
   if (selectedType && hoverSlot) {
     const base = TOWER_TYPES[selectedType];
     if (base) {
@@ -898,11 +800,18 @@ ctx.fillRect(0, 0, w, h);
       ctx.lineWidth = 1.5;
       ctx.stroke();
       ctx.fillStyle = "rgba(78,205,196,0.35)";
-      ctx.fillRect(hoverSlot.x-TILE/2+5, hoverSlot.y-TILE/2+5, TILE-10, TILE-10);
+      ctx.fillRect(hoverSlot.x-TILE*0.4, hoverSlot.y-TILE*0.4, TILE*0.8, TILE*0.8);
     }
   }
 
-  // torres
+  // Castelo no fim do caminho (vaga alvo)
+  const last = PATH[PATH.length-1];
+  ctx.font = "28px sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("🏰", last.x, last.y - TILE*0.6);
+
+  // Torres
   towers.forEach(t => {
     const base = TOWER_TYPES[t.type];
     if (t === selectedTower) {
@@ -916,88 +825,69 @@ ctx.fillRect(0, 0, w, h);
       ctx.stroke();
     }
     ctx.beginPath();
-    ctx.arc(t.x, t.y, 13, 0, Math.PI*2);
+    ctx.arc(t.x, t.y, TILE*0.35, 0, Math.PI*2);
     ctx.fillStyle = base.color;
     ctx.fill();
-    ctx.strokeStyle = "#070a14";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#0a1020";
+    ctx.lineWidth = 3;
     ctx.stroke();
     if (t.stars > 0) {
       ctx.fillStyle = "#ffd700";
       ctx.font = "bold 9px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("★".repeat(t.stars), t.x, t.y - 17);
+      ctx.fillText("★".repeat(t.stars), t.x, t.y - TILE*0.55);
     }
-    ctx.font = "16px sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    ctx.font = "20px sans-serif";
     ctx.fillText(base.ico, t.x, t.y + 1);
   });
 
-  // inimigos
+  // Inimigos
   enemies.forEach(e => {
     if (!e.alive) return;
     ctx.beginPath();
     ctx.arc(e.x, e.y, e.radius, 0, Math.PI*2);
-    ctx.fillStyle = e.color;
-    ctx.fill();
-    ctx.strokeStyle = "#070a14";
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+    ctx.fillStyle = e.color; ctx.fill();
+    ctx.strokeStyle = "#0a1020"; ctx.lineWidth = 2; ctx.stroke();
     if (e.hp < e.maxHp) {
       const bw = e.radius*2;
-      ctx.fillStyle = "rgba(0,0,0,0.5)";
-      ctx.fillRect(e.x - bw/2, e.y - e.radius - 7, bw, 3);
+      ctx.fillStyle = "rgba(0,0,0,0.55)";
+      ctx.fillRect(e.x - bw/2, e.y - e.radius - 8, bw, 4);
       ctx.fillStyle = e.type === "boss" ? "#ff5252" : "#4ecdc4";
-      ctx.fillRect(e.x - bw/2, e.y - e.radius - 7, bw * (e.hp/e.maxHp), 3);
+      ctx.fillRect(e.x - bw/2, e.y - e.radius - 8, bw * (e.hp/e.maxHp), 4);
     }
     if (e.slow > 0) {
-      ctx.beginPath();
-      ctx.arc(e.x, e.y, e.radius+2, 0, Math.PI*2);
-      ctx.strokeStyle = "rgba(129,212,250,0.7)";
-      ctx.lineWidth = 2;
-      ctx.stroke();
+      ctx.beginPath(); ctx.arc(e.x, e.y, e.radius+3, 0, Math.PI*2);
+      ctx.strokeStyle = "rgba(129,212,250,0.7)"; ctx.lineWidth = 2; ctx.stroke();
     }
     if (e.poison > 0) {
-      ctx.beginPath();
-      ctx.arc(e.x, e.y, e.radius+3, 0, Math.PI*2);
-      ctx.strokeStyle = "rgba(156,204,101,0.7)";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
+      ctx.beginPath(); ctx.arc(e.x, e.y, e.radius+4, 0, Math.PI*2);
+      ctx.strokeStyle = "rgba(156,204,101,0.7)"; ctx.lineWidth = 1.5; ctx.stroke();
     }
   });
 
-  // projéteis
+  // Projéteis
   projectiles.forEach(p => {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
-    ctx.fillStyle = p.color;
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
+    ctx.fillStyle = p.color; ctx.fill();
   });
 
-  // partículas
+  // Partículas
   particles.forEach(p => {
-    ctx.globalAlpha = p.life;
-    ctx.fillStyle = p.color;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-    ctx.fill();
+    ctx.globalAlpha = p.life; ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
   });
   ctx.globalAlpha = 1;
 
-  // floats
+  // Floats
   floats.forEach(f => {
-    ctx.globalAlpha = f.life;
-    ctx.fillStyle = f.color;
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "center";
+    ctx.globalAlpha = f.life; ctx.fillStyle = f.color;
+    ctx.font = "bold 13px sans-serif"; ctx.textAlign = "center";
     ctx.fillText(f.txt, f.x, f.y);
   });
   ctx.globalAlpha = 1;
 }
 
 /* ══════════════════════════════════════════════════════════════
-   HUD
+   HUD / BOTÕES
    ══════════════════════════════════════════════════════════════ */
 function updateHUD() {
   goldLbl.textContent = Math.floor(gold || 0);
@@ -1006,12 +896,13 @@ function updateHUD() {
   waveLbl.textContent = wave || 1;
   scoreLbl.textContent = Math.floor(score || 0);
   speedBtn.textContent = speedMul + "x";
+  convGoldTxt.textContent = Math.floor(gold || 0);
   hudDirty = false;
 }
 
 function updateStartBtn() {
   if (running) {
-    startBtn.textContent = "A decorrer...";
+    startBtnTxt.textContent = "A decorrer...";
     startBtn.classList.remove("boss");
     startBtn.disabled = true;
     return;
@@ -1019,10 +910,10 @@ function updateStartBtn() {
   const nextWave = wave;
   const isBoss = nextWave % 5 === 0;
   if (isBoss) {
-    startBtn.textContent = "CHEFE " + nextWave + " 👑";
+    startBtnTxt.textContent = "CHEFE " + nextWave + " 👑";
     startBtn.classList.add("boss");
   } else {
-    startBtn.textContent = "VAGA " + nextWave;
+    startBtnTxt.textContent = "VAGA " + nextWave;
     startBtn.classList.remove("boss");
   }
   startBtn.disabled = false;
@@ -1041,11 +932,9 @@ function buildTowerButtons() {
       '<div class="nm">' + base.name + '</div>' +
       '<div class="cost">🪙 ' + base.cost + '</div>';
     btn.addEventListener("click", () => {
-      if (locked) { showInfo("🔒 Desbloqueia na árvore de talentos"); return; }
+      if (locked) { showInfo("🔒 Bloqueada"); return; }
       if (selectedType === type) {
-        selectedType = null;
-        btn.classList.remove("sel");
-        hoverSlot = null;
+        selectedType = null; btn.classList.remove("sel"); hoverSlot = null;
       } else {
         selectedType = type;
         document.querySelectorAll(".tbtn").forEach(b => b.classList.remove("sel"));
@@ -1057,7 +946,7 @@ function buildTowerButtons() {
   });
 }
 
-// ⏸ CONTINUA NA PARTE 5/5
+// CONTINUA NA PARTE 5/5
 /* ══════════════════════════════════════════════════════════════
    EVENTOS CANVAS
    ══════════════════════════════════════════════════════════════ */
@@ -1071,10 +960,8 @@ cv.addEventListener("pointerdown", evt => {
   evt.preventDefault();
   if (paused || gameOverFlag) return;
   const p = canvasCoords(evt);
-
   for (let i = 0; i < towers.length; i++) {
-    const t = towers[i];
-    if (dist(p, t) < 16) { showPopup(t); return; }
+    if (dist(p, towers[i]) < TILE*0.45) { showPopup(towers[i]); return; }
   }
   const slot = slots.find(s => dist(p, s) < TILE/2);
   if (slot && selectedType && !slot.occupied && slot.buildable) {
@@ -1097,7 +984,6 @@ cv.addEventListener("pointermove", evt => {
 });
 
 cv.addEventListener("pointerleave", () => {
-  cv.style.cursor = "default";
   hoverSlot = null;
   hoverPos = { x:-999, y:-999 };
 });
@@ -1122,17 +1008,14 @@ speedBtn.addEventListener("click", () => {
 
 function convertGold() {
   if (gold < 250) { showInfo("🪙 Precisas de 250 ouro"); return; }
-  gold -= 250;
-  persistent.essence++;
-  hudDirty = true;
-  vibrate(10);
+  gold -= 250; persistent.essence++;
+  hudDirty = true; vibrate(10);
   showInfo("💎 +1 essência");
   if (talentScreen.classList.contains("show")) renderTalentList();
   saveProgress(true);
 }
 convBtn.addEventListener("click", convertGold);
 talConv.addEventListener("click", convertGold);
-
 startBtn.addEventListener("click", () => { startWave(); });
 
 /* ══════════════════════════════════════════════════════════════
@@ -1143,7 +1026,7 @@ function openTalents() {
   pauseBadge.classList.add("show");
   talentScreen.classList.add("show");
   renderTalentList();
-  saveProgress(true);
+  forceSave();
 }
 function closeTalents() {
   paused = false;
@@ -1159,21 +1042,20 @@ function renderTalentList() {
     const lvl = talentLvl(tal.id);
     const cost = tal.cost(lvl);
     const maxed = lvl >= tal.max;
+    const canBuy = !maxed && persistent.essence >= cost;
     const div = document.createElement("div");
     div.className = "tal-item";
     div.innerHTML = '<div class="tico">' + tal.ico + '</div>' +
       '<div class="tinfo">' +
-        '<div class="tnm">' + tal.name + '</div>' +
+        '<div class="tnm">' + tal.name + ' <span style="color:#c77dff;font-weight:700;font-size:12px;">(' + lvl + '/' + tal.max + ')</span></div>' +
         '<div class="tdesc">' + tal.desc + '</div>' +
       '</div>' +
-      '<div class="tlvl">' + lvl + '/' + tal.max + '</div>' +
-      '<button class="tal-buy" ' + (maxed || persistent.essence < cost ? "disabled" : "") + '>' +
+      '<button class="tal-buy" ' + (canBuy ? "" : "disabled") + '>' +
         (maxed ? "MAX" : "💎 " + cost) +
       '</button>';
     const btn = div.querySelector(".tal-buy");
     btn.addEventListener("click", () => {
-      if (maxed) return;
-      if (persistent.essence < cost) return;
+      if (!canBuy) return;
       persistent.essence -= cost;
       persistent.talents[tal.id] = lvl + 1;
       if (tal.id === "force" && lvl+1 >= 3) persistent.unlocked.lightning = true;
@@ -1191,6 +1073,33 @@ function renderTalentList() {
 menuBtn.addEventListener("click", openTalents);
 talClose.addEventListener("click", closeTalents);
 
+talSave.addEventListener("click", () => {
+  forceSave();
+  showInfo("💾 Jogo guardado!");
+  vibrate(20);
+});
+
+btnRanking.addEventListener("click", () => {
+  // Abre overlay a mostrar ranking (sem game over)
+  overlay.classList.add("show");
+  document.querySelector(".ov-title").textContent = "🏆 Ranking";
+  document.querySelector(".ov-sub").textContent = "Melhores pontuações";
+  ovWave.textContent = "-";
+  ovWave2.textContent = "-";
+  ovScore.textContent = "-";
+  ovKills.textContent = "-";
+  ovTowers.textContent = "-";
+  ovName.style.display = "none";
+  ovBtn.textContent = "Voltar";
+  ovBtn.onclick = () => {
+    overlay.classList.remove("show");
+    ovName.style.display = "block";
+    ovBtn.textContent = "Jogar Novamente";
+    ovBtn.onclick = defaultOvBtnHandler;
+  };
+  renderRanking();
+});
+
 /* ══════════════════════════════════════════════════════════════
    OVERLAY / RANKING
    ══════════════════════════════════════════════════════════════ */
@@ -1199,10 +1108,13 @@ function escapeHtml(s) {
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   }[c]));
 }
-
 function renderRanking() {
   ovRanking.innerHTML = "";
   const sorted = persistent.ranking.slice().sort((a,b) => b.score - a.score).slice(0, 10);
+  if (sorted.length === 0) {
+    ovRanking.innerHTML = '<div style="text-align:center;color:#5a6b82;font-size:13px;padding:20px;">Ainda sem recordes</div>';
+    return;
+  }
   sorted.forEach((r, i) => {
     const d = document.createElement("div");
     d.className = "rk-item";
@@ -1212,86 +1124,69 @@ function renderRanking() {
     ovRanking.appendChild(d);
   });
 }
-
 function showGameOver() {
   gameOverFlag = true;
   running = false;
   overlay.classList.add("show");
+  document.querySelector(".ov-title").textContent = "Fim de Jogo";
+  document.querySelector(".ov-sub").innerHTML = "A torre caiu na vaga <span id=\"ovWave\">1</span>!";
+  ovWave = $("ovWave");
   ovWave.textContent = Math.max(0, wave - 1);
+  ovWave2.textContent = Math.max(0, wave - 1);
   ovScore.textContent = Math.floor(score);
   ovKills.textContent = killsThisRun;
   ovTowers.textContent = towersBuiltThisRun;
   ovName.value = persistent.playerName || "";
+  ovName.style.display = "block";
+  ovBtn.textContent = "Jogar Novamente";
   renderRanking();
 }
 
-ovBtn.addEventListener("click", () => {
+function defaultOvBtnHandler() {
   const name = (ovName.value || "").trim().replace(/[<>]/g, "").slice(0, 16);
   if (name) persistent.playerName = name;
   startNewGame();
-});
+}
+ovBtn.addEventListener("click", defaultOvBtnHandler);
 
 /* ══════════════════════════════════════════════════════════════
    GAME OVER / NOVO JOGO
    ══════════════════════════════════════════════════════════════ */
 function endGame() {
   if (gameOverFlag) return;
-  gameOverFlag = true;
-  running = false;
-
+  gameOverFlag = true; running = false;
   persistent.totalGames++;
   persistent.totalKills += killsThisRun;
   if (wave - 1 > persistent.bestWave) persistent.bestWave = wave - 1;
   if (score > persistent.bestScore) persistent.bestScore = Math.floor(score);
-
   const bonusEss = Math.floor((gold || 0) * 0.005);
   persistent.essence += bonusEss;
-
   if (!scoreSubmitted) {
     scoreSubmitted = true;
-    const name = (persistent.playerName || ovName.value || "Anónimo").slice(0, 16);
+    const name = (persistent.playerName || "Anónimo").slice(0, 16);
     persistent.ranking.push({ name, score: Math.floor(score), wave: wave - 1, date: Date.now() });
     persistent.ranking.sort((a,b) => b.score - a.score);
     persistent.ranking = persistent.ranking.slice(0, MAX_RANKING);
   }
-
-  persistent.currentWave = wave;
-  persistent.currentGold = gold;
-  persistent.currentLives = lives;
-  persistent.currentScore = score;
-  persistent.savedTowers = towers.map(t => ({
-    type: t.type, level: t.level, stars: t.stars, col: t.col, row: t.row
-  }));
-
+  persistent.savedState = null;
   saveProgress(true);
   showGameOver();
 }
 
 function startNewGame() {
   overlay.classList.remove("show");
-  gameOverFlag = false;
-  scoreSubmitted = false;
-  paused = false;
+  gameOverFlag = false; scoreSubmitted = false; paused = false;
   pauseBadge.classList.remove("show");
+  persistent.savedState = null;
 
   gold = 100 + startGoldBonus();
   maxLives = 20 + startLivesBonus();
   lives = maxLives;
-  wave = 1;
-  score = 0;
-  running = false;
-  selectedType = null;
-  selectedTower = null;
-  hoverSlot = null;
-  enemies = [];
-  projectiles = [];
-  particles = [];
-  floats = [];
-  spawnQueue = [];
-  spawnTimer = 0;
-  killsThisRun = 0;
-  towersBuiltThisRun = 0;
-  speedMul = 1;
+  wave = 1; score = 0; running = false;
+  selectedType = null; selectedTower = null; hoverSlot = null;
+  enemies = []; projectiles = []; particles = []; floats = [];
+  spawnQueue = []; spawnTimer = 0;
+  killsThisRun = 0; towersBuiltThisRun = 0; speedMul = 1;
 
   slots.forEach(s => { s.occupied = false; });
   towers = [];
@@ -1301,25 +1196,19 @@ function startNewGame() {
   updateStartBtn();
   buildTowerButtons();
   hidePopup();
-  setTimeout(() => {
-  resizeCanvas();
-  buildTowerButtons();
-}, 50); // Dá 50ms para o layout assentar antes de desenhar
+  saveProgress(true);
 }
 
 /* ══════════════════════════════════════════════════════════════
    LOOP PRINCIPAL
    ══════════════════════════════════════════════════════════════ */
-let lastTime = 0;
-let acc = 0;
+let lastTime = 0, acc = 0;
 const FRAME = 1000 / 60;
-
 function loop(now) {
   requestAnimationFrame(loop);
   if (!lastTime) lastTime = now;
   const dt = now - lastTime;
   lastTime = now;
-
   if (!paused) {
     acc += dt * speedMul;
     let steps = 0;
@@ -1330,7 +1219,6 @@ function loop(now) {
     }
     if (acc > FRAME * 6) acc = 0;
   }
-
   if (hudDirty) updateHUD();
   render();
 }
@@ -1338,29 +1226,47 @@ function loop(now) {
 /* ══════════════════════════════════════════════════════════════
    RESIZE
    ══════════════════════════════════════════════════════════════ */
-let resizeRAF = null;
-function resizeCanvas() {
-  if (resizeRAF) cancelAnimationFrame(resizeRAF);
-  resizeRAF = requestAnimationFrame(() => {
-    const wrap = $("gamewrap");
-    const w = wrap.clientWidth || window.innerWidth;
-    const h = wrap.clientHeight || window.innerHeight;
-    
-    // Garante que não fica com tamanho 0
-    if (w === 0 || h === 0) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    cv.width = Math.floor(w * dpr);
-    cv.height = Math.floor(h * dpr);
-    cv.style.width = w + "px";
-    cv.style.height = h + "px";
-    
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    rebuildStrategicSlots(w, h);
-  });
+let resizeTimer = 0;
+function onResize() {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    resizeCanvas();
+    buildTowerButtons();
+  }, 120);
 }
 window.addEventListener("resize", onResize);
 window.addEventListener("orientationchange", onResize);
+
+/* ══════════════════════════════════════════════════════════════
+   AUTO-SAVE
+   ══════════════════════════════════════════════════════════════ */
+function forceSave() {
+  if (gameOverFlag) return;
+  persistent.savedState = {
+    wave, gold, lives, score,
+    towers: towers.map(t => ({
+      type: t.type, level: t.level, stars: t.stars, col: t.col, row: t.row
+    }))
+  };
+  saveProgress(true);
+}
+
+// 1. Guarda a cada 5 segundos
+setInterval(() => {
+  if (running && !paused) forceSave();
+}, 5000);
+
+// 2. Guarda quando a página é escondida/fechada
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
+    forceSave();
+    if (running && !paused) {
+      paused = true;
+      pauseBadge.classList.add("show");
+    }
+  }
+});
+window.addEventListener("pagehide", forceSave);
 
 /* ══════════════════════════════════════════════════════════════
    INIT
@@ -1368,52 +1274,55 @@ window.addEventListener("orientationchange", onResize);
 function initGame() {
   loadProgress();
 
-  // Tenta retomar o jogo anterior
-  if (persistent.currentWave > 0) {
-    wave = persistent.currentWave;
-    gold = persistent.currentGold;
-    lives = persistent.currentLives;
-    score = persistent.currentScore;
-    
-    // Reconstrói as torres que lá estavam
+  if (persistent.savedState) {
+    // Retoma jogo guardado
+    const s = persistent.savedState;
+    wave = s.wave || 1;
+    gold = s.gold || 100;
+    lives = s.lives || 20;
+    score = s.score || 0;
+    maxLives = 20 + startLivesBonus();
+    running = false;
+    gameOverFlag = false;
+    paused = false;
+    scoreSubmitted = false;
+    enemies = []; projectiles = []; particles = []; floats = [];
+    spawnQueue = []; spawnTimer = 0;
+    killsThisRun = 0; towersBuiltThisRun = 0; speedMul = 1;
+    selectedType = null; selectedTower = null; hoverSlot = null;
+
+    // Reconstrói torres após o canvas ter slots
     setTimeout(() => {
-      if (persistent.savedTowers && persistent.savedTowers.length > 0) {
-        persistent.savedTowers.forEach(st => {
-          const slot = slots.find(s => s.col === st.col && s.row === st.row);
-          if (slot && slot.buildable) {
+      rebuildStrategicSlots($("gamewrap").clientWidth, $("gamewrap").clientHeight);
+      if (Array.isArray(s.towers)) {
+        s.towers.forEach(st => {
+          const slot = slots.find(x => x.col === st.col && x.row === st.row && x.buildable);
+          if (slot && !slot.occupied) {
             slot.occupied = true;
             towers.push({
-              type: st.type, level: st.level, stars: st.stars,
+              type: st.type, level: st.level || 1, stars: st.stars || 0,
               col: st.col, row: st.row, x: slot.x, y: slot.y,
               slot, cooldown: 0, angle: 0
             });
           }
         });
       }
-    }, 100); // Espera o canvas reconstruir os slots
+    }, 80);
   } else {
-    // Jogo novo
+    // Novo jogo
     gold = 100 + startGoldBonus();
-    wave = 1;
-    score = 0;
-    lives = 20 + startLivesBonus();
+    maxLives = 20 + startLivesBonus();
+    lives = maxLives;
+    wave = 1; score = 0; running = false;
+    gameOverFlag = false; paused = false; scoreSubmitted = false;
+    enemies = []; projectiles = []; particles = []; floats = [];
+    spawnQueue = []; spawnTimer = 0;
+    killsThisRun = 0; towersBuiltThisRun = 0; speedMul = 1;
+    selectedType = null; selectedTower = null; hoverSlot = null;
+    towers = [];
   }
 
-  maxLives = 20 + startLivesBonus();
-  running = false;
-  gameOverFlag = false;
-  scoreSubmitted = false;
-  paused = false;
-  selectedType = null;
-  selectedTower = null;
-  hoverSlot = null;
-  hoverPos = { x:-999, y:-999 };
-  enemies = [];
-  projectiles = [];
-  particles = [];
-  floats = [];
-  spawnQueue = [];
-  
+  resizeCanvas();
   setTimeout(() => {
     resizeCanvas();
     buildTowerButtons();
@@ -1426,38 +1335,6 @@ function initGame() {
   requestAnimationFrame(loop);
 }
 
-/* ══════════════════════════════════════════════════════════════
-   AUTO-SAVE E PROTEÇÃO DE SAÍDA
-   ══════════════════════════════════════════════════════════════ */
-// Auto-save a cada 5 segundos (guarda ouro, vidas, vagas, torres)
-setInterval(() => {
-  if (gameOverFlag || !running) return; // Se morreu ou está pausado, já guardou
-  
-  persistent.currentWave = wave;
-  persistent.currentGold = gold;
-  persistent.currentLives = lives;
-  persistent.currentScore = score;
-  persistent.savedTowers = towers.map(t => ({
-    type: t.type, level: t.level, stars: t.stars, col: t.col, row: t.row
-  }));
-  saveProgress(true);
-}, 5000);
-
-// Guarda ao fechar/minimizar a aba
-window.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden" && !gameOverFlag) {
-    persistent.currentWave = wave;
-    persistent.currentGold = gold;
-    persistent.currentLives = lives;
-    persistent.currentScore = score;
-    persistent.savedTowers = towers.map(t => ({
-      type: t.type, level: t.level, stars: t.stars, col: t.col, row: t.row
-    }));
-    saveProgress(true);
-    paused = true; // Pausa o jogo se mudares de app
-    pauseBadge.classList.add("show");
-  }
-});
 initGame();
 </script>
 </body>
