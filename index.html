@@ -158,7 +158,7 @@
     <div class="hstat gold"><div class="val" id="goldLbl">0</div><div class="lbl">OURO</div></div>
     <div class="hstat ess"><div class="val" id="essLbl">0</div><div class="lbl">ESSÊNCIA</div></div>
     <div class="hstat score"><div class="val" id="scoreLbl">0</div><div class="lbl">PONTOS</div></div>
-    <div class="hstat life"><div class="val" id="lifeLbl">20</div><div class="lbl">VIDAS</div></div>
+    <div class="hstat life"><div class="val" id="lifeLbl">12</div><div class="lbl">VIDAS</div></div>
     <div class="hstat wave"><div class="val" id="waveLbl">1</div><div class="lbl">VAGA</div></div>
     <div class="hstat world"><div class="val" id="worldLbl">1</div><div class="lbl">MUNDO</div></div>
     <div class="hspacer"></div>
@@ -230,8 +230,7 @@
 </div>
 <script>
 "use strict";
-
-const SAVE_KEY = "torreProgressV34";
+const SAVE_KEY = "torreProgressV35";
 const TILE = 36;
 const MAX_RANKING = 20;
 
@@ -250,21 +249,21 @@ const TOWER_TYPES = {
 };
 
 const ENEMY_TYPES = {
-  goblin: { name:"Goblin", hp:3,  gold:6,  color:"#7cb342", speed:0.9,  radius:10 },
-  orc:    { name:"Orc",    hp:9,  gold:10, color:"#8d6e63", speed:0.75, radius:12 },
-  swift:  { name:"Veloz",  hp:5,  gold:8,  color:"#ffb74d", speed:1.35, radius:9  },
-  tank:   { name:"Tanque", hp:22, gold:20, color:"#b0bec5", speed:0.55, radius:14 },
-  boss:   { name:"Chefe",  hp:90, gold:45, color:"#e53935", speed:0.5,  radius:18, lives:5 }
+  goblin: { name:"Goblin", hp:5,  gold:5,  color:"#7cb342", speed:0.85, radius:10 },
+  orc:    { name:"Orc",    hp:14, gold:9,  color:"#8d6e63", speed:0.70, radius:12 },
+  swift:  { name:"Veloz",  hp:8,  gold:7,  color:"#ffb74d", speed:1.30, radius:9  },
+  tank:   { name:"Tanque", hp:35, gold:18, color:"#b0bec5", speed:0.50, radius:14 },
+  boss:   { name:"Chefe",  hp:160,gold:50, color:"#e53935", speed:0.55, radius:18, lives:8 }
 };
 
 const TALENTS = [
   { id:"force",    ico:"⚔️", name:"Força",       desc:"+15% dano das torres por nível (Nv.3 desbloqueia ⚡)", max:5, cost:n=>4+n*2 },
   { id:"greed",    ico:"🪙", name:"Ganância",    desc:"+20% ouro obtido por nível (Nv.3 desbloqueia ☠️)", max:5, cost:n=>3+n*2 },
-  { id:"vital",    ico:"❤️", name:"Vitalidade",  desc:"+2 vidas iniciais por nível",           max:5, cost:n=>3+n*2 },
-  { id:"precision",ico:"🎯", name:"Precisão",    desc:"+8% alcance das torres por nível",      max:5, cost:n=>4+n*2 },
-  { id:"speed",    ico:"⏱️", name:"Celeridade",  desc:"+10% cadência de tiro por nível",       max:5, cost:n=>5+n*2 },
-  { id:"heritage", ico:"💰", name:"Herança",     desc:"+40 ouro inicial por nível",            max:3, cost:n=>6+n*2 },
-  { id:"channel",  ico:"🔮", name:"Canalização", desc:"+1 essência extra por vaga",            max:5, cost:n=>5+n*3 }
+  { id:"vital",    ico:"❤️", name:"Vitalidade",  desc:"+1 vida inicial por nível",               max:5, cost:n=>3+n*2 },
+  { id:"precision",ico:"🎯", name:"Precisão",    desc:"+8% alcance das torres por nível",        max:5, cost:n=>4+n*2 },
+  { id:"speed",    ico:"⏱️", name:"Celeridade",  desc:"+10% cadência de tiro por nível",         max:5, cost:n=>5+n*2 },
+  { id:"heritage", ico:"💰", name:"Herança",     desc:"+20 ouro inicial por nível",              max:3, cost:n=>6+n*2 },
+  { id:"channel",  ico:"🔮", name:"Canalização", desc:"+1 essência extra por vaga",              max:5, cost:n=>5+n*3 }
 ];
 
 function defaultPersistent() {
@@ -292,10 +291,7 @@ function loadProgress() {
     persistent.ranking = Array.isArray(persistent.ranking) ? persistent.ranking.slice(0, MAX_RANKING) : [];
     persistent.playerName = typeof persistent.playerName === "string" ? persistent.playerName.slice(0,16) : "";
     if (persistent.savedState && typeof persistent.savedState !== "object") persistent.savedState = null;
-  } catch(e) {
-    console.warn("load falhou", e);
-    persistent = defaultPersistent();
-  }
+  } catch(e) { console.warn("load falhou", e); persistent = defaultPersistent(); }
 }
 
 let saveDirty = false, lastSaveTime = 0;
@@ -303,9 +299,8 @@ function saveProgress(force) {
   const now = performance.now();
   if (!force && now - lastSaveTime < 1000) { saveDirty = true; return; }
   lastSaveTime = now; saveDirty = false;
-  try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(persistent));
-  } catch(e) {
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(persistent)); }
+  catch(e) {
     if (storageAvailable) {
       storageAvailable = false;
       try { showInfo("⚠️ Não é possível guardar (modo privado?)"); } catch(_){}
@@ -314,7 +309,7 @@ function saveProgress(force) {
   }
 }
 
-let gold = 0, lives = 20, maxLives = 20, wave = 1, world = 1, score = 0;
+let gold = 0, lives = 12, maxLives = 12, wave = 1, world = 1, score = 0;
 let running = false, gameOverFlag = false, paused = false;
 let selectedType = null, selectedTower = null;
 let towers = [], enemies = [], projectiles = [], particles = [], floats = [];
@@ -322,7 +317,7 @@ let spawnQueue = [], spawnTimer = 0, slots = [], PATH = [];
 let killsThisRun = 0, towersBuiltThisRun = 0;
 let speedMul = 1, hudDirty = true;
 let hoverSlot = null;
-let pendingSaleId = null, pendingSaleTimer = 0;
+let pendingSaleId = null;
 
 const $ = id => document.getElementById(id);
 const cv = $("cv"), ctx = cv.getContext("2d");
@@ -338,6 +333,7 @@ const goldLbl=$("goldLbl"), essLbl=$("essLbl"), scoreLbl=$("scoreLbl"), lifeLbl=
       globalRankingList=$("globalRankingList"), convGoldTxt=$("convGoldTxt"), overlay=$("overlay"),
       ovWave=$("ovWave"), ovWave2=$("ovWave2"), ovScore=$("ovScore"), ovKills=$("ovKills"),
       ovTowers=$("ovTowers"), ovName=$("ovName"), ovBtn=$("ovBtn"), ovRanking=$("ovRanking");
+
 function vibrate(ms){ if(navigator.vibrate){ try{ navigator.vibrate(ms); }catch(_){} } }
 function rand(a,b){ return a + Math.random()*(b-a); }
 function dist(a,b){ const dx=a.x-b.x, dy=a.y-b.y; return Math.hypot(dx,dy); }
@@ -358,7 +354,6 @@ function burst(x,y,color,n){
   }
 }
 function floatText(x,y,txt,color){ floats.push({x,y,txt,color,life:1,vy:-0.8}); }
-
 let COLS = 10, ROWS = 14, offX = 0, offY = 0;
 
 function resizeCanvas(){
@@ -409,6 +404,7 @@ function rebuildStrategicSlots(w,h){
       if(distToSegment(s, PATH[i], PATH[i+1]) < TILE*0.85){ s.buildable = false; break; }
     }
   });
+
   previousTowers.forEach(item => {
     const t = item.tower;
     let slot = slots.find(s => s.buildable && !s.occupied && s.col === item.col && s.row === item.row);
@@ -429,10 +425,8 @@ function rebuildStrategicSlots(w,h){
       t.x = slot.x; t.y = slot.y;
       towers.push(t);
     } else {
-      // Fallback: reembolsa se não houver slot livre (evita perder torre)
       const refund = TOWER_TYPES[t.type] ? TOWER_TYPES[t.type].cost : 0;
       gold += refund;
-      try { showInfo("♻️ Torre reembolsada por falta de espaço"); } catch(_){}
     }
   });
 }
@@ -451,12 +445,8 @@ function buildPath(offX, offY){
   const r1 = Math.max(1, Math.floor(ROWS * 0.30));
   const r2 = Math.max(r1 + 2, Math.floor(ROWS * 0.65));
   const pts = [
-    { col:c1, row:0 },
-    { col:c1, row:r1 },
-    { col:c2, row:r1 },
-    { col:c2, row:r2 },
-    { col:c1, row:r2 },
-    { col:c1, row:ROWS-1 }
+    { col:c1, row:0 }, { col:c1, row:r1 }, { col:c2, row:r1 },
+    { col:c2, row:r2 }, { col:c1, row:r2 }, { col:c1, row:ROWS-1 }
   ];
   return pts.map(p => ({
     x: offX + p.col*TILE + TILE/2,
@@ -469,22 +459,23 @@ function dmgMul()       { return 1 + talentLvl("force")*0.15; }
 function goldMul()      { return 1 + talentLvl("greed")*0.20; }
 function rangeMul()     { return 1 + talentLvl("precision")*0.08; }
 function rateMul()      { return 1 - talentLvl("speed")*0.10; }
-function startGoldBonus(){ return talentLvl("heritage")*40; }
-function startLivesBonus(){ return talentLvl("vital")*2; }
+function startGoldBonus(){ return talentLvl("heritage")*20; }
+function startLivesBonus(){ return talentLvl("vital")*1; }
 function essencePerWave(){ return 1 + talentLvl("channel"); }
 
 function towerStats(t){
   const base = TOWER_TYPES[t.type];
-  const lvlMul = Math.pow(1.6, t.level-1);
-  const starMul = Math.pow(1.35, t.stars);
+  const lvlMul = Math.pow(1.45, t.level-1);
+  const starMul = Math.pow(1.25, t.stars);
   const dmg = base.dmg * lvlMul * starMul * dmgMul();
   const range = (base.range + (t.level-1)*18 + t.stars*12) * rangeMul();
   const rate = base.rate * Math.pow(0.82, t.level-1) * Math.pow(0.9, t.stars) * rateMul();
   return { dmg, range, rate: Math.max(8, rate) };
 }
-function towerUpgradeCost(t){ return Math.floor(TOWER_TYPES[t.type].cost * 0.6 * t.level); }
+function towerUpgradeCost(t){ return Math.floor(TOWER_TYPES[t.type].cost * 0.85 * t.level); }
 function towerEvolveCost(t) { return 4 + t.stars * 4; }
 function towerSellValue(t)  { return Math.floor((TOWER_TYPES[t.type].cost + (t.level-1)*30) * 0.6); }
+
 function buildTower(slot, type){
   const base = TOWER_TYPES[type];
   if (!base) return;
@@ -538,7 +529,7 @@ function sellTower(t){
 function showPopup(t){ selectedTower = t; popup.classList.add("show"); refreshPopup(); }
 function hidePopup(){
   popup.classList.remove("show"); selectedTower = null;
-  pendingSaleId = null; pendingSaleTimer = 0;
+  pendingSaleId = null;
   sellBtn.classList.remove("confirm");
   sellBtn.innerHTML = 'Vender<small id="sellVal">0</small>';
 }
@@ -556,24 +547,20 @@ function refreshPopup(){
   else { upgBtn.disabled = gold < upCost; upgCost.textContent = "🪙 " + upCost; }
   if (t.stars >= 5) { evoBtn.disabled = true; evoCost.textContent = "MAX"; }
   else { evoBtn.disabled = t.level < 3 || persistent.essence < evCost; evoCost.textContent = "💎 " + evCost; }
-  sellBtn.disabled = false; sellVal.textContent = "🪙 " + sv;
+  sellBtn.disabled = false;
   sellBtn.classList.remove("confirm");
   sellBtn.innerHTML = 'Vender<small id="sellVal">🪙 ' + sv + '</small>';
-  // re-obter referência pois innerHTML foi reescrito
-  sellValEl = document.getElementById("sellVal");
-  pendingSaleId = null; pendingSaleTimer = 0;
+  pendingSaleId = null;
 }
-let sellValEl = null;
-
 function spawnEnemy(type, waveNum, worldNum){
   const base = ENEMY_TYPES[type];
   if (!base) return;
-  const worldFactor = 1 + (worldNum - 1) * 0.5;
-  let tierBonus = 1 + Math.floor(waveNum / 10) * 0.35;
-  if (waveNum % 5 === 0) tierBonus += 0.20;
-  const hpScale = (1 + (waveNum - 1) * 0.28 * tierBonus) * worldFactor;
+  const worldFactor = 1 + (worldNum - 1) * 0.6;
+  let tierBonus = 1 + Math.floor(waveNum / 8) * 0.45;
+  if (waveNum % 5 === 0) tierBonus += 0.25;
+  const hpScale = (1 + (waveNum - 1) * 0.42 * tierBonus) * worldFactor;
   const hp = Math.ceil(base.hp * hpScale);
-  const speed = base.speed * (1 + (worldNum - 1) * 0.08) * (1 + Math.floor(waveNum / 10) * 0.03);
+  const speed = base.speed * (1 + (worldNum - 1) * 0.10) * (1 + Math.floor(waveNum / 8) * 0.05);
   enemies.push({
     type, hp, maxHp: hp, gold: Math.ceil(base.gold * (1 + (worldNum-1)*0.2)),
     speed, radius: base.radius, color: base.color, x: PATH[0].x, y: PATH[0].y,
@@ -587,13 +574,15 @@ function startWave(){
   spawnQueue = []; spawnTimer = 0;
   const isBoss = wave % 5 === 0;
   const waveTierMult = 1 + Math.floor(wave / 10) * 0.15;
-  const count = isBoss ? (7 + Math.floor(wave * 0.5 * waveTierMult)) : (6 + Math.floor(wave * 0.7 * waveTierMult));
+  const count = isBoss
+    ? (10 + Math.floor(wave * 0.7 * waveTierMult))
+    : (8 + Math.floor(wave * 1.0 * waveTierMult));
   for (let i = 0; i < count; i++) {
     let type = "goblin";
     if (wave >= 3 && Math.random() < 0.35) type = "orc";
     if (wave >= 5 && Math.random() < 0.25) type = "swift";
     if (wave >= 7 && Math.random() < 0.25) type = "tank";
-    const delayStep = Math.max(16, 40 - Math.floor(wave / 5) * 2);
+    const delayStep = Math.max(12, 34 - Math.floor(wave / 4) * 2);
     spawnQueue.push({ type, delay: i === 0 ? 0 : delayStep });
   }
   if (isBoss) spawnQueue.push({ type: "boss", delay: 30 });
@@ -619,7 +608,7 @@ function killEnemy(e){
 }
 function damageBase(e){
   if (!e.alive) return;
-  const livesCfg = ENEMY_TYPES[e.type] && ENEMY_TYPES[e.type].lives ? ENEMY_TYPES[e.type].lives : 1;
+  const livesCfg = e.type === "boss" ? 8 : (ENEMY_TYPES[e.type] && ENEMY_TYPES[e.type].lives ? ENEMY_TYPES[e.type].lives : 1);
   lives -= livesCfg; vibrate(40);
   e.alive = false;
   enemies = enemies.filter(x => x !== e);
@@ -627,6 +616,7 @@ function damageBase(e){
   burst(e.x, e.y, "#ff5252", 12);
   if (lives <= 0) endGame();
 }
+
 function fireProjectile(t, target){
   const base = TOWER_TYPES[t.type];
   const st = towerStats(t);
@@ -680,7 +670,7 @@ function update(){
     }
   } else if (enemies.length === 0 && running) {
     running = false;
-    const bonus = 15 + wave * 4 * world;
+    const bonus = 12 + wave * 2 * world;
     gold += bonus; score += bonus;
     persistent.essence += essencePerWave();
     if (wave % 5 === 0) {
@@ -955,7 +945,6 @@ cv.addEventListener("pointerdown", evt => {
   evt.preventDefault();
   if (paused || gameOverFlag) return;
   const p = canvasCoords(evt);
-  // Se estamos a construir, ignorar cliques em torres existentes
   if (selectedType) {
     const slot = slots.find(s => dist(p, s) < TILE/2);
     if (slot && !slot.occupied && slot.buildable) {
@@ -963,11 +952,9 @@ cv.addEventListener("pointerdown", evt => {
       hoverSlot = null;
       return;
     }
-    // Se não for slot válido, cancela seleção
     hidePopup();
     return;
   }
-  // Sem tipo selecionado: abrir popup se clicou numa torre
   for (let i = 0; i < towers.length; i++) {
     if (dist(p, towers[i]) < TILE*0.45) { showPopup(towers[i]); return; }
   }
@@ -992,17 +979,17 @@ evoBtn.addEventListener("click", () => { if (selectedTower) evolveTower(selected
 sellBtn.addEventListener("click", () => {
   if (!selectedTower) return;
   const t = selectedTower;
-  if (pendingSaleId === t && pendingSaleTimer > 0) {
-    pendingSaleId = null; pendingSaleTimer = 0;
+  if (pendingSaleId === t) {
+    pendingSaleId = null;
     sellTower(t);
     return;
   }
-  pendingSaleId = t; pendingSaleTimer = 3000;
+  pendingSaleId = t;
   sellBtn.classList.add("confirm");
   sellBtn.innerHTML = 'Confirmar<small>Toca de novo</small>';
   setTimeout(() => {
     if (pendingSaleId === t) {
-      pendingSaleId = null; pendingSaleTimer = 0;
+      pendingSaleId = null;
       if (selectedTower === t) {
         sellBtn.classList.remove("confirm");
         const sv = towerSellValue(t);
@@ -1046,7 +1033,6 @@ function closeTalents(){
 }
 
 function renderTalentList(){
-  // NOTA: não chamar loadProgress() aqui — usa estado em memória
   talEss.textContent = persistent.essence;
   talList.innerHTML = "";
   TALENTS.forEach(tal => {
@@ -1102,7 +1088,6 @@ function renderGlobalRanking(){
   globalRankingList.innerHTML = "";
   const sorted = persistent.ranking.slice().sort((a,b) => b.score - a.score).slice(0, 10);
   if (sorted.length === 0) {
-    globalRankingList.innerHTML = '<div style="text-align:center;color:#5
     globalRankingList.innerHTML = '<div style="text-align:center;color:#5a6b82;font-size:13px;padding:20px;">Ainda sem recordes</div>';
     return;
   }
@@ -1121,13 +1106,12 @@ btnRanking.addEventListener("click", () => {
   renderGlobalRanking();
   rankingScreen.classList.add("show");
 });
-
 rankClose.addEventListener("click", () => {
   rankingScreen.classList.remove("show");
   talentScreen.classList.add("show");
 });
 
-function renderGameOverRanking(highlightIdx){
+function renderGameOverRanking(){
   ovRanking.innerHTML = "";
   const sorted = persistent.ranking.slice().sort((a,b) => b.score - a.score).slice(0, 10);
   if (sorted.length === 0) {
@@ -1136,7 +1120,7 @@ function renderGameOverRanking(highlightIdx){
   }
   sorted.forEach((r, i) => {
     const d = document.createElement("div");
-    d.className = "rk-item" + (i === highlightIdx ? " rk-highlight" : "");
+    d.className = "rk-item";
     d.innerHTML = '<div class="rk-pos">#' + (i+1) + '</div>' +
       '<div class="rk-name">' + escapeHtml(r.name || "Anónimo") + '</div>' +
       '<div class="rk-score">' + r.score + '</div>';
@@ -1165,7 +1149,6 @@ function endGame(){
   const bonusEss = Math.floor((gold || 0) * 0.005);
   persistent.essence += bonusEss;
   persistent.savedState = null;
-  // Ranking é submetido no botão "Jogar Novamente" (após nome) — evita duplicação
   saveProgress(true);
   showGameOver();
 }
@@ -1186,7 +1169,7 @@ function startNewGame(){
   pauseBadge.classList.remove("show");
   persistent.savedState = null;
   gold = 100 + startGoldBonus();
-  maxLives = 20 + startLivesBonus();
+  maxLives = 12 + startLivesBonus();
   lives = maxLives;
   wave = 1; world = 1; score = 0; running = false;
   selectedType = null; selectedTower = null; hoverSlot = null;
@@ -1264,9 +1247,9 @@ function initGame(){
     wave = s.wave || 1;
     world = s.world || 1;
     gold = s.gold || 100;
-    lives = Math.max(1, s.lives || 20);
+    lives = Math.max(1, s.lives || 12);
     score = s.score || 0;
-    maxLives = Math.max(lives, 20 + startLivesBonus());
+    maxLives = Math.max(lives, 12 + startLivesBonus());
     running = false; gameOverFlag = false; paused = false;
     enemies = []; projectiles = []; particles = []; floats = [];
     spawnQueue = []; spawnTimer = 0;
@@ -1290,7 +1273,7 @@ function initGame(){
     }, 50);
   } else {
     gold = 100 + startGoldBonus();
-    maxLives = 20 + startLivesBonus();
+    maxLives = 12 + startLivesBonus();
     lives = maxLives;
     wave = 1; world = 1; score = 0; running = false;
     gameOverFlag = false; paused = false;
