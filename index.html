@@ -84,30 +84,73 @@
   .pbtn:disabled { opacity:0.3; }
   .pbtn:active:not(:disabled) { transform:scale(0.95); }
 
-  /* Panel */
-  #panel { display:flex; align-items:stretch; gap:8px; padding:12px;
-    background:#0f1626; border-top:1px solid rgba(255,255,255,0.05); flex-shrink:0; }
-  #towerScroll { flex:1; display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }
-  #towerScroll::-webkit-scrollbar { display:none; }
-  .tbtn { flex-shrink:0; width:70px; padding:10px 6px; border-radius:12px;
-    background:#141c2e; border:1px solid rgba(255,255,255,0.08);
-    color:#e8ecf5; cursor:pointer; display:flex; flex-direction:column;
-    align-items:center; gap:4px; position:relative; transition:all .15s; }
-  .tbtn .ico { font-size:24px; line-height:1; }
-  .tbtn .nm { font-size:11px; font-weight:700; color:#8fa3bd; }
-  .tbtn .cost { font-size:11px; font-weight:800; color:#ffd700; }
-  .tbtn.sel { background:rgba(78,205,196,0.15); border-color:#4ecdc4; }
-  .tbtn.locked { opacity:0.4; }
-  .tbtn.locked::after { content:'🔒'; position:absolute; top:6px; right:6px; font-size:12px; }
-  .tbtn:active { transform:scale(0.95); }
+  /* Panel (Barra de baixo) */
+#panel { 
+  display: flex; 
+  align-items: stretch; 
+  gap: 8px; 
+  padding: 8px 10px;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
+  background: #0f1626; 
+  border-top: 1px solid rgba(255,255,255,0.05); 
+  flex-shrink: 0; 
+  height: 85px; /* Altura fixa para não "esmagar" */
+}
 
-  #startBtn { flex-shrink:0; padding:0 20px; border-radius:12px;
-    background:#f44336; border:none; color:#fff; font-weight:900; font-size:14px;
-    cursor:pointer; display:flex; flex-direction:column; align-items:center;
-    justify-content:center; line-height:1.2; min-width:96px; }
-  #startBtn.boss { background:#d32f2f; animation:pulse 1s infinite; }
-  #startBtn:disabled { opacity:0.5; }
-  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.7;} }
+#towerScroll { 
+  flex: 1; 
+  display: flex; 
+  gap: 8px; 
+  overflow-x: auto; 
+  overflow-y: hidden;
+  scrollbar-width: none; 
+  -webkit-overflow-scrolling: touch; 
+}
+#towerScroll::-webkit-scrollbar { display: none; }
+
+.tbtn { 
+  flex-shrink: 0; 
+  width: 68px; /* Largura fixa para caberem mais */
+  padding: 6px 4px; 
+  border-radius: 12px;
+  background: #141c2e; 
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #e8ecf5; 
+  cursor: pointer; 
+  display: flex; 
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center; /* Centra o conteúdo na vertical */
+  gap: 2px; 
+  position: relative; 
+  transition: all .15s; 
+}
+.tbtn .ico { font-size: 22px; line-height: 1; }
+.tbtn .nm { font-size: 10px; font-weight: 700; color: #8fa3bd; white-space: nowrap; }
+.tbtn .cost { font-size: 11px; font-weight: 800; color: #ffd700; }
+.tbtn.sel { background: rgba(78,205,196,0.15); border-color: #4ecdc4; box-shadow: 0 0 10px rgba(78,205,196,0.2); }
+.tbtn.locked { opacity: 0.4; }
+.tbtn.locked::after { content: '🔒'; position: absolute; top: 4px; right: 4px; font-size: 11px; }
+
+/* Botão VAGA / CHEFE */
+#startBtn { 
+  flex-shrink: 0; 
+  width: 90px; /* Largura fixa em vez de padding elástico */
+  border-radius: 12px;
+  background: #4ecdc4; 
+  border: none; 
+  color: #0a1020; 
+  font-weight: 900; 
+  font-size: 13px;
+  cursor: pointer; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  text-align: center;
+  line-height: 1.2;
+}
+#startBtn.boss { background: #f44336; color: #fff; animation: pulse 1s infinite; }
+#startBtn:disabled { opacity: 0.5; background: #2d3a4f; color: #8fa3bd; }
 
   /* Talent screen */
   #talentScreen, #overlay { position:absolute; inset:0; z-index:50; background:#0a1020;
