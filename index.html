@@ -310,7 +310,7 @@
     <div class="talentActions">
       <button id="showRankFromTalents">🏆 Ranking</button>
       <button id="closeTalents">Voltar</button>
-      <button id="manualSaveBtn">💾 Guardar Na Nuvem Local</button>
+      <button id="manualSaveBtn">💾 Guardar Jogo</button>
       <button id="exportSaveBtn">📥 Exportar Ficheiro</button>
       <button id="importSaveBtn">📤 Importar Ficheiro</button>
       <input type="file" id="importFile" style="display:none" accept=".json">
@@ -389,14 +389,33 @@ let persistent = {
   unlocked: { lightning:false, poison:false },
   bestWave: 0,
   bestScore: 0,
-  ranking: []
+  ranking: [],
+  // Estado da partida atual para gravação:
+  currentWave: 0,
+  currentGold: 150,
+  currentLives: 15,
+  currentScore: 0,
+  savedTowers: []
 };
 TALENT_DEFS.forEach(t => persistent.talents[t.id] = 0);
 
-const STORAGE_KEY = 'torreProgressV16_PT';
+const STORAGE_KEY = 'torreProgressV17_PT';
 
 function saveProgress(){
   try {
+    // Guardar estado atual da partida antes de salvar
+    if (typeof wave !== 'undefined') persistent.currentWave = wave;
+    if (typeof gold !== 'undefined') persistent.currentGold = gold;
+    if (typeof lives !== 'undefined') persistent.currentLives = lives;
+    if (typeof score !== 'undefined') persistent.currentScore = score;
+    
+    if (typeof towers !== 'undefined' && slots) {
+      persistent.savedTowers = towers.map(t => {
+        let slotIdx = slots.indexOf(t.slot);
+        return { slotIdx, type: t.type, level: t.level, stars: t.stars };
+      });
+    }
+
     const data = JSON.stringify(persistent);
     localStorage.setItem(STORAGE_KEY, data);
     sessionStorage.setItem(STORAGE_KEY, data);
@@ -419,6 +438,11 @@ function loadProgress(){
       if (p.bestWave) persistent.bestWave = p.bestWave;
       if (p.bestScore) persistent.bestScore = p.bestScore;
       if (Array.isArray(p.ranking)) persistent.ranking = p.ranking;
+      if (typeof p.currentWave === 'number') persistent.currentWave = p.currentWave;
+      if (typeof p.currentGold === 'number') persistent.currentGold = p.currentGold;
+      if (typeof p.currentLives === 'number') persistent.currentLives = p.currentLives;
+      if (typeof p.currentScore === 'number') persistent.currentScore = p.currentScore;
+      if (Array.isArray(p.savedTowers)) persistent.savedTowers = p.savedTowers;
     }
   } catch(e){}
 }
@@ -485,7 +509,6 @@ function buildPath(){
 }
 
 function rebuildSlotsPreservingTowers(){
-  const oldTowers = towers ? [...towers] : [];
   slots = [];
   const cols = W < 500 ? 4 : 6;
   const rows = W < 500 ? 4 : 3;
@@ -502,23 +525,6 @@ function rebuildSlotsPreservingTowers(){
       if (!near) slots.push({ x, y, occupied:false, tower:null });
     }
   }
-
-  towers = [];
-  oldTowers.forEach(t => {
-    let closestSlot = null, minDist = Infinity;
-    slots.forEach(s => {
-      if (!s.occupied){
-        const d = Math.hypot(s.x-t.x, s.y-t.y);
-        if (d < minDist){ minDist = d; closestSlot = s; }
-      }
-    });
-    if (closestSlot){
-      closestSlot.occupied = true;
-      t.x = closestSlot.x; t.y = closestSlot.y; t.slot = closestSlot;
-      closestSlot.tower = t;
-      towers.push(t);
-    }
-  });
 }
 
 window.addEventListener('resize', resize);
@@ -534,28 +540,55 @@ speedBtn.addEventListener('click', ()=>{
 
 function initGame(){
   loadProgress();
-  gold = 150 + talentBonus('start');
-  essence = 0;
+  buildSlots();
+
+  // Restaurar estado da partida guardada
+  wave = persistent.currentWave || 0;
+  gold = (persistent.currentWave > 0) ? (persistent.currentGold ?? (150 + talentBonus('start'))) : (150 + talentBonus('start'));
   maxLives = 15 + talentBonus('life');
-  lives = maxLives;
-  wave = 0; score = 0;
+  lives = persistent.currentWave > 0 ? (persistent.currentLives ?? maxLives) : maxLives;
+  score = persistent.currentScore || 0;
+  
+  essence = 0; // As essências vão para o cofre persistent.essence
   running = false; gameOverFlag = false; gameSpeed = 1;
   speedBtn.textContent = '1x';
   selectedType = null; selectedTower = null;
   towers = []; enemies = []; projectiles = []; particles = []; floats = [];
   spawnQueue = []; spawnTimer = 0;
+
+  // Restaurar torres guardadas
+  if (Array.isArray(persistent.savedTowers) && persistent.savedTowers.length > 0){
+    persistent.savedTowers.forEach(st => {
+      if (slots[st.slotIdx]) {
+        const slot = slots[st.slotIdx];
+        const T = TOWER_TYPES[st.type];
+        if (T) {
+          slot.occupied = true;
+          const dmgBonus = talentBonus('dmg');
+          const rangeBonus = talentBonus('range');
+          const rateBonus = talentBonus('rate');
+          
+          let tower = {
+            x: slot.x, y: slot.y, type: st.type,
+            level: st.level || 1, stars: st.stars || 0, cooldown: 0, angle: -Math.PI/2,
+            range: T.range * rangeBonus,
+            dmg: (T.dmg * dmgBonus) * Math.pow(1.6, (st.level||1)-1) * Math.pow(1.35, st.stars||0),
+            fireRate: (T.fireRate * rateBonus) * Math.pow(0.82, (st.level||1)-1) * Math.pow(0.9, st.stars||0),
+            slot, color: T.color, icon: T.icon
+          };
+          slot.tower = tower;
+          towers.push(tower);
+        }
+      }
+    });
+  }
+
   updateTowerButtons();
   startBtn.disabled = false;
   document.getElementById('overlay').classList.remove('show');
   document.getElementById('talentScreen').classList.remove('show');
   hidePopup();
   updateHUD();
-  buildSlots();
-}
-
-function buildSlots(){
-  towers = [];
-  rebuildSlotsPreservingTowers();
 }
 
 function updateTowerButtons(){
@@ -719,7 +752,7 @@ document.getElementById('showRankFromTalents').addEventListener('click', ()=>{
 document.getElementById('manualSaveBtn').addEventListener('click', ()=>{
   saveProgress();
   vibrate(50);
-  showInfo('💾 Progresso guardado com sucesso!');
+  showInfo('💾 Jogo e progresso guardados com sucesso!');
 });
 
 document.getElementById('exportSaveBtn').addEventListener('click', ()=>{
@@ -746,8 +779,7 @@ document.getElementById('importFile').addEventListener('change', (event)=>{
         if (parsed && typeof parsed.essence === 'number') {
           persistent = parsed;
           saveProgress();
-          updateHUD();
-          openTalents();
+          initGame();
           showInfo('📤 Progresso importado com sucesso!');
         } else {
           showInfo('❌ Ficheiro inválido!');
@@ -805,6 +837,7 @@ function placeTower(slot){
   burst(tower.x, tower.y, T.color, 14);
   vibrate(30);
   showInfo(T.name + ' construído!');
+  saveProgress();
   updateHUD();
   selectedType = null;
   document.querySelectorAll('.tbtn').forEach(x=>x.classList.remove('sel'));
@@ -865,6 +898,7 @@ upgBtn.addEventListener('click', ()=>{
   burst(t.x, t.y, '#ffd700', 18);
   floatText(t.x, t.y - 30, 'Nv.' + t.level, '#ffd700');
   vibrate(40);
+  saveProgress();
   updateHUD();
   refreshPopup();
 });
@@ -876,12 +910,12 @@ evolveBtn.addEventListener('click', ()=>{
   const cost = Math.floor(4 + t.stars * 4);
   if (persistent.essence < cost){ showInfo('💎 Essência insuficiente!'); return; }
   persistent.essence -= cost;
-  saveProgress();
   t.stars++;
   t.dmg *= 1.35; t.range += 12; t.fireRate *= 0.9;
   burst(t.x, t.y, '#c77dff', 24);
   floatText(t.x, t.y - 30, '⭐ ' + t.stars, '#c77dff');
   vibrate(50);
+  saveProgress();
   updateHUD();
   refreshPopup();
 });
@@ -897,6 +931,7 @@ sellBtn.addEventListener('click', ()=>{
   floatText(t.x, t.y - 30, '+' + val + '🪙', '#ffd700');
   vibrate(20);
   hidePopup();
+  saveProgress();
   updateHUD();
 });
 
@@ -932,6 +967,7 @@ function startWave(){
   }
   spawnTimer = 0;
   vibrate(30);
+  saveProgress();
   updateHUD();
 }
 
@@ -1060,6 +1096,7 @@ function update(dt){
       floatText(e.x, e.y-20, '-' + loss + ' ❤️', '#ff4444');
       vibrate(80);
       enemies.splice(i,1);
+      saveProgress();
       updateHUD();
       if (lives<=0){ endGame(); return; }
       continue;
@@ -1115,9 +1152,9 @@ function hitEnemy(e, dmg, color){
       score += e.isBoss ? 100 : 10;
       if (e.isBoss){
         persistent.essence += 2;
-        saveProgress();
       }
       enemies.splice(idx,1);
+      saveProgress();
       updateHUD();
     }
   }
@@ -1128,6 +1165,14 @@ let scoreSubmitted = false;
 function endGame(){
   gameOverFlag = true; running = false;
   vibrate([100, 50, 100]);
+  
+  // Limpar jogo atual guardado para recomeçar da vaga 0 se perder
+  persistent.currentWave = 0;
+  persistent.currentGold = 150;
+  persistent.currentLives = 15;
+  persistent.currentScore = 0;
+  persistent.savedTowers = [];
+
   const goldBonusEss = Math.floor(gold * ENDGAME_GOLD_RATIO);
   persistent.essence += goldBonusEss;
   
@@ -1205,10 +1250,17 @@ function submitScoreOnly(){
 
 function submitScoreAndRestart(){
   submitScoreOnly();
+  persistent.currentWave = 0;
+  persistent.currentGold = 150;
+  persistent.currentLives = 15;
+  persistent.currentScore = 0;
+  persistent.savedTowers = [];
+  saveProgress();
   initGame();
 }
 
 function openTalents(){
+  saveProgress(); // Guardar antes de abrir a árvore
   const screen = document.getElementById('talentScreen');
   const total = persistent.essence;
 
