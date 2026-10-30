@@ -280,7 +280,6 @@
     <button class="tal-save" id="talSave">💾 Guardar Jogo</button>
   </div>
 
-  <!-- Ecrã dedicado para o Ranking (para não interferir com o Game Over) -->
   <div id="rankingScreen">
     <div class="tal-head">
       <h2>🏆 Melhores Pontuações</h2>
@@ -1101,7 +1100,6 @@ talSave.addEventListener("click", () => {
   vibrate(20);
 });
 
-// Botão de ranking na árvore de talentos abre o ecrã dedicado de ranking
 function renderGlobalRanking() {
   globalRankingList.innerHTML = "";
   const sorted = persistent.ranking.slice().sort((a,b) => b.score - a.score).slice(0, 10);
