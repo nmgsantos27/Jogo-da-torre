@@ -159,6 +159,10 @@
   .tal-save { width:100%; padding:16px; margin-top:10px; border-radius:14px; border:none;
     font-weight:900; font-size:15px; background:#2e7d32; color:#fff; cursor:pointer; }
 
+  /* Ecrã de Ranking Global específico */
+  #rankingScreen { justify-content: flex-start; }
+  #rankingScreen .tal-close { width: 100%; flex: unset; padding: 14px; margin-top: auto; }
+
   /* Overlay game over */
   #overlay { background:rgba(10,16,32,0.98); justify-content:center; align-items:center; text-align:center; }
   .ov-title { font-size:32px; font-weight:900; color:#ff5252; margin-bottom:10px; }
@@ -252,7 +256,7 @@
       <h2>🏆 Melhores Pontuações</h2>
     </div>
     <div class="ov-ranking" id="globalRankingList" style="max-width:100%; max-height:none; flex:1; margin:0 0 16px 0;"></div>
-    <button class="tal-close" id="rankClose" style="width:100%;">Voltar</button>
+    <button class="tal-close" id="rankClose">Voltar</button>
   </div>
 
   <div id="overlay">
@@ -1195,8 +1199,18 @@ function showGameOver() {
 }
 
 ovBtn.addEventListener("click", () => {
+  // Captura o nome inserido no input antes de reiniciar
   const name = (ovName.value || "").trim().replace(/[<>]/g, "").slice(0, 16);
-  if (name) persistent.playerName = name;
+  if (name) {
+    persistent.playerName = name;
+  }
+  
+  // Atualiza o nome na última pontuação submetida se estava como anónimo
+  if (persistent.ranking.length > 0 && (!persistent.ranking[persistent.ranking.length - 1].name || persistent.ranking[persistent.ranking.length - 1].name === "Anónimo")) {
+    persistent.ranking[persistent.ranking.length - 1].name = persistent.playerName || "Anónimo";
+  }
+  
+  saveProgress(true);
   startNewGame();
 });
 
@@ -1209,13 +1223,16 @@ function endGame() {
   if (score > persistent.bestScore) persistent.bestScore = Math.floor(score);
   const bonusEss = Math.floor((gold || 0) * 0.005);
   persistent.essence += bonusEss;
+  
   if (!scoreSubmitted) {
     scoreSubmitted = true;
-    const name = (persistent.playerName || "Anónimo").slice(0, 16);
+    const name = (ovName.value || persistent.playerName || "Anónimo").trim().replace(/[<>]/g, "").slice(0, 16) || "Anónimo";
+    persistent.playerName = name;
     persistent.ranking.push({ name, score: Math.floor(score), wave: wave - 1, date: Date.now() });
     persistent.ranking.sort((a,b) => b.score - a.score);
     persistent.ranking = persistent.ranking.slice(0, MAX_RANKING);
   }
+  
   persistent.savedState = null;
   saveProgress(true);
   showGameOver();
