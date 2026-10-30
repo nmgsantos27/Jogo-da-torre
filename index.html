@@ -50,7 +50,7 @@
     display:none; padding:6px 12px; border-radius:8px;
     background:rgba(255,215,0,0.15); border:1px solid rgba(255,215,0,0.4);
     color:#ffd700; font-size:12px; font-weight:800; }
-  #pauseBadge.show { display:block; }
+  #pauseBadge.show { display:block; cursor:pointer; pointer-events:auto; }
 
   #info { position:absolute; top:20%; left:50%; transform:translateX(-50%);
     background:rgba(15,22,38,0.95); border:1px solid rgba(78,205,196,0.4);
@@ -195,7 +195,7 @@
   <div id="gamewrap">
     <canvas id="cv"></canvas>
     <button id="menuBtn">🌳</button>
-    <div id="pauseBadge">⏸ PAUSA</div>
+    <div id="pauseBadge" role="button" tabindex="0" aria-label="Retomar jogo">⏸ PAUSA · TOCA PARA RETOMAR</div>
     <div id="info"></div>
 
     <div id="popup">
@@ -358,7 +358,7 @@ const $ = id => document.getElementById(id);
 const cv = $("cv");
 const ctx = cv.getContext("2d");
 const goldLbl = $("goldLbl"), essLbl = $("essLbl"), lifeLbl = $("lifeLbl"),
-      waveLbl = $("waveLbl"), worldLbl = $("worldLbl"), scoreLbl = $("scoreLbl"), 
+      waveLbl = $("waveLbl"), worldLbl = $("worldLbl"), 
       speedBtn = $("speedBtn"), convBtn = $("convBtn"), menuBtn = $("menuBtn"), 
       pauseBadge = $("pauseBadge"), infoEl = $("info"), popup = $("popup"), 
       popTitle = $("popTitle"), popClose = $("popClose"), psDmg = $("psDmg"), 
@@ -412,13 +412,19 @@ function resizeCanvas() {
 
 function rebuildStrategicSlots(w, h) {
   const margin = 8;
+  const oldCols = COLS, oldRows = ROWS, oldOffX = offX, oldOffY = offY;
+  const previousTowers = towers.map(t => ({
+    tower: t,
+    nx: oldCols > 0 ? (t.x - oldOffX) / (oldCols * TILE) : 0.5,
+    ny: oldRows > 0 ? (t.y - oldOffY) / (oldRows * TILE) : 0.5,
+    col: t.col,
+    row: t.row
+  }));
+
   COLS = Math.max(7, Math.floor((w - margin*2) / TILE));
   ROWS = Math.max(10, Math.floor((h - margin*2) / TILE));
   offX = Math.floor((w - COLS*TILE) / 2);
   offY = Math.floor((h - ROWS*TILE) / 2);
-
-  const old = {};
-  towers.forEach(t => { old[t.col + "," + t.row] = t; });
 
   slots = [];
   towers = [];
@@ -441,13 +447,26 @@ function rebuildStrategicSlots(w, h) {
     }
   });
 
-  slots.forEach(s => {
-    if (!s.buildable) return;
-    const t = old[s.col + "," + s.row];
-    if (t) {
-      s.occupied = true;
-      t.slot = s;
-      t.x = s.x; t.y = s.y;
+  // Primeiro tenta manter cada torre na mesma célula; se a grelha mudou,
+  // coloca-a no espaço livre mais próximo, sem a apagar.
+  previousTowers.forEach(item => {
+    const t = item.tower;
+    let slot = slots.find(s => s.buildable && !s.occupied && s.col === item.col && s.row === item.row);
+    if (!slot) {
+      const targetX = offX + Math.max(0, Math.min(1, item.nx)) * COLS * TILE;
+      const targetY = offY + Math.max(0, Math.min(1, item.ny)) * ROWS * TILE;
+      let best = Infinity;
+      slots.forEach(s => {
+        if (!s.buildable || s.occupied) return;
+        const d = (s.x - targetX) ** 2 + (s.y - targetY) ** 2;
+        if (d < best) { best = d; slot = s; }
+      });
+    }
+    if (slot) {
+      slot.occupied = true;
+      t.slot = slot;
+      t.col = slot.col; t.row = slot.row;
+      t.x = slot.x; t.y = slot.y;
       towers.push(t);
     }
   });
@@ -725,8 +744,13 @@ function update() {
       const d = Math.hypot(dx, dy);
       if (d < 4) e.waypoint++;
       else { e.x += (dx/d)*sp; e.y += (dy/d)*sp; }
-    } else { damageBase(e); }
+    } else {
+      damageBase(e);
+      if (gameOverFlag) return;
+    }
   }
+
+  if (gameOverFlag || !running) return;
 
   towers.forEach(t => {
     t.cooldown--;
@@ -903,7 +927,6 @@ function updateHUD() {
   lifeLbl.textContent = Math.max(0, lives || 0);
   waveLbl.textContent = wave || 1;
   worldLbl.textContent = world || 1;
-  scoreLbl.textContent = Math.floor(score || 0);
   speedBtn.textContent = speedMul + "x";
   convGoldTxt.textContent = Math.floor(gold || 0);
   hudDirty = false;
@@ -1083,6 +1106,21 @@ function renderTalentList() {
 menuBtn.addEventListener("click", openTalents);
 talClose.addEventListener("click", closeTalents);
 
+// O indicador de pausa também permite retomar o jogo no telemóvel.
+function resumeGame() {
+  if (talentScreen.classList.contains("show") || rankingScreen.classList.contains("show") || gameOverFlag) return;
+  paused = false;
+  pauseBadge.classList.remove("show");
+  lastTime = 0;
+}
+pauseBadge.addEventListener("click", resumeGame);
+pauseBadge.addEventListener("keydown", event => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    resumeGame();
+  }
+});
+
 talSave.addEventListener("click", () => {
   forceSave();
   showInfo("💾 Jogo guardado!");
@@ -1252,6 +1290,7 @@ function forceSave() {
 
 setInterval(() => {
   if (running && !paused) forceSave();
+  else if (saveDirty) saveProgress(true);
 }, 5000);
 
 document.addEventListener("visibilitychange", () => {
@@ -1260,6 +1299,14 @@ document.addEventListener("visibilitychange", () => {
     if (running && !paused) {
       paused = true;
       pauseBadge.classList.add("show");
+    }
+  } else if (document.visibilityState === "visible") {
+    // Se o jogo foi pausado apenas por ter mudado de aplicação, permite continuar.
+    if (!talentScreen.classList.contains("show") &&
+        !rankingScreen.classList.contains("show") && !gameOverFlag) {
+      paused = false;
+      pauseBadge.classList.remove("show");
+      lastTime = 0;
     }
   }
 });
