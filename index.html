@@ -596,25 +596,19 @@ function refreshPopup() {
   sellBtn.disabled = false; sellVal.textContent = "🪙 " + sv;
 }
 
-/* Inimigos (Curva normal até à vaga 10, a apertar o cerco a partir daí) */
+/* Inimigos (Dificuldade escalonada por blocos de 10 e bónus pós-Boss) */
 function spawnEnemy(type, waveNum, worldNum) {
   const base = ENEMY_TYPES[type];
   if (!base) return;
   const worldFactor = 1 + (worldNum - 1) * 0.5;
   
-  // A partir da vaga 10, a dificuldade escala de forma bem mais agressiva
-  let hpScale;
-  if (waveNum <= 10) {
-    hpScale = (1 + (waveNum - 1) * 0.30) * worldFactor;
-  } else {
-    // Escalonamento acentuado pós-vaga 10
-    const base10Hp = (1 + 9 * 0.30);
-    hpScale = (base10Hp * Math.pow(1.22, waveNum - 10)) * worldFactor;
-  }
+  // Escalonamento focado: picos de dificuldade a cada 10 vagas e após cada boss (vagas % 5 === 0)
+  let tierBonus = 1 + Math.floor(waveNum / 10) * 0.35;
+  if (waveNum % 5 === 0) tierBonus += 0.20; // Bónus extra logo após bosses
 
+  const hpScale = (1 + (waveNum - 1) * 0.28 * tierBonus) * worldFactor;
   const hp = Math.ceil(base.hp * hpScale);
-  const speedBoost = waveNum > 10 ? Math.min(1.3, 1 + (waveNum - 10) * 0.02) : 1.0;
-  const speed = base.speed * (1 + (worldNum - 1) * 0.08) * speedBoost;
+  const speed = base.speed * (1 + (worldNum - 1) * 0.08) * (1 + Math.floor(waveNum / 10) * 0.03);
 
   enemies.push({ 
     type, hp, maxHp: hp, gold: Math.ceil(base.gold * (1 + (worldNum-1)*0.2)), 
@@ -629,17 +623,16 @@ function startWave() {
   spawnQueue = []; spawnTimer = 0;
   const isBoss = wave % 5 === 0;
   
-  // A partir da vaga 10, vêm mais inimigos em simultâneo
-  const waveMultiplier = wave > 10 ? 1.2 : 0.8;
-  const count = isBoss ? 8 + Math.floor(wave*0.6) : 6 + Math.floor(wave*waveMultiplier);
+  // A quantidade e pressão aumentam progressivamente a cada 10 vagas
+  const waveTierMult = 1 + Math.floor(wave / 10) * 0.15;
+  const count = isBoss ? (7 + Math.floor(wave * 0.5 * waveTierMult)) : (6 + Math.floor(wave * 0.7 * waveTierMult));
   
   for (let i = 0; i < count; i++) {
     let type = "goblin";
     if (wave >= 3 && Math.random() < 0.35) type = "orc";
     if (wave >= 5 && Math.random() < 0.25) type = "swift";
     if (wave >= 7 && Math.random() < 0.25) type = "tank";
-    // Intervalos de espaçamento mais curtos a partir da vaga 10 para criar pressão
-    const delayStep = wave > 10 ? Math.max(15, 35 - wave) : Math.max(22, 42 - world * 2);
+    const delayStep = Math.max(16, 40 - Math.floor(wave / 5) * 2);
     spawnQueue.push({ type, delay: i === 0 ? 0 : delayStep });
   }
   if (isBoss) spawnQueue.push({ type: "boss", delay: 30 });
