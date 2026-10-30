@@ -19,7 +19,6 @@
     padding-top:env(safe-area-inset-top);
     padding-bottom:env(safe-area-inset-bottom); }
 
-  /* ── HUD ── */
   #hud { display:flex; align-items:center; gap:6px; padding:8px 10px;
     background:rgba(10,16,30,0.92); border-bottom:1px solid rgba(78,205,196,0.15);
     font-size:12px; font-weight:700; flex-shrink:0; }
@@ -37,10 +36,9 @@
   .hbtn.gold { color:#ffd700; border-color:rgba(255,215,0,0.35);
     background:rgba(255,215,0,0.1); }
 
-  /* ── GAME WRAP ── */
   #gamewrap { flex:1; position:relative; overflow:hidden;
     display:flex; align-items:center; justify-content:center;
-    background:radial-gradient(circle at 50% 40%,#0d1424 0%,#070a14 100%); }
+    background:#0a1020; }
   canvas#cv { display:block; touch-action:none; }
 
   #menuBtn { position:absolute; top:10px; left:10px; z-index:5;
@@ -67,7 +65,6 @@
     box-shadow:0 6px 24px rgba(0,0,0,0.5); }
   #info.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-  /* ── POPUP TORRE ── */
   #popup { position:absolute; bottom:12px; left:50%; transform:translateX(-50%) translateY(20px);
     width:calc(100% - 24px); max-width:400px;
     background:rgba(13,20,36,0.98); border:1px solid rgba(78,205,196,0.4);
@@ -93,7 +90,6 @@
   .pbtn:disabled { opacity:0.35; cursor:not-allowed; }
   .pbtn:active:not(:disabled) { transform:scale(0.95); }
 
-  /* ── PANEL ── */
   #panel { display:flex; align-items:stretch; gap:6px; padding:8px 10px;
     background:rgba(10,16,30,0.96); border-top:1px solid rgba(78,205,196,0.15);
     flex-shrink:0; }
@@ -122,7 +118,6 @@
   #startBtn:active { transform:scale(0.96); }
   #startBtn:disabled { opacity:0.4; cursor:not-allowed; }
 
-  /* ── TALENT SCREEN ── */
   #talentScreen { position:absolute; inset:0; z-index:50;
     background:linear-gradient(180deg,#0d1424 0%,#070a14 100%);
     display:flex; flex-direction:column; padding:14px;
@@ -154,7 +149,6 @@
     background:rgba(78,205,196,0.14); border:1px solid rgba(78,205,196,0.4);
     color:#4ecdc4; font-weight:900; font-size:14px; cursor:pointer; }
 
-  /* ── OVERLAY ── */
   #overlay { position:absolute; inset:0; z-index:60;
     background:rgba(4,8,16,0.94); backdrop-filter:blur(6px);
     display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -358,6 +352,8 @@ let speedMul = 1;
 let scoreSubmitted = false;
 let paused = false;
 let hudDirty = true;
+let hoverSlot = null;
+let hoverPos = { x:-999, y:-999 };
 
 /* ══════════════════════════════════════════════════════════════
    DOM REFS
@@ -452,23 +448,28 @@ function resizeCanvas() {
 }
 
 function rebuildStrategicSlots(w, h) {
-  COLS = Math.max(8, Math.floor(w / TILE));
-  ROWS = Math.max(10, Math.floor(h / TILE));
-  const offX = Math.floor((w - COLS*TILE)/2);
-  const offY = Math.floor((h - ROWS*TILE)/2);
+  const margin = 12;
+  const usableW = w - margin * 2;
+  const usableH = h - margin * 2;
+
+  COLS = Math.max(8, Math.floor(usableW / TILE));
+  ROWS = Math.max(10, Math.floor(usableH / TILE));
+
+  const offX = Math.floor((w - COLS * TILE) / 2);
+  const offY = Math.floor((h - ROWS * TILE) / 2);
 
   const old = {};
-  towers.forEach(t => { old[t.col+","+t.row] = t; });
+  towers.forEach(t => { old[t.col + "," + t.row] = t; });
 
   slots = [];
   towers = [];
-  for (let r=0;r<ROWS;r++) {
-    for (let c=0;c<COLS;c++) {
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
       slots.push({
-        col:c, row:r,
-        x: offX + c*TILE + TILE/2,
-        y: offY + r*TILE + TILE/2,
-        occupied:false, buildable:true
+        col: c, row: r,
+        x: offX + c * TILE + TILE / 2,
+        y: offY + r * TILE + TILE / 2,
+        occupied: false, buildable: true
       });
     }
   }
@@ -476,20 +477,21 @@ function rebuildStrategicSlots(w, h) {
   PATH = buildPath(offX, offY);
   const pathSet = new Set();
   PATH.forEach(p => {
-    const c = Math.round((p.x - offX - TILE/2)/TILE);
-    const r = Math.round((p.y - offY - TILE/2)/TILE);
-    if (c>=0 && c<COLS && r>=0 && r<ROWS) pathSet.add(c+","+r);
+    const c = Math.round((p.x - offX - TILE / 2) / TILE);
+    const r = Math.round((p.y - offY - TILE / 2) / TILE);
+    if (c >= 0 && c < COLS && r >= 0 && r < ROWS) pathSet.add(c + "," + r);
   });
-  // marca alguns slots adjacentes ao caminho como não-construíveis (estética)
   pathSet.forEach(k => {
-    const [c,r] = k.split(",").map(Number);
-    const s = slots.find(s=>s.col===c && s.row===r);
+    const parts = k.split(",");
+    const c = Number(parts[0]);
+    const r = Number(parts[1]);
+    const s = slots.find(s => s.col === c && s.row === r);
     if (s) s.buildable = false;
   });
 
   slots.forEach(s => {
     if (!s.buildable) return;
-    const t = old[s.col+","+s.row];
+    const t = old[s.col + "," + s.row];
     if (t) {
       s.occupied = true;
       t.slot = s;
@@ -500,24 +502,26 @@ function rebuildStrategicSlots(w, h) {
 }
 
 function buildPath(offX, offY) {
-  const c1 = 1, c2 = COLS-2;
-  const rows = [
-    0,
-    Math.floor(ROWS*0.3),
-    Math.floor(ROWS*0.3),
-    Math.floor(ROWS*0.65),
-    Math.floor(ROWS*0.65),
-    ROWS-1
+  const c1 = Math.max(1, Math.floor(COLS * 0.15));
+  const c2 = COLS - 1 - Math.max(1, Math.floor(COLS * 0.15));
+  const r1 = Math.max(1, Math.floor(ROWS * 0.30));
+  const r2 = Math.max(r1 + 2, Math.floor(ROWS * 0.65));
+
+  const pts = [
+    { col: c1, row: 0 },
+    { col: c1, row: r1 },
+    { col: c2, row: r1 },
+    { col: c2, row: r2 },
+    { col: c1, row: r2 },
+    { col: c1, row: ROWS - 1 }
   ];
-  const cols = [c1, c1, c2, c2, c1, c1];
-  const pts = [];
-  for (let i=0;i<rows.length;i++) {
-    pts.push({ x: offX + cols[i]*TILE + TILE/2, y: offY + rows[i]*TILE + TILE/2 });
-  }
-  return pts;
+  return pts.map(p => ({
+    x: offX + p.col * TILE + TILE / 2,
+    y: offY + p.row * TILE + TILE / 2
+  }));
 }
 
-// ⏸ CONTINUA NO BLOCO 4/4
+// ⏸ CONTINUA NA PARTE 4/5
 /* ══════════════════════════════════════════════════════════════
    TALENTOS — MULTIPLICADORES
    ══════════════════════════════════════════════════════════════ */
@@ -740,13 +744,13 @@ function hitProjectile(p) {
   }
   burst(p.x, p.y, p.color, 5);
 }
+
 /* ══════════════════════════════════════════════════════════════
    UPDATE
    ══════════════════════════════════════════════════════════════ */
 function update() {
   if (paused || !running) return;
 
-  // spawns
   if (spawnQueue.length > 0) {
     spawnTimer++;
     if (spawnTimer >= spawnQueue[0].delay) {
@@ -755,7 +759,6 @@ function update() {
       spawnEnemy(s.type, wave);
     }
   } else if (enemies.length === 0 && running) {
-    // fim da vaga
     running = false;
     const bonus = 15 + wave * 5;
     gold += bonus;
@@ -772,7 +775,6 @@ function update() {
     return;
   }
 
-  // inimigos
   for (let i = enemies.length - 1; i >= 0; i--) {
     const e = enemies[i];
     if (!e.alive) continue;
@@ -794,7 +796,6 @@ function update() {
     }
   }
 
-  // torres
   towers.forEach(t => {
     t.cooldown--;
     if (t.cooldown > 0) return;
@@ -811,7 +812,6 @@ function update() {
     }
   });
 
-  // projéteis
   projectiles = projectiles.filter(p => {
     if (p.hit) return false;
     const tgt = p.target;
@@ -824,7 +824,6 @@ function update() {
     return true;
   });
 
-  // partículas
   particles = particles.filter(p => {
     p.x += p.vx; p.y += p.vy;
     p.vx *= 0.94; p.vy *= 0.94;
@@ -832,7 +831,6 @@ function update() {
     return p.life > 0;
   });
 
-  // floats
   floats = floats.filter(f => {
     f.y += f.vy;
     f.life -= 0.02;
@@ -848,43 +846,58 @@ function render() {
   const h = cv.height / (window.devicePixelRatio || 1);
   ctx.clearRect(0, 0, w, h);
 
-  // caminho
-  ctx.strokeStyle = "rgba(78,205,196,0.15)";
-  ctx.lineWidth = TILE * 0.7;
+  // fundo da arena
+  ctx.fillStyle = "#0a1020";
+  ctx.fillRect(0, 0, w, h);
+
+  // caminho — base escura
+  ctx.strokeStyle = "rgba(40,60,80,0.9)";
+  ctx.lineWidth = TILE * 0.85;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
   ctx.beginPath();
   PATH.forEach((p, i) => { i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); });
   ctx.stroke();
 
-  ctx.strokeStyle = "rgba(78,205,196,0.35)";
-  ctx.lineWidth = 2;
-  ctx.setLineDash([6, 8]);
+  // caminho — contorno luminoso
+  ctx.strokeStyle = "rgba(78,205,196,0.55)";
+  ctx.lineWidth = 3;
+  ctx.setLineDash([8, 10]);
   ctx.beginPath();
   PATH.forEach((p, i) => { i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); });
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // slots + preview
+  // slots
   slots.forEach(s => {
-    if (s.occupied || !s.buildable) return;
-    ctx.strokeStyle = "rgba(78,205,196,0.12)";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(s.x-TILE/2+4, s.y-TILE/2+4, TILE-8, TILE-8);
-    if (selectedType) {
-      const base = TOWER_TYPES[selectedType];
-      if (base) {
-        const r = base.range * rangeMul();
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, r, 0, Math.PI*2);
-        ctx.fillStyle = "rgba(78,205,196,0.06)";
-        ctx.fill();
-        ctx.strokeStyle = "rgba(78,205,196,0.3)";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
+    if (!s.buildable) return;
+    if (s.occupied) {
+      ctx.strokeStyle = "rgba(255,215,0,0.18)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(s.x-TILE/2+5, s.y-TILE/2+5, TILE-10, TILE-10);
+      return;
     }
+    ctx.strokeStyle = "rgba(78,205,196,0.10)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(s.x-TILE/2+5, s.y-TILE/2+5, TILE-10, TILE-10);
   });
+
+  // preview do alcance — SÓ no slot sob o dedo/rato
+  if (selectedType && hoverSlot) {
+    const base = TOWER_TYPES[selectedType];
+    if (base) {
+      const r = base.range * rangeMul();
+      ctx.beginPath();
+      ctx.arc(hoverSlot.x, hoverSlot.y, r, 0, Math.PI*2);
+      ctx.fillStyle = "rgba(78,205,196,0.10)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(78,205,196,0.45)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.fillStyle = "rgba(78,205,196,0.35)";
+      ctx.fillRect(hoverSlot.x-TILE/2+5, hoverSlot.y-TILE/2+5, TILE-10, TILE-10);
+    }
+  }
 
   // torres
   towers.forEach(t => {
@@ -1029,6 +1042,7 @@ function buildTowerButtons() {
       if (selectedType === type) {
         selectedType = null;
         btn.classList.remove("sel");
+        hoverSlot = null;
       } else {
         selectedType = type;
         document.querySelectorAll(".tbtn").forEach(b => b.classList.remove("sel"));
@@ -1039,6 +1053,8 @@ function buildTowerButtons() {
     towerScroll.appendChild(btn);
   });
 }
+
+// ⏸ CONTINUA NA PARTE 5/5
 /* ══════════════════════════════════════════════════════════════
    EVENTOS CANVAS
    ══════════════════════════════════════════════════════════════ */
@@ -1060,12 +1076,28 @@ cv.addEventListener("pointerdown", evt => {
   const slot = slots.find(s => dist(p, s) < TILE/2);
   if (slot && selectedType && !slot.occupied && slot.buildable) {
     buildTower(slot, selectedType);
+    hoverSlot = null;
     return;
   }
   hidePopup();
 });
 
-cv.addEventListener("pointerleave", () => { cv.style.cursor = "default"; });
+cv.addEventListener("pointermove", evt => {
+  if (paused || gameOverFlag) return;
+  const p = canvasCoords(evt);
+  hoverPos = p;
+  if (selectedType) {
+    hoverSlot = slots.find(s => dist(p, s) < TILE/2 && !s.occupied && s.buildable) || null;
+  } else {
+    hoverSlot = null;
+  }
+});
+
+cv.addEventListener("pointerleave", () => {
+  cv.style.cursor = "default";
+  hoverSlot = null;
+  hoverPos = { x:-999, y:-999 };
+});
 
 /* ══════════════════════════════════════════════════════════════
    POPUP — BOTÕES
@@ -1247,6 +1279,7 @@ function startNewGame() {
   running = false;
   selectedType = null;
   selectedTower = null;
+  hoverSlot = null;
   enemies = [];
   projectiles = [];
   particles = [];
@@ -1328,6 +1361,8 @@ function initGame() {
   paused = false;
   selectedType = null;
   selectedTower = null;
+  hoverSlot = null;
+  hoverPos = { x:-999, y:-999 };
   enemies = [];
   projectiles = [];
   particles = [];
@@ -1341,7 +1376,6 @@ function initGame() {
   updateStartBtn();
   renderTalentList();
 
-  // pré-preenche nome
   ovName.value = persistent.playerName || "";
 
   requestAnimationFrame(loop);
