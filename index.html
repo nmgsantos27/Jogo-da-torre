@@ -388,21 +388,34 @@ let persistent = {
   unlocked: { lightning:false, poison:false },
   bestWave: 0,
   bestScore: 0,
-  ranking: []
+  ranking: [],
+  currentWave: 0,
+  currentGold: 150,
+  currentLives: 15,
+  currentScore: 0,
+  savedTowers: []
 };
 TALENT_DEFS.forEach(t => persistent.talents[t.id] = 0);
 
-const STORAGE_KEY = 'torreProgressV23_PT';
+const STORAGE_KEY = 'torreProgressV24_PT';
 
 function saveProgress(){
   try {
+    if (typeof wave !== 'undefined') persistent.currentWave = wave;
+    if (typeof gold !== 'undefined') persistent.currentGold = gold;
+    if (typeof lives !== 'undefined') persistent.currentLives = lives;
+    if (typeof score !== 'undefined') persistent.currentScore = score;
+    
+    if (typeof towers !== 'undefined' && typeof slots !== 'undefined') {
+      persistent.savedTowers = towers.map(t => {
+        let slotIdx = slots.indexOf(t.slot);
+        return { slotIdx, type: t.type, level: t.level, stars: t.stars };
+      });
+    }
+
     const data = JSON.stringify(persistent);
     localStorage.setItem(STORAGE_KEY, data);
     sessionStorage.setItem(STORAGE_KEY, data);
-    // Força escrita síncrona se suportada
-    if (localStorage.getItem(STORAGE_KEY) !== data) {
-      localStorage.setItem(STORAGE_KEY, data);
-    }
   } catch(e){}
 }
 
@@ -422,6 +435,11 @@ function loadProgress(){
       if (p.bestWave) persistent.bestWave = p.bestWave;
       if (p.bestScore) persistent.bestScore = p.bestScore;
       if (Array.isArray(p.ranking)) persistent.ranking = p.ranking;
+      if (typeof p.currentWave === 'number') persistent.currentWave = p.currentWave;
+      if (typeof p.currentGold === 'number') persistent.currentGold = p.currentGold;
+      if (typeof p.currentLives === 'number') persistent.currentLives = p.currentLives;
+      if (typeof p.currentScore === 'number') persistent.currentScore = p.currentScore;
+      if (Array.isArray(p.savedTowers)) persistent.savedTowers = p.savedTowers;
     }
   } catch(e){}
 }
@@ -473,7 +491,7 @@ function resize(){
   cv.style.width = W + 'px'; cv.style.height = H + 'px';
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   buildPath();
-  rebuildSlots();
+  rebuildSlotsPreservingTowers();
 }
 
 function buildPath(){
@@ -488,7 +506,7 @@ function buildPath(){
   }
 }
 
-function rebuildSlots(){
+function rebuildSlotsPreservingTowers(){
   slots = [];
   const cols = W < 500 ? 4 : 6;
   const rows = W < 500 ? 4 : 3;
@@ -522,11 +540,11 @@ function initGame(){
   loadProgress();
   resize();
 
-  wave = 0;
-  gold = 150 + talentBonus('start');
+  wave = persistent.currentWave || 0;
+  gold = (persistent.currentWave > 0) ? (persistent.currentGold ?? (150 + talentBonus('start'))) : (150 + talentBonus('start'));
   maxLives = 15 + talentBonus('life');
-  lives = maxLives;
-  score = 0;
+  lives = persistent.currentWave > 0 ? (persistent.currentLives ?? maxLives) : maxLives;
+  score = persistent.currentScore || 0;
   
   essence = 0;
   running = false; gameOverFlag = false; gameSpeed = 1;
@@ -534,6 +552,32 @@ function initGame(){
   selectedType = null; selectedTower = null;
   towers = []; enemies = []; projectiles = []; particles = []; floats = [];
   spawnQueue = []; spawnTimer = 0;
+
+  if (Array.isArray(persistent.savedTowers) && persistent.savedTowers.length > 0){
+    persistent.savedTowers.forEach(st => {
+      if (slots[st.slotIdx]) {
+        const slot = slots[st.slotIdx];
+        const T = TOWER_TYPES[st.type];
+        if (T) {
+          slot.occupied = true;
+          const dmgBonus = talentBonus('dmg');
+          const rangeBonus = talentBonus('range');
+          const rateBonus = talentBonus('rate');
+          
+          let tower = {
+            x: slot.x, y: slot.y, type: st.type,
+            level: st.level || 1, stars: st.stars || 0, cooldown: 0, angle: -Math.PI/2,
+            range: T.range * rangeBonus,
+            dmg: (T.dmg * dmgBonus) * Math.pow(1.6, (st.level||1)-1) * Math.pow(1.35, st.stars||0),
+            fireRate: (T.fireRate * rateBonus) * Math.pow(0.82, (st.level||1)-1) * Math.pow(0.9, st.stars||0),
+            slot, color: T.color, icon: T.icon
+          };
+          slot.tower = tower;
+          towers.push(tower);
+        }
+      }
+    });
+  }
 
   updateTowerButtons();
   startBtn.disabled = false;
@@ -783,6 +827,7 @@ function placeTower(slot){
   burst(tower.x, tower.y, T.color, 14);
   vibrate(30);
   showInfo(T.name + ' construído!');
+  saveProgress();
   updateHUD();
   selectedType = null;
   document.querySelectorAll('.tbtn').forEach(x=>x.classList.remove('sel'));
@@ -843,6 +888,7 @@ upgBtn.addEventListener('click', ()=>{
   burst(t.x, t.y, '#ffd700', 18);
   floatText(t.x, t.y - 30, 'Nv.' + t.level, '#ffd700');
   vibrate(40);
+  saveProgress();
   updateHUD();
   refreshPopup();
 });
@@ -875,6 +921,7 @@ sellBtn.addEventListener('click', ()=>{
   floatText(t.x, t.y - 30, '+' + val + '🪙', '#ffd700');
   vibrate(20);
   hidePopup();
+  saveProgress();
   updateHUD();
 });
 
@@ -910,6 +957,7 @@ function startWave(){
   }
   spawnTimer = 0;
   vibrate(30);
+  saveProgress();
   updateHUD();
 }
 
@@ -1038,6 +1086,7 @@ function update(dt){
       floatText(e.x, e.y-20, '-' + loss + ' ❤️', '#ff4444');
       vibrate(80);
       enemies.splice(i,1);
+      saveProgress();
       updateHUD();
       if (lives <= 0){ endGame(); return; }
       continue;
@@ -1095,6 +1144,7 @@ function hitEnemy(e, dmg, color){
         persistent.essence += 2;
       }
       enemies.splice(idx,1);
+      saveProgress();
       updateHUD();
     }
   }
@@ -1106,6 +1156,12 @@ function endGame(){
   gameOverFlag = true; running = false;
   vibrate([100, 50, 100]);
   
+  persistent.currentWave = 0;
+  persistent.currentGold = 150;
+  persistent.currentLives = 15;
+  persistent.currentScore = 0;
+  persistent.savedTowers = [];
+
   const goldBonusEss = Math.floor(gold * ENDGAME_GOLD_RATIO);
   persistent.essence += goldBonusEss;
   
@@ -1183,6 +1239,11 @@ function submitScoreOnly(){
 
 function submitScoreAndRestart(){
   submitScoreOnly();
+  persistent.currentWave = 0;
+  persistent.currentGold = 150;
+  persistent.currentLives = 15;
+  persistent.currentScore = 0;
+  persistent.savedTowers = [];
   saveProgress();
   initGame();
 }
