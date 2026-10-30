@@ -397,7 +397,7 @@ let persistent = {
 };
 TALENT_DEFS.forEach(t => persistent.talents[t.id] = 0);
 
-const STORAGE_KEY = 'torreProgressV24_PT';
+const STORAGE_KEY = 'torreProgressV25_PT';
 
 function saveProgress(){
   try {
@@ -418,6 +418,13 @@ function saveProgress(){
     sessionStorage.setItem(STORAGE_KEY, data);
   } catch(e){}
 }
+
+// Força salvamento imediato caso o utilizador pressione "Voltar" ou saia da página
+window.addEventListener('beforeunload', saveProgress);
+window.addEventListener('pagehide', saveProgress);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') saveProgress();
+});
 
 function loadProgress(){
   try {
