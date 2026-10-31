@@ -241,11 +241,11 @@ const WORLDS = [
 ];
 
 const TOWER_TYPES = {
-  archer:    { name:"Arqueiro",  ico:"🏹", cost:60,  dmg:1,  range:130, rate:28, color:"#4ecdc4", special:null,       unlock:null },
-  cannon:    { name:"Canhão",    ico:"💣", cost:240, dmg:9,  range:110, rate:70, color:"#ff9800", special:"splash",  splash:55,  unlock:null },
-  ice:       { name:"Gelo",      ico:"❄️", cost:90,  dmg:1,  range:120, rate:40, color:"#81d4fa", special:"slow",    slow:0.5,   unlock:null },
-  lightning: { name:"Relâmpago", ico:"⚡", cost:320, dmg:7,  range:140, rate:45, color:"#ffd700", special:"chain",   chain:3,    unlock:"lightning" },
-  poison:    { name:"Veneno",    ico:"☠️", cost:280, dmg:5,  range:125, rate:35, color:"#9ccc65", special:"poison",  poisonDmg:3.5, unlock:"poison" }
+  archer:    { name:"Arqueiro",  ico:"🏹", cost:60,  dmg:1,  range:130, rate:28, color:"#4ecdc4", special:null,       unlock:null, footprint:1 },
+  cannon:    { name:"Canhão",    ico:"💣", cost:200, dmg:9,  range:110, rate:70, color:"#ff9800", special:"splash",  splash:55,  unlock:null, footprint:2 },
+  ice:       { name:"Gelo",      ico:"❄️", cost:90,  dmg:1,  range:120, rate:40, color:"#81d4fa", special:"slow",    slow:0.5,   unlock:null, footprint:1 },
+  lightning: { name:"Relâmpago", ico:"⚡", cost:320, dmg:7,  range:140, rate:45, color:"#ffd700", special:"chain",   chain:3,    unlock:"lightning", footprint:1 },
+  poison:    { name:"Veneno",    ico:"☠️", cost:280, dmg:5,  range:125, rate:35, color:"#9ccc65", special:"poison",  poisonDmg:3.5, unlock:"poison", footprint:1 }
 };
 
 const ENEMY_TYPES = {
@@ -482,10 +482,32 @@ function buildTower(slot, type){
   if (base.unlock && !persistent.unlocked[base.unlock]) { showInfo("🔒 Bloqueada (Ver talentos)"); return; }
   if (gold < base.cost) { showInfo("🪙 Ouro insuficiente"); return; }
   if (slot.occupied || !slot.buildable) return;
+
+  // Limite dinâmico de canhões (Ideia D)
+  if (type === "cannon") {
+    const cannons = towers.filter(x => x.type === "cannon").length;
+    const maxCannons = 2 + Math.floor(wave / 8); // vaga 1-7: 2; 8-15: 3; 16-23: 4; 24+: 5
+    if (cannons >= maxCannons) {
+      showInfo("🚫 Limite de canhões: " + maxCannons + " (melhora os que tens!)");
+      return;
+    }
+  }
+
+  // Pegada 2 (Ideia C): precisa de slot vizinho livre
+  let extraSlots = [];
+  if (base.footprint === 2) {
+    const right = slots.find(s => s.col === slot.col+1 && s.row === slot.row && s.buildable && !s.occupied);
+    const down  = slots.find(s => s.col === slot.col && s.row === slot.row+1 && s.buildable && !s.occupied);
+    if (right) extraSlots.push(right);
+    else if (down) extraSlots.push(down);
+    else { showInfo("🚫 Canhão precisa de 2 slots livres (direita ou baixo)"); return; }
+  }
+
   gold -= base.cost;
   const t = { type, level:1, stars:0, col:slot.col, row:slot.row,
-    x:slot.x, y:slot.y, slot, cooldown:0, angle:0 };
+    x:slot.x, y:slot.y, slot, extraSlots, cooldown:0, angle:0 };
   slot.occupied = true;
+  extraSlots.forEach(s => s.occupied = true);
   towers.push(t);
   towersBuiltThisRun++;
   hudDirty = true;
@@ -519,6 +541,7 @@ function sellTower(t){
   const val = towerSellValue(t);
   gold += val;
   t.slot.occupied = false;
+  if (t.extraSlots) t.extraSlots.forEach(s => s.occupied = false);
   towers = towers.filter(x => x !== t);
   selectedTower = null; hidePopup(); hudDirty = true;
   burst(t.x, t.y, "#ffd700", 10);
@@ -825,6 +848,23 @@ function render(){
       ctx.stroke();
     }
     ctx.beginPath();
+    // Slots extra do canhão (pegada 2)
+if (t.extraSlots && t.extraSlots.length > 0) {
+  t.extraSlots.forEach(ex => {
+    ctx.beginPath();
+    ctx.arc(ex.x, ex.y, TILE*0.35, 0, Math.PI*2);
+    ctx.fillStyle = base.color + "44";
+    ctx.fill();
+    ctx.strokeStyle = base.color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.font = "14px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = base.color;
+    ctx.fillText("●", ex.x, ex.y);
+  });
+}
     ctx.arc(t.x, t.y, TILE*0.35, 0, Math.PI*2);
     ctx.fillStyle = base.color;
     ctx.fill();
@@ -1219,7 +1259,10 @@ function forceSave(){
   if (gameOverFlag) return;
   persistent.savedState = {
     wave, world, gold, lives, score,
-    towers: towers.map(t => ({ type:t.type, level:t.level, stars:t.stars, col:t.col, row:t.row }))
+    towers: towers.map(t => ({
+      type: t.type, level: t.level, stars: t.stars, col: t.col, row: t.row,
+      extraCols: t.extraSlots ? t.extraSlots.map(s => ({ col: s.col, row: s.row })) : []
+    }))
   };
   saveProgress(true);
 }
@@ -1260,21 +1303,28 @@ function initGame(){
     killsThisRun = 0; towersBuiltThisRun = 0; speedMul = 1;
     selectedType = null; selectedTower = null; hoverSlot = null;
     setTimeout(() => {
-      resizeCanvas();
-      if (Array.isArray(s.towers)) {
-        s.towers.flat().forEach(st => {
-          const slot = slots.find(x => x.col === st.col && x.row === st.row && x.buildable);
-          if (slot && !slot.occupied) {
-            slot.occupied = true;
-            towers.push({
-              type: st.type, level: st.level || 1, stars: st.stars || 0,
-              col: st.col, row: st.row, x: slot.x, y: slot.y,
-              slot, cooldown: 0, angle: 0
-            });
-          }
+  resizeCanvas();
+  if (Array.isArray(s.towers)) {
+    s.towers.flat().forEach(st => {
+      const slot = slots.find(x => x.col === st.col && x.row === st.row && x.buildable && !x.occupied);
+      if (slot && !slot.occupied) {
+        slot.occupied = true;
+        const extras = [];
+        if (Array.isArray(st.extraCols)) {
+          st.extraCols.forEach(ec => {
+            const ex = slots.find(x => x.col === ec.col && x.row === ec.row && x.buildable && !x.occupied);
+            if (ex) { ex.occupied = true; extras.push(ex); }
+          });
+        }
+        towers.push({
+          type: st.type, level: st.level || 1, stars: st.stars || 0,
+          col: st.col, row: st.row, x: slot.x, y: slot.y,
+          slot, extraSlots: extras, cooldown: 0, angle: 0
         });
       }
-    }, 50);
+    });
+  }
+}, 50);
   } else {
     gold = 120 + startGoldBonus();
     maxLives = 12 + startLivesBonus();
