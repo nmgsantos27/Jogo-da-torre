@@ -167,6 +167,7 @@
   </div>
   <div id="gamewrap">
     <canvas id="cv" aria-label="Arena do jogo"></canvas>
+    <div id="waveProgress" style="position:absolute;top:0;left:0;height:3px;background:#64ffda;width:0%;transition:width .15s linear;z-index:6;box-shadow:0 0 8px #64ffda;"></div>
     <button id="menuBtn" aria-label="Abrir talentos">🌳</button>
     <div id="pauseBadge" role="button" tabindex="0" aria-label="Retomar jogo">⏸ PAUSA · TOCA PARA RETOMAR</div>
     <div id="info" role="status" aria-live="polite"></div>
@@ -230,7 +231,7 @@
 </div>
 <script>
 "use strict";
-const SAVE_KEY = "torreProgressV35";
+const SAVE_KEY = "torreProgressV36";
 const TILE = 36;
 const MAX_RANKING = 20;
 
@@ -242,9 +243,9 @@ const WORLDS = [
 
 const TOWER_TYPES = {
   archer:    { name:"Arqueiro",  ico:"🏹", cost:60,  dmg:1,  range:130, rate:28, color:"#4ecdc4", special:null,       unlock:null, footprint:1 },
-  cannon:    { name:"Canhão",    ico:"💣", cost:200, dmg:9,  range:110, rate:70, color:"#ff9800", special:"splash",  splash:55,  unlock:null, footprint:2 },
+  cannon:    { name:"Canhão",    ico:"💣", cost:200, dmg:6,  range:110, rate:80, color:"#ff9800", special:"splash",  splash:50,  unlock:null, footprint:2 },
   ice:       { name:"Gelo",      ico:"❄️", cost:90,  dmg:1,  range:120, rate:40, color:"#81d4fa", special:"slow",    slow:0.5,   unlock:null, footprint:1 },
-  lightning: { name:"Relâmpago", ico:"⚡", cost:320, dmg:7,  range:140, rate:45, color:"#ffd700", special:"chain",   chain:3,    unlock:"lightning", footprint:1 },
+  lightning: { name:"Relâmpago", ico:"⚡", cost:320, dmg:10, range:150, rate:42, color:"#ffd700", special:"chain",   chain:4,    unlock:"lightning", footprint:1 },
   poison:    { name:"Veneno",    ico:"☠️", cost:280, dmg:5,  range:125, rate:35, color:"#9ccc65", special:"poison",  poisonDmg:3.5, unlock:"poison", footprint:1 }
 };
 
@@ -318,6 +319,7 @@ let killsThisRun = 0, towersBuiltThisRun = 0;
 let speedMul = 1, hudDirty = true;
 let hoverSlot = null;
 let pendingSaleId = null;
+let waveTotalCount = 0;
 
 const $ = id => document.getElementById(id);
 const cv = $("cv"), ctx = cv.getContext("2d");
@@ -483,24 +485,22 @@ function buildTower(slot, type){
   if (gold < base.cost) { showInfo("🪙 Ouro insuficiente"); return; }
   if (slot.occupied || !slot.buildable) return;
 
-  // Limite dinâmico de canhões (Ideia D)
   if (type === "cannon") {
     const cannons = towers.filter(x => x.type === "cannon").length;
-    const maxCannons = 2 + Math.floor(wave / 8); // vaga 1-7: 2; 8-15: 3; 16-23: 4; 24+: 5
+    const maxCannons = 2 + Math.floor(wave / 8);
     if (cannons >= maxCannons) {
       showInfo("🚫 Limite de canhões: " + maxCannons + " (melhora os que tens!)");
       return;
     }
   }
 
-  // Pegada 2 (Ideia C): precisa de slot vizinho livre
   let extraSlots = [];
   if (base.footprint === 2) {
     const right = slots.find(s => s.col === slot.col+1 && s.row === slot.row && s.buildable && !s.occupied);
     const down  = slots.find(s => s.col === slot.col && s.row === slot.row+1 && s.buildable && !s.occupied);
     if (right) extraSlots.push(right);
     else if (down) extraSlots.push(down);
-    else { showInfo("🚫 Canhão precisa de 2 slots livres (direita ou baixo)"); return; }
+    else { showInfo("🚫 Canhão precisa de 2 slots livres"); return; }
   }
 
   gold -= base.cost;
@@ -523,6 +523,7 @@ function upgradeTower(t){
   gold -= cost; t.level++;
   hudDirty = true; vibrate(12);
   burst(t.x, t.y, "#4ecdc4", 10);
+  floatText(t.x, t.y-20, "Nv." + t.level, "#4ecdc4");
   refreshPopup(); saveProgress(false);
 }
 
@@ -534,6 +535,7 @@ function evolveTower(t){
   persistent.essence -= cost; t.stars++;
   hudDirty = true; vibrate(20);
   burst(t.x, t.y, "#c77dff", 16);
+  floatText(t.x, t.y-20, "★".repeat(t.stars), "#ffd700");
   refreshPopup(); saveProgress(false);
 }
 
@@ -579,11 +581,10 @@ function spawnEnemy(type, waveNum, worldNum){
   const base = ENEMY_TYPES[type];
   if (!base) return;
   const worldFactor = 1 + (worldNum - 1) * 0.5;
-// Curva progressiva: começa suave (0.18) e cresce (0.06 por cada 5 vagas)
-const baseScale = 0.18 + Math.floor((waveNum - 1) / 5) * 0.06;
-let tierBonus = 1 + Math.floor(waveNum / 10) * 0.30;
-if (waveNum % 5 === 0) tierBonus += 0.20;
-const hpScale = (1 + (waveNum - 1) * baseScale * tierBonus) * worldFactor;
+  const baseScale = 0.18 + Math.floor((waveNum - 1) / 5) * 0.06;
+  let tierBonus = 1 + Math.floor(waveNum / 10) * 0.30;
+  if (waveNum % 5 === 0) tierBonus += 0.20;
+  const hpScale = (1 + (waveNum - 1) * baseScale * tierBonus) * worldFactor;
   const hp = Math.ceil(base.hp * hpScale);
   const speed = base.speed * (1 + (worldNum - 1) * 0.10) * (1 + Math.floor(waveNum / 8) * 0.05);
   enemies.push({
@@ -600,8 +601,8 @@ function startWave(){
   const isBoss = wave % 5 === 0;
   const waveTierMult = 1 + Math.floor(wave / 10) * 0.15;
   const count = isBoss
-  ? (7 + Math.floor(wave * 0.6 * waveTierMult))
-  : (5 + Math.floor(wave * 0.85 * waveTierMult));
+    ? (7 + Math.floor(wave * 0.6 * waveTierMult))
+    : (5 + Math.floor(wave * 0.85 * waveTierMult));
   for (let i = 0; i < count; i++) {
     let type = "goblin";
     if (wave >= 3 && Math.random() < 0.35) type = "orc";
@@ -611,8 +612,13 @@ function startWave(){
     spawnQueue.push({ type, delay: i === 0 ? 0 : delayStep });
   }
   if (isBoss) spawnQueue.push({ type: "boss", delay: 30 });
+  waveTotalCount = spawnQueue.length;
   startBtn.disabled = true;
   updateStartBtn();
+
+  if (wave % 5 === 0) showInfo("👑 BOSS · Vaga " + wave);
+  else if (wave % 4 === 0) showInfo("🛡️ TANQUES · Vaga " + wave);
+  else if (wave % 3 === 0) showInfo("🌊 ENXAME · Vaga " + wave);
 }
 
 function hitEnemy(e, dmg){
@@ -634,13 +640,14 @@ function killEnemy(e){
 function damageBase(e){
   if (!e.alive) return;
   const livesCfg = e.type === "boss"
-  ? (wave <= 5 ? 3 : 6)
-  : (ENEMY_TYPES[e.type] && ENEMY_TYPES[e.type].lives ? ENEMY_TYPES[e.type].lives : 1);
+    ? (wave <= 5 ? 3 : 6)
+    : (ENEMY_TYPES[e.type] && ENEMY_TYPES[e.type].lives ? ENEMY_TYPES[e.type].lives : 1);
   lives -= livesCfg; vibrate(40);
   e.alive = false;
   enemies = enemies.filter(x => x !== e);
   hudDirty = true;
   burst(e.x, e.y, "#ff5252", 12);
+  floatText(e.x, e.y-20, "-" + livesCfg + "❤️", "#ff5252");
   if (lives <= 0) endGame();
 }
 
@@ -658,36 +665,60 @@ function hitProjectile(p){
   p.hit = true;
   const tgt = p.target;
   if (!tgt || !tgt.alive) return;
+
+  if (p.special === "chain" && tgt.type === "boss") {
+    p.dmg *= 1.8;
+    floatText(tgt.x, tgt.y - tgt.radius - 10, "⚡CRÍTICO", "#ffd700");
+  }
+
   if (p.special === "splash") {
     enemies.forEach(e => {
       if (!e.alive) return;
-      if (dist(e, tgt) <= p.splash) { hitEnemy(e, p.dmg); if (e.alive) burst(e.x, e.y, p.color, 4); }
+      if (dist(e, tgt) <= p.splash) {
+        hitEnemy(e, p.dmg);
+        if (e.alive) { floatText(e.x + rand(-6,6), e.y - e.radius - 2, Math.round(p.dmg), "#ff9800"); burst(e.x, e.y, p.color, 4); }
+      }
     });
   } else if (p.special === "chain") {
     hitEnemy(tgt, p.dmg);
+    if (tgt.alive) floatText(tgt.x + rand(-6,6), tgt.y - tgt.radius - 2, Math.round(p.dmg), "#ffd700");
     let last = tgt, chained = [tgt];
     for (let i=0;i<p.chain-1;i++){
-      let next = null, bestD = 90;
+      let next = null, bestD = 70;
       enemies.forEach(e => {
         if (!e.alive || chained.includes(e)) return;
         const d = dist(e, last); if (d < bestD) { bestD = d; next = e; }
       });
       if (!next) break;
-      hitEnemy(next, p.dmg * 0.7);
+      const chainDmg = p.dmg * 0.7;
+      hitEnemy(next, chainDmg);
+      if (next.alive) floatText(next.x + rand(-6,6), next.y - next.radius - 2, Math.round(chainDmg), "#ffd700");
       chained.push(next); last = next;
     }
   } else if (p.special === "slow") {
     hitEnemy(tgt, p.dmg);
+    if (tgt.alive) floatText(tgt.x + rand(-6,6), tgt.y - tgt.radius - 2, "❄️", "#81d4fa");
     if (tgt.alive) tgt.slow = Math.max(tgt.slow, p.slow);
   } else if (p.special === "poison") {
     hitEnemy(tgt, p.dmg);
+    if (tgt.alive) floatText(tgt.x + rand(-6,6), tgt.y - tgt.radius - 2, "☠️", "#9ccc65");
     if (tgt.alive) { tgt.poison = 90; tgt.poisonDmg = p.poisonDmg; }
-  } else { hitEnemy(tgt, p.dmg); }
+  } else {
+    hitEnemy(tgt, p.dmg);
+    if (tgt.alive) floatText(tgt.x + rand(-6,6), tgt.y - tgt.radius - 2, Math.round(p.dmg), "#e8ecf5");
+  }
   burst(p.x, p.y, p.color, 5);
 }
 
 function update(){
   if (paused || !running) return;
+
+  const remaining = spawnQueue.length + enemies.length;
+  const done = Math.max(0, waveTotalCount - remaining);
+  const pct = waveTotalCount > 0 ? (done / waveTotalCount) * 100 : 0;
+  const wpEl = document.getElementById("waveProgress");
+  if (wpEl) wpEl.style.width = pct + "%";
+
   if (spawnQueue.length > 0) {
     spawnTimer++;
     if (spawnTimer >= spawnQueue[0].delay) {
@@ -700,11 +731,17 @@ function update(){
     const bonus = 18 + wave * 3 * world;
     gold += bonus; score += bonus;
     persistent.essence += essencePerWave();
+    const prevBest = persistent.bestWave;
+    if (wave > persistent.bestWave) persistent.bestWave = wave;
+    const isNewRecord = wave > prevBest;
+
     if (wave % 5 === 0) {
       persistent.essence += 3;
       world++;
       const wname = (WORLDS[(world-1)%WORLDS.length]?.name) || "Extra";
       showInfo("🌍 Mundo " + world + ": " + wname + "!");
+    } else if (isNewRecord && prevBest > 0) {
+      showInfo("🏆 NOVO RECORDE! Vaga " + wave);
     } else {
       showInfo("✅ Vaga concluída! +" + bonus + " 🪙");
     }
@@ -837,6 +874,24 @@ function render(){
 
   towers.forEach(t => {
     const base = TOWER_TYPES[t.type];
+
+    if (t.extraSlots && t.extraSlots.length > 0) {
+      t.extraSlots.forEach(ex => {
+        ctx.beginPath();
+        ctx.arc(ex.x, ex.y, TILE*0.35, 0, Math.PI*2);
+        ctx.fillStyle = base.color + "44";
+        ctx.fill();
+        ctx.strokeStyle = base.color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.font = "14px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = base.color;
+        ctx.fillText("●", ex.x, ex.y);
+      });
+    }
+
     if (t === selectedTower) {
       const st = towerStats(t);
       ctx.beginPath();
@@ -847,25 +902,22 @@ function render(){
       ctx.lineWidth = 1.5;
       ctx.stroke();
     }
+
+    const baseRadius = TILE*0.35;
+    const lvlBonus = (t.level-1) * 1.5;
+    const starBonus = t.stars * 1.2;
+    const radius = baseRadius + lvlBonus + starBonus;
+
+    if (t.level >= 3) {
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, radius + 3, 0, Math.PI*2);
+      ctx.strokeStyle = "rgba(255,215,0,0.5)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
     ctx.beginPath();
-    // Slots extra do canhão (pegada 2)
-if (t.extraSlots && t.extraSlots.length > 0) {
-  t.extraSlots.forEach(ex => {
-    ctx.beginPath();
-    ctx.arc(ex.x, ex.y, TILE*0.35, 0, Math.PI*2);
-    ctx.fillStyle = base.color + "44";
-    ctx.fill();
-    ctx.strokeStyle = base.color;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.font = "14px sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillStyle = base.color;
-    ctx.fillText("●", ex.x, ex.y);
-  });
-}
-    ctx.arc(t.x, t.y, TILE*0.35, 0, Math.PI*2);
+    ctx.arc(t.x, t.y, radius, 0, Math.PI*2);
     ctx.fillStyle = base.color;
     ctx.fill();
     ctx.strokeStyle = "#0a1020";
@@ -874,9 +926,13 @@ if (t.extraSlots && t.extraSlots.length > 0) {
     if (t.stars > 0) {
       ctx.fillStyle = "#ffd700";
       ctx.font = "bold 9px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
       ctx.fillText("★".repeat(t.stars), t.x, t.y - TILE*0.55);
     }
     ctx.font = "20px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
     ctx.fillText(base.ico, t.x, t.y + 1);
   });
 
@@ -917,6 +973,7 @@ if (t.extraSlots && t.extraSlots.length > 0) {
   floats.forEach(f => {
     ctx.globalAlpha = f.life; ctx.fillStyle = f.color;
     ctx.font = "bold 13px sans-serif"; ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
     ctx.fillText(f.txt, f.x, f.y);
   });
   ctx.globalAlpha = 1;
@@ -930,6 +987,10 @@ function updateHUD(){
   worldLbl.textContent = world || 1;
   speedBtn.textContent = speedMul + "x";
   convGoldTxt.textContent = Math.floor(gold || 0);
+  if (!running) {
+    const wpEl = document.getElementById("waveProgress");
+    if (wpEl) wpEl.style.width = "0%";
+  }
   hudDirty = false;
 }
 
@@ -1293,7 +1354,7 @@ function initGame(){
     const s = persistent.savedState;
     wave = s.wave || 1;
     world = s.world || 1;
-    gold = s.gold || 100;
+    gold = s.gold || 120;
     lives = Math.max(1, s.lives || 12);
     score = s.score || 0;
     maxLives = Math.max(lives, 12 + startLivesBonus());
@@ -1303,28 +1364,28 @@ function initGame(){
     killsThisRun = 0; towersBuiltThisRun = 0; speedMul = 1;
     selectedType = null; selectedTower = null; hoverSlot = null;
     setTimeout(() => {
-  resizeCanvas();
-  if (Array.isArray(s.towers)) {
-    s.towers.flat().forEach(st => {
-      const slot = slots.find(x => x.col === st.col && x.row === st.row && x.buildable && !x.occupied);
-      if (slot && !slot.occupied) {
-        slot.occupied = true;
-        const extras = [];
-        if (Array.isArray(st.extraCols)) {
-          st.extraCols.forEach(ec => {
-            const ex = slots.find(x => x.col === ec.col && x.row === ec.row && x.buildable && !x.occupied);
-            if (ex) { ex.occupied = true; extras.push(ex); }
-          });
-        }
-        towers.push({
-          type: st.type, level: st.level || 1, stars: st.stars || 0,
-          col: st.col, row: st.row, x: slot.x, y: slot.y,
-          slot, extraSlots: extras, cooldown: 0, angle: 0
+      resizeCanvas();
+      if (Array.isArray(s.towers)) {
+        s.towers.flat().forEach(st => {
+          const slot = slots.find(x => x.col === st.col && x.row === st.row && x.buildable && !x.occupied);
+          if (slot && !slot.occupied) {
+            slot.occupied = true;
+            const extras = [];
+            if (Array.isArray(st.extraCols)) {
+              st.extraCols.forEach(ec => {
+                const ex = slots.find(x => x.col === ec.col && x.row === ec.row && x.buildable && !x.occupied);
+                if (ex) { ex.occupied = true; extras.push(ex); }
+              });
+            }
+            towers.push({
+              type: st.type, level: st.level || 1, stars: st.stars || 0,
+              col: st.col, row: st.row, x: slot.x, y: slot.y,
+              slot, extraSlots: extras, cooldown: 0, angle: 0
+            });
+          }
         });
       }
-    });
-  }
-}, 50);
+    }, 50);
   } else {
     gold = 120 + startGoldBonus();
     maxLives = 12 + startLivesBonus();
