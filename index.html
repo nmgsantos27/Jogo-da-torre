@@ -1074,7 +1074,7 @@ function showAscendScreen(){
 
 ascCancel.addEventListener("click", () => { ascendScreen.classList.remove("show"); paused = false; pauseBadge.classList.remove("show"); lastTime = 0; });
 ascConfirm.addEventListener("click", () => {
-  const pts = calcAscendPoints(); persistent.ascensionLevel += pts; persistent.totalAscensions++; persistent.essence += 2; // Bónus fixo de apenas 2 essências por ascensão saveProgress(true);
+  const pts = calcAscendPoints(); persistent.ascensionLevel += pts; persistent.totalAscensions++; persistent.essence += 2; saveProgress(true);
   ascendScreen.classList.remove("show"); paused = false; pauseBadge.classList.remove("show");
   const oldLvl = ascLevel() - pts, newLvl = ascLevel(); const unlocked = [];
   ASCENSION_BONUSES.forEach(b => { if (b.lvl > oldLvl && b.lvl <= newLvl) { if (b.ico === "🔥") unlocked.push("Piromante"); if (b.ico === "💀" && b.lvl === 9) unlocked.push("Necromante"); } });
@@ -1100,7 +1100,12 @@ function renderTalentList(){
 }
 
 menuBtn.addEventListener("click", openTalents); talClose.addEventListener("click", closeTalents);
-function convertGold(){ if (gold < 1000) { showInfo("🪙 Precisas de 1000 ouro"); return; } gold -= 1000; persistent.essence++; ...hudDirty = true; vibrate(10); showInfo("💎 +1 essência"); if (talentScreen.classList.contains("show")) renderTalentList(); saveProgress(true); }
+function convertGold(){
+  if (gold < 1000) { showInfo("🪙 Precisas de 1000 ouro"); return; }
+  gold -= 1000; persistent.essence++; hudDirty = true; vibrate(10); showInfo("💎 +1 essência");
+  if (talentScreen.classList.contains("show")) renderTalentList();
+  saveProgress(true);
+}
 talConv.addEventListener("click", convertGold);
 
 function resumeGame(){ if (talentScreen.classList.contains("show") || gameOverFlag || branchScreen.classList.contains("show") || rankingScreen.classList.contains("show") || ascendScreen.classList.contains("show") || buildMenu.classList.contains("show") || popup.classList.contains("show")) return; paused = false; pauseBadge.classList.remove("show"); lastTime = 0; }
@@ -1125,7 +1130,7 @@ function showGameOver(){ overlay.classList.add("show"); ovWave.textContent = Mat
 function endGame(){
   if (gameOverFlag) return; gameOverFlag = true; running = false; persistent.totalGames++; persistent.totalKills += killsThisRun;
   if (wave - 1 > persistent.bestWave) persistent.bestWave = wave - 1; if (score > persistent.bestScore) persistent.bestScore = Math.floor(score);
-  persistent.essence += Math.floor((gold || 0) * 0.001); // Reduzido de 0.5% para 0.1% persistent.savedState = null; saveProgress(true); showGameOver();
+  persistent.essence += Math.floor((gold || 0) * 0.001); persistent.savedState = null; saveProgress(true); showGameOver();
 }
 
 ovBtn.addEventListener("click", () => {
