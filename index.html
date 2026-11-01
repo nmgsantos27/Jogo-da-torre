@@ -889,31 +889,20 @@ function drawTower(ctx, t){
   if (t.level >= 5) {
     const auraStrength = Math.min(1, (t.level - 4) / 6);
     const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 300);
-    ctx.beginPath();
-    ctx.arc(0, 0, size + 6 + t.level, 0, Math.PI*2);
-    ctx.fillStyle = "rgba(255,215,0," + (0.1 + pulse*0.1*auraStrength) + ")";
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(0, 0, size + 6 + t.level, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(255,215,0," + (0.1 + pulse*0.1*auraStrength) + ")"; ctx.fill();
   }
 
   if (t.level >= 3) {
     const ringColors = ["#cd7f32", "#c0c0c0", "#ffd700", "#ff6f00", "#ff1744", "#ff1744", "#ff1744", "#ff1744"];
-    ctx.beginPath();
-    ctx.arc(0, 0, size + 2 + Math.min(t.level-3, 3), 0, Math.PI*2);
-    ctx.strokeStyle = ringColors[Math.min(t.level-3, 7)];
-    ctx.lineWidth = 2 + Math.min(t.level-3, 3)*0.5;
-    ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, size + 2 + Math.min(t.level-3, 3), 0, Math.PI*2);
+    ctx.strokeStyle = ringColors[Math.min(t.level-3, 7)]; ctx.lineWidth = 2 + Math.min(t.level-3, 3)*0.5; ctx.stroke();
   }
 
-  ctx.beginPath();
-  ctx.arc(0, 0, size, 0, Math.PI*2);
-  ctx.fillStyle = st.color;
-  ctx.fill();
-  ctx.strokeStyle = "#0a1020";
-  ctx.lineWidth = 2.5;
-  ctx.stroke();
+  ctx.beginPath(); ctx.arc(0, 0, size, 0, Math.PI*2); ctx.fillStyle = st.color; ctx.fill();
+  ctx.strokeStyle = "#0a1020"; ctx.lineWidth = 2.5; ctx.stroke();
 
-  ctx.save();
-  ctx.rotate(angle);
+  ctx.save(); ctx.rotate(angle);
 
   if (!t.branch || t.level < 3) {
     ctx.strokeStyle = "#fff"; ctx.lineWidth = 2;
@@ -950,8 +939,7 @@ function drawTower(ctx, t){
       ctx.strokeStyle = "#e1bee7"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(-size*0.2, size*0.2); ctx.lineTo(size*0.2, size*0.2); ctx.stroke();
     }
   }
-  ctx.restore();
-  ctx.restore();
+  ctx.restore(); ctx.restore();
 
   if (t.level > 1) {
     ctx.fillStyle = "#ffd700"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
@@ -991,7 +979,6 @@ function render(){
   }
 
   towers.forEach(t => drawTower(ctx, t));
-
   skeletons.forEach(s => {
     ctx.fillStyle = "#e1bee7"; ctx.beginPath(); ctx.arc(s.x, s.y, 6, 0, Math.PI*2); ctx.fill();
     ctx.strokeStyle = "#7e57c2"; ctx.lineWidth = 1.5; ctx.stroke();
