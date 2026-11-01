@@ -213,7 +213,7 @@
       <div class="icon-box">🪙</div>
       <div class="info">
         <b><span id="convGoldTxt">0</span> 🪙 disponíveis</b>
-        <span>250 🪙 = 1 💎</span>
+        <span>1000 🪙 = 1 💎</span>
       </div>
       <button id="talConv">Converter</button>
     </div>
@@ -384,12 +384,12 @@ const ENEMY_TYPES = {
 };
 
 const TALENTS = [
-  { id:"force",    ico:"⚔️", name:"Força",      desc:"+10% dano por nível", max:5, cost:n=>4+n*2 },
-  { id:"greed",    ico:"🪙", name:"Ganância",   desc:"+15% ouro por nível", max:5, cost:n=>3+n*2 },
-  { id:"vital",    ico:"❤️", name:"Vitalidade", desc:"+2 vidas iniciais por nível", max:5, cost:n=>3+n*2 },
-  { id:"precision",ico:"🎯", name:"Precisão",   desc:"+5% alcance por nível", max:5, cost:n=>4+n*2 },
-  { id:"speed",    ico:"⏱️", name:"Celeridade", desc:"+8% cadência por nível", max:5, cost:n=>5+n*2 },
-  { id:"heritage", ico:"💰", name:"Herança",    desc:"+30 ouro inicial por nível", max:3, cost:n=>6+n*2 }
+  { id:"force",    ico:"⚔️", name:"Força",      desc:"+10% dano por nível", max:5, cost:n=>10+n*5 },
+  { id:"greed",    ico:"🪙", name:"Ganância",   desc:"+15% ouro por nível", max:5, cost:n=>8+n*5 },
+  { id:"vital",    ico:"❤️", name:"Vitalidade", desc:"+2 vidas iniciais por nível", max:5, cost:n=>8+n*5 },
+  { id:"precision",ico:"🎯", name:"Precisão",   desc:"+5% alcance por nível", max:5, cost:n=>10+n*5 },
+  { id:"speed",    ico:"⏱️", name:"Celeridade", desc:"+8% cadência por nível", max:5, cost:n=>12+n*6 },
+  { id:"heritage", ico:"💰", name:"Herança",    desc:"+30 ouro inicial por nível", max:3, cost:n=>15+n*8 }
 ];
 
 function defaultPersistent() {
@@ -792,7 +792,7 @@ function killEnemy(e){
   if (!e.alive) return; e.alive = false; enemies = enemies.filter(x => x !== e);
   let g = Math.round(e.gold * goldMul()); if (wave > 30) g = Math.round(g * 0.6); g = Math.round(g * ascGoldFactor());
   gold += g; score += g; killsThisRun++; hudDirty = true; burst(e.x, e.y, e.color, 4);
-  if (e.type === "boss") { persistent.essence += 2 + world; saveProgress(false); showInfo("👑 Boss! +" + (2+world) + " 💎"); }
+  if (e.type === "boss") { persistent.essence += 1; saveProgress(false); showInfo("👑 Boss! +1 💎"); }
 }
 
 function damageBase(e){
@@ -830,9 +830,9 @@ function update(){
   if (spawnQueue.length > 0) {
     spawnTimer++; if (spawnTimer >= spawnQueue[0].delay) { spawnTimer = 0; spawnEnemy(spawnQueue.shift().type, wave, world); }
   } else if (enemies.length === 0 && running) {
-    running = false; let bonus = 18 + wave * 3 * world; if (wave > 30) bonus = 50; gold += bonus; score += bonus; persistent.essence += 1 + talentLvl("greed");
+    running = false; let bonus = 18 + wave * 3 * world; if (wave > 30) bonus = 50; gold += bonus; score += bonus; if (wave % 2 === 0) persistent.essence += 1; // Só dá 1 essência a cada 2 vagas
     const prevBest = persistent.bestWave; if (wave > persistent.bestWave) persistent.bestWave = wave; const isNewRecord = wave > prevBest;
-    if (wave % 5 === 0) { persistent.essence += 3; world++; const wname = (WORLDS[(world-1)%WORLDS.length]?.name) || "Extra"; showInfo("🌍 Mundo " + world + ": " + wname + "!"); }
+    if (wave % 5 === 0) { persistent.essence += 1; world++; ... const wname = (WORLDS[(world-1)%WORLDS.length]?.name) || "Extra"; showInfo("🌍 Mundo " + world + ": " + wname + "!"); }
     else if (isNewRecord && prevBest > 0) showInfo("🏆 NOVO RECORDE! Vaga " + wave);
     else showInfo("✅ Vaga concluída! +" + bonus + " 🪙");
     wave++; hudDirty = true; vibrate(25); startBtn.disabled = false; updateStartBtn(); saveProgress(true); return;
@@ -1074,7 +1074,7 @@ function showAscendScreen(){
 
 ascCancel.addEventListener("click", () => { ascendScreen.classList.remove("show"); paused = false; pauseBadge.classList.remove("show"); lastTime = 0; });
 ascConfirm.addEventListener("click", () => {
-  const pts = calcAscendPoints(); persistent.ascensionLevel += pts; persistent.totalAscensions++; persistent.essence += 5 + Math.floor(wave / 5); saveProgress(true);
+  const pts = calcAscendPoints(); persistent.ascensionLevel += pts; persistent.totalAscensions++; persistent.essence += 2; // Bónus fixo de apenas 2 essências por ascensão saveProgress(true);
   ascendScreen.classList.remove("show"); paused = false; pauseBadge.classList.remove("show");
   const oldLvl = ascLevel() - pts, newLvl = ascLevel(); const unlocked = [];
   ASCENSION_BONUSES.forEach(b => { if (b.lvl > oldLvl && b.lvl <= newLvl) { if (b.ico === "🔥") unlocked.push("Piromante"); if (b.ico === "💀" && b.lvl === 9) unlocked.push("Necromante"); } });
@@ -1100,7 +1100,7 @@ function renderTalentList(){
 }
 
 menuBtn.addEventListener("click", openTalents); talClose.addEventListener("click", closeTalents);
-function convertGold(){ if (gold < 250) { showInfo("🪙 Precisas de 250 ouro"); return; } gold -= 250; persistent.essence++; hudDirty = true; vibrate(10); showInfo("💎 +1 essência"); if (talentScreen.classList.contains("show")) renderTalentList(); saveProgress(true); }
+function convertGold(){ if (gold < 1000) { showInfo("🪙 Precisas de 1000 ouro"); return; } gold -= 1000; persistent.essence++; ...hudDirty = true; vibrate(10); showInfo("💎 +1 essência"); if (talentScreen.classList.contains("show")) renderTalentList(); saveProgress(true); }
 talConv.addEventListener("click", convertGold);
 
 function resumeGame(){ if (talentScreen.classList.contains("show") || gameOverFlag || branchScreen.classList.contains("show") || rankingScreen.classList.contains("show") || ascendScreen.classList.contains("show") || buildMenu.classList.contains("show") || popup.classList.contains("show")) return; paused = false; pauseBadge.classList.remove("show"); lastTime = 0; }
@@ -1125,7 +1125,7 @@ function showGameOver(){ overlay.classList.add("show"); ovWave.textContent = Mat
 function endGame(){
   if (gameOverFlag) return; gameOverFlag = true; running = false; persistent.totalGames++; persistent.totalKills += killsThisRun;
   if (wave - 1 > persistent.bestWave) persistent.bestWave = wave - 1; if (score > persistent.bestScore) persistent.bestScore = Math.floor(score);
-  persistent.essence += Math.floor((gold || 0) * 0.005); persistent.savedState = null; saveProgress(true); showGameOver();
+  persistent.essence += Math.floor((gold || 0) * 0.001); // Reduzido de 0.5% para 0.1% persistent.savedState = null; saveProgress(true); showGameOver();
 }
 
 ovBtn.addEventListener("click", () => {
