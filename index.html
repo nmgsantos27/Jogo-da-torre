@@ -433,93 +433,83 @@ function rebuildStrategicSlots(w,h){
 
   PATH = buildPath(offX, offY);
 
-  // 1. Marcar caminho como NÃO construível
+  // 1. Filtrar slots inválidos (perto do caminho ou nos cantos superiores)
   slots.forEach(s => {
     let distToPath = Infinity;
     for(let i=0;i<PATH.length-1;i++){ 
       const d = distToSegment(s, PATH[i], PATH[i+1]); 
       if (d < distToPath) distToPath = d; 
     }
-    if (distToPath > TILE * 1.1) s.buildable = true;
+    
+    // Impede slots na linha do topo (onde ficam os botões do menu e da árvore)
+    const isTopCorner = (s.row <= 1 && s.col >= COLS - 3); 
+    
+    if (distToPath > TILE * 1.1 && !isTopCorner) {
+      s.buildable = true;
+    }
   });
 
   const availableSlots = slots.filter(s => s.buildable);
-  const numZones = 5;
-  const slotsPerZone = Math.ceil(maxTowers() / numZones);
   const chosenSlots = [];
+  
+  // Função auxiliar para calcular a distância de um slot ao caminho
+  const getPathDist = (slot) => {
+    let d = Infinity;
+    for(let i=0;i<PATH.length-1;i++){ d = Math.min(d, distToSegment(slot, PATH[i], PATH[i+1])); }
+    return d;
+  };
 
-  // 2. Escolher os slots com espaço de sobra entre eles
-  for (let z = 0; z < numZones; z++) {
-    const zoneStartY = (ROWS / numZones) * z;
-    const zoneEndY = (ROWS / numZones) * (z + 1);
+  // Ordenar todos os slots disponíveis pela proximidade ao caminho
+  availableSlots.sort((a,b) => getPathDist(a) - getPathDist(b));
+
+  // 2. Dividir o mapa em 3 zonas (Início, Meio, Fim) para garantir distribuição
+  const zoneSize = ROWS / 3;
+  
+  for (let z = 0; z < 3; z++) {
+    const startY = z * zoneSize;
+    const endY = (z + 1) * zoneSize;
     
-    let zoneSlots = availableSlots.filter(s => s.row >= zoneStartY && s.row < zoneEndY && !chosenSlots.includes(s));
+    // Slots que estão nesta zona
+    let zoneSlots = availableSlots.filter(s => s.row >= startY && s.row < endY && !chosenSlots.includes(s));
     
-    if (zoneSlots.length < slotsPerZone) {
-      const extras = availableSlots.filter(s => !chosenSlots.includes(s) && !zoneSlots.includes(s));
-      extras.sort((a,b) => Math.abs(a.row - (zoneStartY + (zoneEndY-zoneStartY)/2)) - Math.abs(b.row - (zoneStartY + (zoneEndY-zoneStartY)/2)));
-      zoneSlots = zoneSlots.concat(extras.slice(0, slotsPerZone - zoneSlots.length));
-    }
+    // Quantos slots queremos por zona (aproximadamente um terço do total)
+    const targetPerZone = Math.ceil(maxTowers() / 3);
+    let addedInZone = 0;
 
-    // Ordenar pela proximidade ao caminho (para escolher os melhores)
-    zoneSlots.sort((a,b) => { 
-      let distA = Infinity, distB = Infinity; 
-      for(let i=0;i<PATH.length-1;i++){ 
-        distA = Math.min(distA, distToSegment(a, PATH[i], PATH[i+1])); 
-        distB = Math.min(distB, distToSegment(b, PATH[i], PATH[i+1])); 
-      } 
-      return distA - distB; 
-    });
-
-    // Escolher, mas verificar se não está demasiado perto de um já escolhido
-    for (let i = 0; i < zoneSlots.length && chosenSlots.length < maxTowers(); i++) { 
-      let tooClose = false;
+    for (let i = 0; i < zoneSlots.length && addedInZone < targetPerZone && chosenSlots.length < maxTowers(); i++) {
       const testSlot = zoneSlots[i];
+      let tooClose = false;
       
-      // Verifica se está a menos de 1.8 blocos de distância de um slot já escolhido
+      // Garante espaçamento de 1.8 blocos entre slots
       for (let j = 0; j < chosenSlots.length; j++) {
-        if (dist(testSlot, chosenSlots[j]) < TILE * 1.8) {
-          tooClose = true;
-          break;
-        }
+        if (dist(testSlot, chosenSlots[j]) < TILE * 1.8) { tooClose = true; break; }
       }
       
       if (!tooClose) {
         chosenSlots.push(testSlot);
+        addedInZone++;
       }
+    }
+  }
+
+  // Fallback: se não preencheu o limite, pega os melhores restantes (respeitando o espaço)
+  if (chosenSlots.length < maxTowers()) {
+    for (let i = 0; i < availableSlots.length && chosenSlots.length < maxTowers(); i++) {
+      const testSlot = availableSlots[i];
+      if (chosenSlots.includes(testSlot)) continue;
+      
+      let tooClose = false;
+      for (let j = 0; j < chosenSlots.length; j++) {
+        if (dist(testSlot, chosenSlots[j]) < TILE * 1.8) { tooClose = true; break; }
+      }
+      if (!tooClose) chosenSlots.push(testSlot);
     }
   }
 
   slots.forEach(s => s.buildable = false);
   chosenSlots.forEach(s => s.buildable = true);
 
-  // Fallback de segurança (se faltarem torres, tenta preencher com espaçamento maior)
-  if (chosenSlots.length < maxTowers()) {
-    const remaining = availableSlots.filter(s => !s.buildable);
-    remaining.sort((a,b) => { 
-      let distA = Infinity, distB = Infinity; 
-      for(let i=0;i<PATH.length-1;i++){ 
-        distA = Math.min(distA, distToSegment(a, PATH[i], PATH[i+1])); 
-        distB = Math.min(distB, distToSegment(b, PATH[i], PATH[i+1])); 
-      } 
-      return distA - distB; 
-    });
-    
-    for (let i = 0; i < remaining.length && chosenSlots.length < maxTowers(); i++) { 
-      let tooClose = false;
-      for (let j = 0; j < chosenSlots.length; j++) {
-        if (dist(remaining[i], chosenSlots[j]) < TILE * 1.5) {
-          tooClose = true;
-          break;
-        }
-      }
-      if (!tooClose) {
-        remaining[i].buildable = true; 
-        chosenSlots.push(remaining[i]); 
-      }
-    }
-  }
-
+  // 3. Restaurar torres
   previousTowers.forEach(item => {
     const t = item.tower;
     let slot = slots.find(s => s.buildable && !s.occupied && s.col === item.col && s.row === item.row);
