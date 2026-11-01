@@ -425,13 +425,21 @@ function rebuildStrategicSlots(w,h){
   offY = Math.floor((h - ROWS*TILE)/2);
 
   slots = []; towers = [];
-  for(let r=0;r<ROWS;r++){ for(let c=0;c<COLS;c++){ slots.push({ col:c, row:r, x: offX + c*TILE + TILE/2, y: offY + r*TILE + TILE/2, occupied:false, buildable:false }); } }
+  for(let r=0;r<ROWS;r++){ 
+    for(let c=0;c<COLS;c++){ 
+      slots.push({ col:c, row:r, x: offX + c*TILE + TILE/2, y: offY + r*TILE + TILE/2, occupied:false, buildable:false }); 
+    } 
+  }
 
   PATH = buildPath(offX, offY);
 
+  // 1. Marcar caminho como NÃO construível
   slots.forEach(s => {
     let distToPath = Infinity;
-    for(let i=0;i<PATH.length-1;i++){ const d = distToSegment(s, PATH[i], PATH[i+1]); if (d < distToPath) distToPath = d; }
+    for(let i=0;i<PATH.length-1;i++){ 
+      const d = distToSegment(s, PATH[i], PATH[i+1]); 
+      if (d < distToPath) distToPath = d; 
+    }
     if (distToPath > TILE * 1.1) s.buildable = true;
   });
 
@@ -440,26 +448,76 @@ function rebuildStrategicSlots(w,h){
   const slotsPerZone = Math.ceil(maxTowers() / numZones);
   const chosenSlots = [];
 
+  // 2. Escolher os slots com espaço de sobra entre eles
   for (let z = 0; z < numZones; z++) {
     const zoneStartY = (ROWS / numZones) * z;
     const zoneEndY = (ROWS / numZones) * (z + 1);
+    
     let zoneSlots = availableSlots.filter(s => s.row >= zoneStartY && s.row < zoneEndY && !chosenSlots.includes(s));
+    
     if (zoneSlots.length < slotsPerZone) {
       const extras = availableSlots.filter(s => !chosenSlots.includes(s) && !zoneSlots.includes(s));
       extras.sort((a,b) => Math.abs(a.row - (zoneStartY + (zoneEndY-zoneStartY)/2)) - Math.abs(b.row - (zoneStartY + (zoneEndY-zoneStartY)/2)));
       zoneSlots = zoneSlots.concat(extras.slice(0, slotsPerZone - zoneSlots.length));
     }
-    zoneSlots.sort((a,b) => { let distA = Infinity, distB = Infinity; for(let i=0;i<PATH.length-1;i++){ distA = Math.min(distA, distToSegment(a, PATH[i], PATH[i+1])); distB = Math.min(distB, distToSegment(b, PATH[i], PATH[i+1])); } return distA - distB; });
-    for (let i = 0; i < Math.min(slotsPerZone, zoneSlots.length); i++) { chosenSlots.push(zoneSlots[i]); }
+
+    // Ordenar pela proximidade ao caminho (para escolher os melhores)
+    zoneSlots.sort((a,b) => { 
+      let distA = Infinity, distB = Infinity; 
+      for(let i=0;i<PATH.length-1;i++){ 
+        distA = Math.min(distA, distToSegment(a, PATH[i], PATH[i+1])); 
+        distB = Math.min(distB, distToSegment(b, PATH[i], PATH[i+1])); 
+      } 
+      return distA - distB; 
+    });
+
+    // Escolher, mas verificar se não está demasiado perto de um já escolhido
+    for (let i = 0; i < zoneSlots.length && chosenSlots.length < maxTowers(); i++) { 
+      let tooClose = false;
+      const testSlot = zoneSlots[i];
+      
+      // Verifica se está a menos de 1.8 blocos de distância de um slot já escolhido
+      for (let j = 0; j < chosenSlots.length; j++) {
+        if (dist(testSlot, chosenSlots[j]) < TILE * 1.8) {
+          tooClose = true;
+          break;
+        }
+      }
+      
+      if (!tooClose) {
+        chosenSlots.push(testSlot);
+      }
+    }
   }
 
   slots.forEach(s => s.buildable = false);
   chosenSlots.forEach(s => s.buildable = true);
 
+  // Fallback de segurança (se faltarem torres, tenta preencher com espaçamento maior)
   if (chosenSlots.length < maxTowers()) {
     const remaining = availableSlots.filter(s => !s.buildable);
-    remaining.sort((a,b) => { let distA = Infinity, distB = Infinity; for(let i=0;i<PATH.length-1;i++){ distA = Math.min(distA, distToSegment(a, PATH[i], PATH[i+1])); distB = Math.min(distB, distToSegment(b, PATH[i], PATH[i+1])); } return distA - distB; });
-    for (let i = 0; i < remaining.length && chosenSlots.length < maxTowers(); i++) { remaining[i].buildable = true; chosenSlots.push(remaining[i]); }
+    remaining.sort((a,b) => { 
+      let distA = Infinity, distB = Infinity; 
+      for(let i=0;i<PATH.length-1;i++){ 
+        distA = Math.min(distA, distToSegment(a, PATH[i], PATH[i+1])); 
+        distB = Math.min(distB, distToSegment(b, PATH[i], PATH[i+1])); 
+      } 
+      return distA - distB; 
+    });
+    
+    for (let i = 0; i < remaining.length && chosenSlots.length < maxTowers(); i++) { 
+      let tooClose = false;
+      for (let j = 0; j < chosenSlots.length; j++) {
+        if (dist(remaining[i], chosenSlots[j]) < TILE * 1.5) {
+          tooClose = true;
+          break;
+        }
+      }
+      if (!tooClose) {
+        remaining[i].buildable = true; 
+        chosenSlots.push(remaining[i]); 
+      }
+    }
   }
 
   previousTowers.forEach(item => {
@@ -469,9 +527,21 @@ function rebuildStrategicSlots(w,h){
       const targetX = offX + Math.max(0, Math.min(1, item.nx)) * COLS * TILE;
       const targetY = offY + Math.max(0, Math.min(1, item.ny)) * ROWS * TILE;
       let best = Infinity;
-      slots.forEach(s => { if (!s.buildable || s.occupied) return; const d = (s.x - targetX) ** 2 + (s.y - targetY) ** 2; if (d < best) { best = d; slot = s; } });
+      slots.forEach(s => { 
+        if (!s.buildable || s.occupied) return; 
+        const d = (s.x - targetX) ** 2 + (s.y - targetY) ** 2; 
+        if (d < best) { best = d; slot = s; } 
+      });
     }
-    if (slot) { slot.occupied = true; t.slot = slot; t.col = slot.col; t.row = slot.row; t.x = slot.x; t.y = slot.y; towers.push(t); }
+    if (slot) { 
+      slot.occupied = true; 
+      t.slot = slot; 
+      t.col = slot.col; 
+      t.row = slot.row; 
+      t.x = slot.x; 
+      t.y = slot.y; 
+      towers.push(t); 
+    }
   });
 }
 
