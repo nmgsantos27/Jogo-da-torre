@@ -477,16 +477,29 @@ function rebuildStrategicSlots(w,h){
 
 function showBuildMenu(slot){
   if (slot.occupied || !slot.buildable) return;
-  pendingBuildSlot = slot; buildMenu.classList.add("show"); buildList.innerHTML = "";
+  pendingBuildSlot = slot; 
+  buildMenu.classList.add("show"); 
+  buildList.innerHTML = "";
+  
   const btn = document.createElement("button");
   btn.className = "build-item" + (gold < BASE_TOWER.cost ? " disabled" : "");
   btn.innerHTML = '<div class="bico">🏹</div><div class="binfo"><div class="bnm">Arqueiro</div><div class="bdesc">Evolui para 7 ramos únicos</div></div><div class="bcost">' + BASE_TOWER.cost + '🪙</div>';
-  if (gold >= BASE_TOWER.cost && towers.length < maxTowers()) { btn.addEventListener("click", () => { buildTower(pendingBuildSlot); hideBuildMenu(); }); }
+  
+  // Previne o clique fantasma: o botão só fica ativo após 300ms
+  btn.style.pointerEvents = "none";
+  setTimeout(() => { btn.style.pointerEvents = "auto"; }, 300);
+
+  if (gold >= BASE_TOWER.cost && towers.length < maxTowers()) { 
+    btn.addEventListener("click", () => { buildTower(pendingBuildSlot); hideBuildMenu(); }); 
+  }
+  
   buildList.appendChild(btn);
+  
   if (towers.length >= maxTowers()) {
     const warn = document.createElement("div");
     warn.style.cssText = "padding:10px;background:rgba(255,82,82,0.15);border-radius:8px;font-size:12px;color:#ff5252;text-align:center;margin-top:8px;";
-    warn.textContent = "🚫 Limite de " + maxTowers() + " torres atingido"; buildList.appendChild(warn);
+    warn.textContent = "🚫 Limite de " + maxTowers() + " torres atingido"; 
+    buildList.appendChild(warn);
   }
 }
 
