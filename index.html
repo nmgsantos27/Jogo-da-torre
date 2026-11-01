@@ -874,14 +874,32 @@ pauseBadge.addEventListener("click", resumeGame); pauseBadge.addEventListener("k
 talSave.addEventListener("click", () => { forceSave(); showInfo("💾 Guardado!"); vibrate(20); });
 
 function renderGlobalRanking(){
-  globalRankingList.innerHTML = ""; const sorted = persistent.ranking.slice().sort((a,b) => b.score - a.score).slice(0, 10);
+  globalRankingList.innerHTML = ""; 
+  const sorted = persistent.ranking.slice().sort((a,b) => b.score - a.score).slice(0, 10);
   if (!sorted.length) { globalRankingList.innerHTML = '<div style="text-align:center;color:#5a6b82;font-size:13px;padding:20px;">Ainda sem recordes</div>'; return; }
-  sorted.forEach((r, i) => { const d = document.createElement("div"); d.className = "rk-item"; d.innerHTML = '<div class="rk-pos">#' + (i+1) + '</div><div class="rk-name">' + escapeHtml(r.name || "Anónimo") + '</div><div class="rk-score">' + r.score + ' pts</div><div class="rk-wave">vaga ' + r.wave + '</div>'; globalRankingList.appendChild(d); });
+  sorted.forEach((r, i) => { 
+    const d = document.createElement("div"); 
+    d.className = "rk-item"; 
+    d.innerHTML = '<div class="rk-pos">#' + (i+1) + '</div>' +
+                  '<div class="rk-name">' + escapeHtml(r.name || "Anónimo") + '</div>' +
+                  '<div class="rk-score">' + r.score + ' pts</div>' +
+                  '<div class="rk-wave">vaga ' + r.wave + ' · asc ' + (r.asc || 0) + '</div>'; 
+    globalRankingList.appendChild(d); 
+  });
 }
 function renderGameOverRanking(){
-  ovRanking.innerHTML = ""; const sorted = persistent.ranking.slice().sort((a,b) => b.score - a.score).slice(0, 10);
+  ovRanking.innerHTML = ""; 
+  const sorted = persistent.ranking.slice().sort((a,b) => b.score - a.score).slice(0, 10);
   if (!sorted.length) { ovRanking.innerHTML = '<div style="text-align:center;color:#5a6b82;font-size:13px;padding:10px;">Ainda sem recordes</div>'; return; }
-  sorted.forEach((r, i) => { const d = document.createElement("div"); d.className = "rk-item"; d.innerHTML = '<div class="rk-pos">#' + (i+1) + '</div><div class="rk-name">' + escapeHtml(r.name || "Anónimo") + '</div><div class="rk-score">' + r.score + '</div>'; ovRanking.appendChild(d); });
+  sorted.forEach((r, i) => { 
+    const d = document.createElement("div"); 
+    d.className = "rk-item"; 
+    d.innerHTML = '<div class="rk-pos">#' + (i+1) + '</div>' +
+                  '<div class="rk-name">' + escapeHtml(r.name || "Anónimo") + '</div>' +
+                  '<div class="rk-score">' + r.score + '</div>' +
+                  '<div class="rk-wave">v.' + r.wave + ' · a.' + (r.asc || 0) + '</div>'; 
+    ovRanking.appendChild(d); 
+  });
 }
 btnRanking.addEventListener("click", () => { talentScreen.classList.remove("show"); renderGlobalRanking(); rankingScreen.classList.add("show"); });
 rankClose.addEventListener("click", () => { rankingScreen.classList.remove("show"); talentScreen.classList.add("show"); });
@@ -896,8 +914,20 @@ function endGame(){
 
 ovBtn.addEventListener("click", () => {
   const name = (ovName.value || "").trim().replace(/[<>]/g, "").slice(0, 16) || "Anónimo";
-  persistent.playerName = name; persistent.ranking.push({ name, score: Math.floor(score), wave: wave - 1, date: Date.now() });
-  persistent.ranking.sort((a,b) => b.score - a.score); persistent.ranking = persistent.ranking.slice(0, MAX_RANKING); saveProgress(true); startNewGame(false);
+  persistent.playerName = name; 
+  
+  persistent.ranking.push({ 
+    name, 
+    score: Math.floor(score), 
+    wave: wave - 1, 
+    asc: ascLevel(), // <--- GUARDA A ASCENSÃO AQUI
+    date: Date.now() 
+  });
+  
+  persistent.ranking.sort((a,b) => b.score - a.score); 
+  persistent.ranking = persistent.ranking.slice(0, MAX_RANKING); 
+  saveProgress(true); 
+  startNewGame(false);
 });
 
 function startNewGame(fromAscension){
