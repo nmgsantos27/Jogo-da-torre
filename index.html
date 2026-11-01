@@ -24,7 +24,6 @@
   .hstat.score .val{ color:#4ecdc4; }
   .hstat.life .val { color:#ff5252; }
   .hstat.wave .val { color:#64ffda; }
-  .hstat.world .val{ color:#ff9800; }
   .hstat.asc .val  { color:#ab47bc; }
   .hspacer { flex:1; }
   .hbtn { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
@@ -60,7 +59,6 @@
   #startBtn:disabled { opacity:0.5; background:#2d3a4f; color:#8fa3bd; box-shadow:none; }
   #startBtn small { font-size:9px; font-weight:700; opacity:0.8; }
   @keyframes pulse { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.05); } }
-  /* Build Menu */
   #buildMenu, #popup, #branchScreen, #ascendScreen, #talentScreen, #rankingScreen, #overlay {
     position:absolute; inset:0; z-index:30; background:rgba(10,16,32,0.92);
     display:flex; flex-direction:column; justify-content:center; padding:20px;
@@ -86,7 +84,6 @@
   .build-item .bcost { font-size:15px; font-weight:900; color:#ffd700; }
   .menu-cancel { width:100%; padding:14px; margin-top:10px; border-radius:12px;
     border:none; background:#3a506b; color:#fff; font-weight:900; font-size:14px; cursor:pointer; }
-  /* Popup de torre */
   .popup-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
   .pstat { background:rgba(255,255,255,0.03); border-radius:10px; padding:8px; text-align:center; }
   .pstat .v { font-size:14px; font-weight:800; color:#4ecdc4; }
@@ -100,10 +97,9 @@
   .pbtn.confirm { background:#ff9800; color:#0a1020; }
   .pbtn:disabled { opacity:0.3; }
   .pbtn:active:not(:disabled) { transform:scale(0.95); }
-  .stars-row { display:flex; gap:3px; justify-content:center; margin-bottom:10px; }
-  .star { font-size:16px; opacity:0.25; }
+  .stars-row { display:flex; gap:2px; justify-content:center; margin-bottom:10px; flex-wrap:wrap; }
+  .star { font-size:13px; opacity:0.25; }
   .star.on { opacity:1; }
-  /* Ecrãs maiores */
   #talentScreen, #rankingScreen { inset:0; background:#0a1020; justify-content:flex-start; padding:20px; z-index:40; }
   .tal-head { display:flex; align-items:center; gap:10px; margin-bottom:16px; color:#c77dff; }
   .tal-head h2 { font-size:22px; font-weight:900; flex:1; }
@@ -140,7 +136,6 @@
   .rk-name { flex:1; font-weight:700; text-align:left; }
   .rk-score { font-weight:900; color:#4ecdc4; }
   .rk-wave { color:#8fa3bd; font-size:11px; margin-left:4px; }
-  /* Overlay game over */
   #overlay { background:rgba(10,16,32,0.98); z-index:45; text-align:center; }
   .ov-title { font-size:32px; font-weight:900; color:#ff5252; margin-bottom:10px; }
   .ov-sub { color:#8fa3bd; font-weight:700; font-size:14px; }
@@ -154,7 +149,6 @@
   .ov-btn { width:100%; max-width:300px; padding:16px; border-radius:12px;
     background:#4ecdc4; border:none; color:#0a1020; font-weight:900; font-size:16px; cursor:pointer; margin-bottom:8px; }
   .ov-ranking { width:100%; max-width:300px; max-height:140px; overflow-y:auto; margin:16px auto; }
-  /* Ascend screen */
   #ascendScreen { background:rgba(10,16,32,0.98); z-index:45; text-align:center; }
   .asc-title { font-size:28px; font-weight:900; color:#ab47bc; margin-bottom:8px; }
   .asc-sub { color:#8fa3bd; font-weight:700; font-size:13px; margin-bottom:20px; }
@@ -194,7 +188,6 @@
     <button id="startBtn"><span id="startBtnTxt">VAGA 1</span><small id="startBtnSub">iniciar</small></button>
   </div>
 
-  <!-- Build Menu -->
   <div id="buildMenu">
     <div class="menu-card">
       <div class="menu-head">
@@ -206,7 +199,6 @@
     </div>
   </div>
 
-  <!-- Popup de Torre -->
   <div id="popup">
     <div class="menu-card">
       <div class="menu-head">
@@ -226,7 +218,6 @@
     </div>
   </div>
 
-  <!-- Branch Screen -->
   <div id="branchScreen">
     <div class="menu-card">
       <div class="menu-head">
@@ -238,7 +229,6 @@
     </div>
   </div>
 
-  <!-- Ascend Screen -->
   <div id="ascendScreen">
     <div class="asc-title">🌟 ASCENSÃO</div>
     <div class="asc-sub">Reset completo. Ganhas poder permanente.</div>
@@ -261,7 +251,6 @@
     </div>
   </div>
 
-  <!-- Talents -->
   <div id="talentScreen">
     <div class="tal-head"><h2>🌳 Talentos</h2></div>
     <div class="tal-ess">Essência: <span id="talEss">0</span> 💎 · Ascensão: <span id="talAsc">0</span> 🌟</div>
@@ -281,14 +270,12 @@
     <button class="tal-save" id="talSave">💾 Guardar</button>
   </div>
 
-  <!-- Ranking -->
   <div id="rankingScreen">
     <div class="tal-head"><h2>🏆 Melhores Pontuações</h2></div>
     <div id="globalRankingList" style="flex:1;overflow-y:auto;margin-bottom:16px;"></div>
     <button class="tal-close" id="rankClose">Voltar</button>
   </div>
 
-  <!-- Game Over -->
   <div id="overlay">
     <div class="ov-title">Fim de Jogo</div>
     <div class="ov-sub">A torre caiu na vaga <span id="ovWave">1</span>!</div>
@@ -305,7 +292,7 @@
 </div>
 <script>
 "use strict";
-const SAVE_KEY = "fortalezaEternaV1";
+const SAVE_KEY = "fortalezaEternaV2";
 const TILE = 36;
 const BASE_MAX_TOWERS = 10;
 const MAX_RANKING = 20;
@@ -316,7 +303,6 @@ const WORLDS = [
   { id:3, name:"Vulcão Sombrio", bg:"#1a0a0a", path:"#422020", pathDash:"#733535" }
 ];
 
-// ============ BASE TOWER ============
 const BASE_TOWER = {
   ico: "🏹",
   cost: 80,
@@ -326,7 +312,6 @@ const BASE_TOWER = {
   ]
 };
 
-// ============ RAMOS (5 normais + 2 de ascensão) ============
 const BRANCHES = {
   damage: {
     ico: "🎯", name: "Atirador", color: "#4ecdc4", tagline: "Dano puro. Anti-boss.",
@@ -428,31 +413,19 @@ const BRANCHES = {
   }
 };
 
-// Custos de upgrade por nível (índice = nível atual)
-const UPGRADE_COSTS = [
-  0,       // nv 1 → construir
-  100,     // nv 1→2
-  180,     // nv 2→3 (escolher ramo)
-  320,     // nv 3→4
-  600,     // nv 4→5
-  1200,    // nv 5→6
-  2400,    // nv 6→7
-  4800,    // nv 7→8
-  9600     // nv 8→9 (→ nv 9 é o 10 total = nível 10)
-];
+const UPGRADE_COSTS = [0, 100, 180, 320, 600, 1200, 2400, 4800, 9600];
 
-// Bónus de Ascensão por nível
 const ASCENSION_BONUSES = [
   { lvl:1, ico:"🏰", desc:"+1 slot de torre" },
-  { lvl:2, ico:"🪙", desc:"+25% ouro ganho" },
-  { lvl:3, ico:"🏰", desc:"+2 slots de torre" },
-  { lvl:4, ico:"⚔️", desc:"Arqueiro base +30% dano" },
+  { lvl:2, ico:"🪙", desc:"+15% ouro ganho" },
+  { lvl:3, ico:"🏰", desc:"+1 slot de torre" },
+  { lvl:4, ico:"⚔️", desc:"Arqueiro base +20% dano" },
   { lvl:5, ico:"🔥", desc:"Novo ramo: Piromante" },
   { lvl:6, ico:"🏰", desc:"+1 slot de torre" },
-  { lvl:7, ico:"💀", desc:"Inimigos -10% HP" },
-  { lvl:8, ico:"⚡", desc:"+50% dano crítico" },
+  { lvl:7, ico:"💀", desc:"Inimigos -5% HP" },
+  { lvl:8, ico:"⚡", desc:"+25% dano crítico" },
   { lvl:9, ico:"💀", desc:"Novo ramo: Necromante" },
-  { lvl:10,ico:"🎁", desc:"Todos os ramos desbloqueados desde Nv.1" }
+  { lvl:10,ico:"🎁", desc:"Todos os ramos desde Nv.1" }
 ];
 
 const ENEMY_TYPES = {
@@ -472,7 +445,6 @@ const TALENTS = [
   { id:"heritage", ico:"💰", name:"Herança",    desc:"+30 ouro inicial por nível", max:3, cost:n=>6+n*2 }
 ];
 
-// ============ PERSISTÊNCIA ============
 function defaultPersistent() {
   return {
     essence:0, talents:{},
@@ -511,11 +483,10 @@ function saveProgress(force) {
   }
 }
 
-// ============ ESTADO ============
 let gold = 0, lives = 15, maxLives = 15, wave = 1, world = 1, score = 0;
 let running = false, gameOverFlag = false, paused = false;
 let selectedTower = null;
-let towers = [], enemies = [], projectiles = [], particles = [], floats = [];
+let towers = [], enemies = [], projectiles = [], particles = [], floats = [], skeletons = [];
 let spawnQueue = [], spawnTimer = 0, slots = [], PATH = [];
 let killsThisRun = 0, towersBuiltThisRun = 0;
 let speedMul = 1, hudDirty = true;
@@ -524,7 +495,6 @@ let waveTotalCount = 0;
 let pendingBranchTower = null;
 let pendingBuildSlot = null;
 
-// ============ DOM ============
 const $ = id => document.getElementById(id);
 const cv = $("cv"), ctx = cv.getContext("2d");
 const goldLbl=$("goldLbl"), essLbl=$("essLbl"), scoreLbl=$("scoreLbl"), lifeLbl=$("lifeLbl"),
@@ -547,7 +517,6 @@ const goldLbl=$("goldLbl"), essLbl=$("essLbl"), scoreLbl=$("scoreLbl"), lifeLbl=
       ovScore=$("ovScore"), ovKills=$("ovKills"), ovTowers=$("ovTowers"),
       ovName=$("ovName"), ovBtn=$("ovBtn"), ovRanking=$("ovRanking");
 
-// ============ UTILITÁRIOS ============
 function vibrate(ms){ if(navigator.vibrate){ try{ navigator.vibrate(ms); }catch(_){} } }
 function rand(a,b){ return a + Math.random()*(b-a); }
 function dist(a,b){ const dx=a.x-b.x, dy=a.y-b.y; return Math.hypot(dx,dy); }
@@ -569,21 +538,31 @@ function burst(x,y,color,n){
 }
 function floatText(x,y,txt,color){ floats.push({x,y,txt,color,life:1,vy:-0.8}); }
 
-// ============ TALENTOS + ASCENSÃO ============
 function talentLvl(id){ return persistent.talents[id] || 0; }
 function ascLevel(){ return persistent.ascensionLevel || 0; }
-function dmgMul()       { return (1 + talentLvl("force")*0.10) * (1 + ascLevel()*0.05); }
-function goldMul()      { return (1 + talentLvl("greed")*0.15) * (1 + (ascLevel()>=2?0.25:0)) * (1 + Math.max(0, ascLevel()-10)*0.10); }
+
+function ascHpFactor()    { return Math.pow(1.20, ascLevel()); }
+function ascSpeedFactor() { return 1 + ascLevel() * 0.04; }
+function ascGoldFactor()  { return Math.max(0.35, 1 - ascLevel() * 0.06); }
+
+function dmgMul()       { return (1 + talentLvl("force")*0.10) * (1 + ascLevel()*0.03); }
+function goldMul()      { return (1 + talentLvl("greed")*0.15) * (ascLevel()>=2?1.15:1) * (ascLevel()>=11?(1 + (ascLevel()-10)*0.05):1); }
 function rangeMul()     { return 1 + talentLvl("precision")*0.05; }
 function rateMul()      { return 1 - talentLvl("speed")*0.08; }
 function startGoldBonus(){ return talentLvl("heritage")*30; }
 function startLivesBonus(){ return talentLvl("vital")*2; }
-function maxTowers()    { return BASE_MAX_TOWERS + (ascLevel()>=1?1:0) + (ascLevel()>=3?2:0) + (ascLevel()>=6?1:0) + Math.max(0, ascLevel()-10); }
-function hpReduction()  { return ascLevel()>=7 ? 0.9 : 1.0; }
-function critMultiplier(){ return ascLevel()>=8 ? 1.5 : 1.0; }
+function maxTowers()    {
+  let n = BASE_MAX_TOWERS;
+  if (ascLevel()>=1) n += 1;
+  if (ascLevel()>=3) n += 1;
+  if (ascLevel()>=6) n += 1;
+  if (ascLevel()>=11) n += Math.floor((ascLevel()-10)/2);
+  return n;
+}
+function hpReduction()  { return ascLevel()>=7 ? 0.95 : 1.0; }
+function critMultiplier(){ return ascLevel()>=8 ? 1.25 : 1.0; }
 function unlockAllBranches(){ return ascLevel()>=10; }
 
-// ============ STATS ============
 function getTowerLevelData(t){
   if (t.level <= 2) return BASE_TOWER.levels[t.level - 1];
   const branch = BRANCHES[t.branch];
@@ -598,7 +577,7 @@ function getTowerSpecial(t){
 function towerStats(t){
   const lvl = getTowerLevelData(t);
   const branch = getTowerSpecial(t);
-  const baseDmgBonus = (t.level <= 2 && ascLevel()>=4) ? 1.3 : 1.0;
+  const baseDmgBonus = (t.level <= 2 && ascLevel()>=4) ? 1.2 : 1.0;
   return {
     dmg: lvl.dmg * dmgMul() * baseDmgBonus,
     range: lvl.range * rangeMul(),
@@ -688,7 +667,6 @@ function rebuildStrategicSlots(w,h){
     { col: c1-1, row: ROWS-3 }
   ];
 
-  // Adicionar slots extra se ascensão permite mais torres
   const extraNeeded = Math.max(0, maxTowers() - 10);
   const extraCandidates = [
     { col: c1+2, row: r1-1 },
@@ -710,7 +688,6 @@ function rebuildStrategicSlots(w,h){
     if (slot) slot.buildable = true;
   });
 
-  // Garantir mínimo de slots buildable
   const minSlots = maxTowers();
   if (slots.filter(s => s.buildable).length < minSlots) {
     const nearPath = slots
@@ -777,7 +754,6 @@ function buildPath(offX, offY){
   }));
 }
 
-// ============ BUILD MENU ============
 function showBuildMenu(slot){
   if (slot.occupied || !slot.buildable) return;
   pendingBuildSlot = slot;
@@ -790,7 +766,7 @@ function showBuildMenu(slot){
     '<div class="bico">🏹</div>' +
     '<div class="binfo">' +
       '<div class="bnm">Arqueiro</div>' +
-      '<div class="bdesc">Evolui para 5 ramos únicos</div>' +
+      '<div class="bdesc">Evolui para 7 ramos únicos</div>' +
     '</div>' +
     '<div class="bcost">' + BASE_TOWER.cost + '🪙</div>';
 
@@ -819,7 +795,6 @@ function hideBuildMenu(){
 buildClose.addEventListener("click", hideBuildMenu);
 buildCancel.addEventListener("click", hideBuildMenu);
 
-// ============ CONSTRUÇÃO ============
 function buildTower(slot){
   if (gold < BASE_TOWER.cost) { showInfo("🪙 Ouro insuficiente"); return; }
   if (slot.occupied || !slot.buildable) return;
@@ -866,7 +841,6 @@ function showBranchChoice(){
   branchList.innerHTML = "";
   Object.keys(BRANCHES).forEach(key => {
     const b = BRANCHES[key];
-    // Verificar se está desbloqueado pela ascensão
     if (b.unlockAsc > ascLevel()) return;
     const lvl3 = b.levels[0];
     const div = document.createElement("div");
@@ -911,7 +885,6 @@ function sellTower(t){
   saveProgress(false);
 }
 
-// ============ POPUP ============
 function showPopup(t){ selectedTower = t; popup.classList.add("show"); refreshPopup(); }
 function hidePopup(){
   popup.classList.remove("show"); selectedTower = null;
@@ -958,12 +931,15 @@ function spawnEnemy(type, waveNum, worldNum){
   if (waveNum > 25) tierBonus *= 1.15;
   const hpScale = (1 + (waveNum - 1) * baseScale * tierBonus) * worldFactor;
   let hp = Math.ceil(base.hp * hpScale * hpReduction());
+  hp = Math.ceil(hp * ascHpFactor());
+
   if (type === "boss") {
     hp = Math.ceil(hp * (1 + Math.floor(waveNum / 10) * 0.5));
   }
-  const speed = base.speed * (1 + (worldNum - 1) * 0.10) * (1 + Math.floor(waveNum / 8) * 0.05);
 
-  // Habilidades especiais pós-vaga 30
+  let speed = base.speed * (1 + (worldNum - 1) * 0.10) * (1 + Math.floor(waveNum / 8) * 0.05);
+  speed *= ascSpeedFactor();
+
   let shield = 0, regen = 0;
   if (waveNum >= 35 && type !== "boss" && Math.random() < 0.25) shield = Math.ceil(hp * 0.4);
   if (waveNum >= 40 && type !== "boss" && Math.random() < 0.20) regen = Math.ceil(hp * 0.02);
@@ -982,9 +958,11 @@ function startWave(){
   spawnQueue = []; spawnTimer = 0;
   const isBoss = wave % 5 === 0;
   const waveTierMult = 1 + Math.floor(wave / 10) * 0.15;
+  const ascBonusCount = ascLevel();
   const count = isBoss
-    ? (7 + Math.floor(wave * 0.6 * waveTierMult))
-    : (5 + Math.floor(wave * 0.85 * waveTierMult));
+    ? (7 + Math.floor(wave * 0.6 * waveTierMult) + ascBonusCount)
+    : (5 + Math.floor(wave * 0.85 * waveTierMult) + ascBonusCount);
+
   for (let i = 0; i < count; i++) {
     let type = "goblin";
     if (wave >= 3 && Math.random() < 0.35) type = "orc";
@@ -999,24 +977,22 @@ function startWave(){
   updateStartBtn();
 
   if (wave % 5 === 0) showInfo("👑 BOSS · Vaga " + wave);
-  else if (wave >= 35) showInfo("🛡️ Vaga " + wave + " · Cuidado com escudos!");
-  else if (wave >= 30) showInfo("⚠️ Vaga " + wave + " · Difícil!");
-  else if (wave % 4 === 0) showInfo("🛡️ TANQUES · Vaga " + wave);
-  else if (wave % 3 === 0) showInfo("🌊 ENXAME · Vaga " + wave);
+  else if (wave >= 35) showInfo("🛡️ Vaga " + wave + " · Escudos!");
+  else if (wave >= 30) showInfo("⚠️ Vaga " + wave);
+  else if (wave % 4 === 0) showInfo("🛡️ TANQUES");
+  else if (wave % 3 === 0) showInfo("🌊 ENXAME");
 }
 
 function hitEnemy(e, dmg){
   if (!e.alive) return;
-  // Crítico de ascensão
   if (critMultiplier() > 1 && Math.random() < 0.15) {
     dmg *= critMultiplier();
     floatText(e.x, e.y - e.radius - 8, "CRIT!", "#ffd700");
   }
-  // Escudo absorve dano primeiro
   if (e.shield > 0) {
     e.shield -= dmg;
     if (e.shield < 0) {
-      e.hp += e.shield; // resto passa
+      e.hp += e.shield;
       e.shield = 0;
     }
   } else {
@@ -1025,12 +1001,14 @@ function hitEnemy(e, dmg){
   e.hitFlash = 2;
   if (e.hp <= 0) killEnemy(e);
 }
+
 function killEnemy(e){
   if (!e.alive) return;
   e.alive = false;
   enemies = enemies.filter(x => x !== e);
   let g = Math.round(e.gold * goldMul());
   if (wave > 30) g = Math.round(g * 0.6);
+  g = Math.round(g * ascGoldFactor());
   gold += g; score += g; killsThisRun++;
   hudDirty = true;
   burst(e.x, e.y, e.color, 4);
@@ -1040,6 +1018,7 @@ function killEnemy(e){
     showInfo("👑 Boss derrotado! +" + (2+world) + " 💎");
   }
 }
+
 function damageBase(e){
   if (!e.alive) return;
   const livesCfg = e.type === "boss" ? (wave <= 5 ? 3 : 5) : 1;
@@ -1100,7 +1079,6 @@ function hitProjectile(p){
     if (tgt.alive) { tgt.poison = 90; tgt.poisonDmg = p.poisonDmg; }
     burst(tgt.x, tgt.y, p.color, 3);
   } else if (p.special === "fire") {
-    // Fogo: splash + queimadura
     enemies.forEach(e => {
       if (!e.alive) return;
       if (dist(e, tgt) <= 55) {
@@ -1110,10 +1088,8 @@ function hitProjectile(p){
     });
     burst(tgt.x, tgt.y, "#ff5722", 10);
   } else if (p.special === "necro") {
-    // Necromante: dano + invoca esqueleto
     hitEnemy(tgt, p.dmg);
     if (Math.random() < 0.3) {
-      // Invocar esqueleto que ataca inimigos
       skeletons.push({
         x: tgt.x + rand(-20, 20), y: tgt.y + rand(-20, 20),
         target: null, cooldown: 0, life: 300
@@ -1126,8 +1102,6 @@ function hitProjectile(p){
     burst(tgt.x, tgt.y, p.color, 2);
   }
 }
-
-let skeletons = [];
 
 function update(){
   if (paused || !running) return;
@@ -1171,13 +1145,9 @@ function update(){
     startBtn.disabled = false;
     updateStartBtn();
     saveProgress(true);
-
-    // Verificar se pode ascender
-    checkAscendAvailable();
     return;
   }
 
-  // Processar inimigos
   for (let i = enemies.length - 1; i >= 0; i--) {
     const e = enemies[i];
     if (!e.alive) continue;
@@ -1186,13 +1156,8 @@ function update(){
       e.poison--; e.hp -= e.poisonDmg;
       if (e.hp <= 0) { killEnemy(e); continue; }
     }
-    // Regen
     if (e.regen > 0 && e.hp < e.maxHp) {
       e.hp = Math.min(e.maxHp, e.hp + e.regen);
-    }
-    // Regen de escudo
-    if (e.shieldMax > 0 && e.shield < e.shieldMax && e.shield > 0) {
-      // não regenera
     }
     let sp = e.speed;
     if (e.slow > 0) { e.slow--; sp *= 0.5; }
@@ -1208,13 +1173,11 @@ function update(){
     }
   }
 
-  // Esqueletos (necromante)
   skeletons = skeletons.filter(s => {
     s.life--;
     if (s.life <= 0) return false;
     s.cooldown--;
     if (s.cooldown <= 0) {
-      // Atacar inimigo mais próximo
       let target = null, bestD = 150;
       enemies.forEach(e => {
         if (!e.alive) return;
@@ -1226,7 +1189,6 @@ function update(){
         s.cooldown = 30;
       }
     }
-    // Mover em direção ao alvo
     if (s.target && s.target.alive) {
       const dx = s.target.x - s.x, dy = s.target.y - s.y;
       const d = Math.hypot(dx, dy);
@@ -1269,16 +1231,6 @@ function update(){
     f.y += f.vy; f.life -= 0.025; return f.life > 0;
   });
 }
-
-function checkAscendAvailable(){
-  // Mostrar botão de ascensão se tiver 3 torres nível 5+ ou wave >= 25
-  const highTowers = towers.filter(t => t.level >= 5).length;
-  if ((highTowers >= 3 || wave >= 25) && !gameOverFlag) {
-    // Mostrar botão "ASCENDER" no startBtn
-    startBtnSub.textContent = "🌟 ASCENDER";
-    startBtn.classList.add("ascend-available");
-  }
-}
 function drawTower(ctx, t){
   const st = towerStats(t);
   const size = TILE * st.size;
@@ -1287,7 +1239,6 @@ function drawTower(ctx, t){
   ctx.save();
   ctx.translate(t.x, t.y);
 
-  // Aura nível 5+
   if (t.level >= 5) {
     const auraStrength = Math.min(1, (t.level - 4) / 6);
     const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 300);
@@ -1297,7 +1248,6 @@ function drawTower(ctx, t){
     ctx.fill();
   }
 
-  // Anel exterior (cor por nível)
   if (t.level >= 3) {
     const ringColors = ["#cd7f32", "#c0c0c0", "#ffd700", "#ff6f00", "#ff1744", "#ff1744", "#ff1744", "#ff1744"];
     ctx.beginPath();
@@ -1307,7 +1257,6 @@ function drawTower(ctx, t){
     ctx.stroke();
   }
 
-  // Corpo
   ctx.beginPath();
   ctx.arc(0, 0, size, 0, Math.PI*2);
   ctx.fillStyle = st.color;
@@ -1316,7 +1265,6 @@ function drawTower(ctx, t){
   ctx.lineWidth = 2.5;
   ctx.stroke();
 
-  // Detalhe rotativo
   ctx.save();
   ctx.rotate(angle);
 
@@ -1416,7 +1364,6 @@ function drawTower(ctx, t){
       ctx.arc(0, -size*0.05, size*0.15, 0, Math.PI);
       ctx.stroke();
     } else if (t.branch === "fire") {
-      // Chamas
       ctx.fillStyle = "#ff5722";
       ctx.beginPath();
       ctx.moveTo(0, -size*0.7);
@@ -1437,7 +1384,6 @@ function drawTower(ctx, t){
       ctx.closePath();
       ctx.fill();
     } else if (t.branch === "necro") {
-      // Caveira com aura púrpura
       ctx.fillStyle = "#1a1a1a";
       ctx.beginPath();
       ctx.arc(0, 0, size*0.45, 0, Math.PI*2);
@@ -1459,7 +1405,6 @@ function drawTower(ctx, t){
   ctx.restore();
   ctx.restore();
 
-  // Nível acima da torre
   if (t.level > 1) {
     ctx.fillStyle = "#ffd700";
     ctx.font = "bold 9px sans-serif";
@@ -1478,7 +1423,6 @@ function render(){
   ctx.fillStyle = theme.bg;
   ctx.fillRect(0, 0, w, h);
 
-  // Caminho
   ctx.strokeStyle = theme.path;
   ctx.lineWidth = TILE * 0.9;
   ctx.lineCap = "round"; ctx.lineJoin = "round";
@@ -1494,7 +1438,6 @@ function render(){
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Slots
   slots.forEach(s => {
     if (!s.buildable) return;
     if (s.occupied) return;
@@ -1514,14 +1457,12 @@ function render(){
     ctx.fillText("+", s.x, s.y);
   });
 
-  // Base
   const last = PATH[PATH.length-1];
   ctx.font = "32px sans-serif";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText("🏰", last.x, last.y - TILE*0.6);
 
-  // Alcance da torre selecionada
   if (selectedTower) {
     const st = towerStats(selectedTower);
     ctx.beginPath();
@@ -1533,10 +1474,8 @@ function render(){
     ctx.stroke();
   }
 
-  // Torres
   towers.forEach(t => drawTower(ctx, t));
 
-  // Esqueletos
   skeletons.forEach(s => {
     ctx.fillStyle = "#e1bee7";
     ctx.beginPath();
@@ -1552,7 +1491,6 @@ function render(){
     ctx.fill();
   });
 
-  // Inimigos
   enemies.forEach(e => {
     if (!e.alive) return;
     const isFlash = e.hitFlash > 0;
@@ -1562,7 +1500,6 @@ function render(){
     ctx.fill();
     ctx.strokeStyle = "#0a1020"; ctx.lineWidth = 2; ctx.stroke();
 
-    // Escudo
     if (e.shield > 0) {
       ctx.beginPath();
       ctx.arc(e.x, e.y, e.radius + 4, 0, Math.PI*2);
@@ -1571,7 +1508,6 @@ function render(){
       ctx.stroke();
     }
 
-    // HP
     if (e.hp < e.maxHp) {
       const bw = e.radius*2;
       ctx.fillStyle = "rgba(0,0,0,0.6)";
@@ -1596,24 +1532,22 @@ function render(){
     if (e.regen > 0) {
       ctx.font = "10px sans-serif";
       ctx.fillStyle = "#4caf50";
+      ctx.textAlign = "center";
       ctx.fillText("+", e.x - 6, e.y - e.radius - 14);
     }
   });
 
-  // Projéteis
   projectiles.forEach(p => {
     ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
     ctx.fillStyle = p.color; ctx.fill();
   });
 
-  // Partículas
   particles.forEach(p => {
     ctx.globalAlpha = p.life * 0.7; ctx.fillStyle = p.color;
     ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
   });
   ctx.globalAlpha = 1;
 
-  // Texto flutuante
   floats.forEach(f => {
     ctx.globalAlpha = f.life; ctx.fillStyle = f.color;
     ctx.font = "bold 14px sans-serif"; ctx.textAlign = "center";
@@ -1651,7 +1585,7 @@ function updateStartBtn(){
     startBtnTxt.textContent = "🌟 ASCENDER";
     startBtnSub.textContent = "+" + calcAscendPoints() + " pts";
     startBtn.classList.remove("boss");
-    startBtn.classList.add("boss"); // vermelho - chama atenção
+    startBtn.classList.add("boss");
     startBtn.disabled = false;
     return;
   }
@@ -1675,7 +1609,6 @@ function calcAscendPoints(){
   return Math.max(1, pts);
 }
 
-// ============ CLICK NO CANVAS ============
 function canvasCoords(evt){
   const r = cv.getBoundingClientRect();
   const pt = evt.touches ? evt.touches[0] : evt;
@@ -1687,12 +1620,10 @@ cv.addEventListener("pointerdown", evt => {
   if (paused || gameOverFlag) return;
   const p = canvasCoords(evt);
 
-  // 1. Clicou numa torre?
   for (let i = 0; i < towers.length; i++) {
     if (dist(p, towers[i]) < TILE*0.5) { showPopup(towers[i]); return; }
   }
 
-  // 2. Clicou num slot vazio?
   const slot = slots.find(s => s.buildable && !s.occupied && dist(p, s) < TILE/2);
   if (slot) {
     showBuildMenu(slot);
@@ -1702,7 +1633,6 @@ cv.addEventListener("pointerdown", evt => {
   hidePopup();
 });
 
-// ============ START BUTTON ============
 startBtn.addEventListener("click", () => {
   if (running) return;
   const canAscend = (towers.filter(t => t.level >= 5).length >= 3 || wave >= 25);
@@ -1713,7 +1643,6 @@ startBtn.addEventListener("click", () => {
   }
 });
 
-// ============ POPUP EVENTS ============
 popClose.addEventListener("click", hidePopup);
 upgBtn.addEventListener("click", () => { if (selectedTower) upgradeTower(selectedTower); });
 sellBtn.addEventListener("click", () => {
@@ -1739,7 +1668,6 @@ sellBtn.addEventListener("click", () => {
   }, 3000);
 });
 
-// ============ SPEED ============
 speedBtn.addEventListener("click", () => {
   speedMul = speedMul === 1 ? 2 : speedMul === 2 ? 3 : 1;
   vibrate(8);
@@ -1747,13 +1675,11 @@ speedBtn.addEventListener("click", () => {
   updateHUD();
 });
 
-// ============ ASCENSÃO ============
 function showAscendScreen(){
   const pts = calcAscendPoints();
   ascPoints.textContent = "+" + pts;
   ascCurrent.textContent = ascLevel();
 
-  // Mostrar próximo bónus
   const nextLvl = ascLevel() + 1;
   const nextBonus = ASCENSION_BONUSES.find(b => b.lvl === nextLvl);
   if (nextBonus) {
@@ -1788,7 +1714,6 @@ ascConfirm.addEventListener("click", () => {
   const oldLvl = ascLevel() - pts;
   const newLvl = ascLevel();
 
-  // Verificar novos desbloqueios
   const unlockedBranches = [];
   ASCENSION_BONUSES.forEach(b => {
     if (b.lvl > oldLvl && b.lvl <= newLvl) {
@@ -1803,11 +1728,9 @@ ascConfirm.addEventListener("click", () => {
     showInfo("🌟 Ascensão! Nível " + newLvl);
   }
 
-  // Reset da run
   startNewGame(true);
 });
 
-// ============ TALENTS ============
 function openTalents(){
   paused = true;
   pauseBadge.classList.add("show");
@@ -1885,7 +1808,6 @@ pauseBadge.addEventListener("keydown", event => {
 
 talSave.addEventListener("click", () => { forceSave(); showInfo("💾 Guardado!"); vibrate(20); });
 
-// ============ RANKING ============
 function renderGlobalRanking(){
   globalRankingList.innerHTML = "";
   const sorted = persistent.ranking.slice().sort((a,b) => b.score - a.score).slice(0, 10);
@@ -1989,7 +1911,6 @@ function startNewGame(fromAscension){
   startBtn.classList.remove("boss");
   hudDirty = true;
 
-  // Recriar slots se maxTowers mudou (ascensão)
   setTimeout(() => {
     resizeCanvas();
     updateHUD();
@@ -2001,7 +1922,6 @@ function startNewGame(fromAscension){
   saveProgress(true);
 }
 
-// ============ LOOP ============
 let lastTime = 0, acc = 0;
 const FRAME = 1000 / 60;
 function loop(now){
@@ -2019,7 +1939,6 @@ function loop(now){
   render();
 }
 
-// ============ RESIZE ============
 let resizeTimer = 0;
 function onResize(){
   clearTimeout(resizeTimer);
@@ -2028,7 +1947,6 @@ function onResize(){
 window.addEventListener("resize", onResize);
 window.addEventListener("orientationchange", onResize);
 
-// ============ SAVE ============
 function forceSave(){
   if (gameOverFlag) return;
   persistent.savedState = {
@@ -2065,7 +1983,6 @@ document.addEventListener("visibilitychange", () => {
 });
 window.addEventListener("pagehide", forceSave);
 
-// ============ INIT ============
 function initGame(){
   loadProgress();
 
