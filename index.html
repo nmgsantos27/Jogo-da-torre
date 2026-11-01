@@ -11,11 +11,8 @@
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     touch-action:none; user-select:none; -webkit-user-select:none; }
   body { display:flex; justify-content:center; align-items:center; }
-  #app { width:100%; max-width:500px; height:100vh; height:100dvh;
-    display:flex; flex-direction:column; position:relative;
-    background:#0a1020; overflow:hidden; }
-  #hud { display:flex; align-items:center; gap:5px; padding:8px 10px;
-    background:#0f1626; border-bottom:1px solid rgba(255,255,255,0.05); flex-shrink:0; z-index:5; }
+  #app { width:100%; max-width:500px; height:100vh; height:100dvh; display:flex; flex-direction:column; position:relative; background:#0a1020; overflow:hidden; }
+  #hud { display:flex; align-items:center; gap:5px; padding:8px 10px; background:#0f1626; border-bottom:1px solid rgba(255,255,255,0.05); flex-shrink:0; z-index:5; }
   .hstat { display:flex; flex-direction:column; align-items:center; line-height:1.1; }
   .hstat .val { font-size:12px; font-weight:800; }
   .hstat .lbl { font-size:7px; font-weight:700; color:#5a6b82; margin-top:2px; letter-spacing:0.3px; }
@@ -26,55 +23,29 @@
   .hstat.wave .val { color:#64ffda; }
   .hstat.asc .val  { color:#ab47bc; }
   .hspacer { flex:1; }
-  .hbtn { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
-    color:#e8ecf5; border-radius:8px; padding:5px 8px; font-size:11px; font-weight:800; cursor:pointer; }
+  .hbtn { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#e8ecf5; border-radius:8px; padding:5px 8px; font-size:11px; font-weight:800; cursor:pointer; }
   .hbtn:active { transform:scale(0.95); }
   #gamewrap { flex:1; width:100%; position:relative; background:#0a1020; overflow:hidden; min-height:200px; }
   canvas#cv { display:block; width:100%; height:100%; touch-action:none; }
   #waveProgress { position:absolute; top:0; left:0; height:3px; background:#64ffda; width:0%; transition:width .15s linear; z-index:6; box-shadow:0 0 8px #64ffda; }
-  #menuBtn { position:absolute; top:12px; right:12px; z-index:15;
-    width:44px; height:44px; border-radius:12px;
-    background:rgba(78,205,196,0.1); border:1px solid rgba(78,205,196,0.3);
-    color:#4ecdc4; font-size:22px; cursor:pointer;
-    display:flex; align-items:center; justify-content:center; }
+  #menuBtn { position:absolute; top:12px; right:12px; z-index:15; width:44px; height:44px; border-radius:12px; background:rgba(78,205,196,0.1); border:1px solid rgba(78,205,196,0.3); color:#4ecdc4; font-size:22px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
   #menuBtn:active { transform:scale(0.92); }
-  #pauseBadge { position:absolute; top:12px; left:12px; z-index:15;
-    display:none; padding:6px 12px; border-radius:8px;
-    background:rgba(255,215,0,0.15); border:1px solid rgba(255,215,0,0.4);
-    color:#ffd700; font-size:12px; font-weight:800; }
+  #pauseBadge { position:absolute; top:12px; left:12px; z-index:15; display:none; padding:6px 12px; border-radius:8px; background:rgba(255,215,0,0.15); border:1px solid rgba(255,215,0,0.4); color:#ffd700; font-size:12px; font-weight:800; }
   #pauseBadge.show { display:block; cursor:pointer; pointer-events:auto; }
-  #info { position:absolute; top:20%; left:50%; transform:translateX(-50%);
-    background:rgba(15,22,38,0.95); border:1px solid rgba(78,205,196,0.4);
-    color:#fff; padding:10px 20px; border-radius:20px; font-size:14px;
-    font-weight:700; white-space:nowrap; pointer-events:none;
-    opacity:0; transition:opacity .2s; z-index:20; }
+  #info { position:absolute; top:20%; left:50%; transform:translateX(-50%); background:rgba(15,22,38,0.95); border:1px solid rgba(78,205,196,0.4); color:#fff; padding:10px 20px; border-radius:20px; font-size:14px; font-weight:700; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .2s; z-index:20; }
   #info.show { opacity:1; }
-  #startBtn { position:absolute; bottom:16px; right:16px; z-index:15;
-    min-width:100px; height:60px; padding:0 16px;
-    border-radius:16px; background:#4ecdc4; border:none;
-    color:#0a1020; font-weight:900; font-size:12px; cursor:pointer;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:2px; box-shadow: 0 4px 20px rgba(78,205,196,0.4); }
+  #startBtn { position:absolute; bottom:16px; right:16px; z-index:15; min-width:100px; height:60px; padding:0 16px; border-radius:16px; background:#4ecdc4; border:none; color:#0a1020; font-weight:900; font-size:12px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow: 0 4px 20px rgba(78,205,196,0.4); }
   #startBtn.boss { background:#f44336; color:#fff; animation:pulse 1s infinite; box-shadow: 0 4px 20px rgba(244,67,54,0.5); }
   #startBtn:disabled { opacity:0.5; background:#2d3a4f; color:#8fa3bd; box-shadow:none; }
   #startBtn small { font-size:9px; font-weight:700; opacity:0.8; }
   @keyframes pulse { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.05); } }
-  #buildMenu, #popup, #branchScreen, #ascendScreen, #talentScreen, #rankingScreen, #overlay {
-    position:absolute; inset:0; z-index:30; background:rgba(10,16,32,0.92);
-    display:flex; flex-direction:column; justify-content:center; padding:20px;
-    opacity:0; pointer-events:none; transition:opacity .2s; overflow-y:auto; }
-  #buildMenu.show, #popup.show, #branchScreen.show, #ascendScreen.show,
-  #talentScreen.show, #rankingScreen.show, #overlay.show { opacity:1; pointer-events:auto; }
-  .menu-card { max-width:400px; margin:0 auto; width:100%; background:#0f1626;
-    border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:18px;
-    box-shadow:0 10px 40px rgba(0,0,0,0.9); }
+  #buildMenu, #popup, #branchScreen, #ascendScreen, #talentScreen, #rankingScreen, #overlay { position:absolute; inset:0; z-index:30; background:rgba(10,16,32,0.92); display:flex; flex-direction:column; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity .2s; overflow-y:auto; }
+  #buildMenu.show, #popup.show, #branchScreen.show, #ascendScreen.show, #talentScreen.show, #rankingScreen.show, #overlay.show { opacity:1; pointer-events:auto; }
+  .menu-card { max-width:400px; margin:0 auto; width:100%; background:#0f1626; border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:18px; box-shadow:0 10px 40px rgba(0,0,0,0.9); }
   .menu-head { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
   .menu-title { font-size:17px; font-weight:900; flex:1; }
-  .menu-close { width:32px; height:32px; border-radius:8px; background:rgba(255,82,82,0.1);
-    border:1px solid rgba(255,82,82,0.3); color:#ff5252; font-size:16px; cursor:pointer; }
-  .build-item { display:flex; align-items:center; gap:12px; padding:14px;
-    background:#141c2e; border:1px solid rgba(78,205,196,0.2); border-radius:14px;
-    cursor:pointer; transition:all .15s; margin-bottom:8px; }
+  .menu-close { width:32px; height:32px; border-radius:8px; background:rgba(255,82,82,0.1); border:1px solid rgba(255,82,82,0.3); color:#ff5252; font-size:16px; cursor:pointer; }
+  .build-item { display:flex; align-items:center; gap:12px; padding:14px; background:#141c2e; border:1px solid rgba(78,205,196,0.2); border-radius:14px; cursor:pointer; transition:all .15s; margin-bottom:8px; }
   .build-item:active { transform:scale(0.98); background:#1a2438; }
   .build-item.disabled { opacity:0.4; cursor:not-allowed; }
   .build-item .bico { font-size:32px; width:48px; text-align:center; }
@@ -82,15 +53,13 @@
   .build-item .bnm { font-size:15px; font-weight:800; }
   .build-item .bdesc { font-size:11px; color:#8fa3bd; font-weight:600; margin-top:2px; }
   .build-item .bcost { font-size:15px; font-weight:900; color:#ffd700; }
-  .menu-cancel { width:100%; padding:14px; margin-top:10px; border-radius:12px;
-    border:none; background:#3a506b; color:#fff; font-weight:900; font-size:14px; cursor:pointer; }
+  .menu-cancel { width:100%; padding:14px; margin-top:10px; border-radius:12px; border:none; background:#3a506b; color:#fff; font-weight:900; font-size:14px; cursor:pointer; }
   .popup-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
   .pstat { background:rgba(255,255,255,0.03); border-radius:10px; padding:8px; text-align:center; }
   .pstat .v { font-size:14px; font-weight:800; color:#4ecdc4; }
   .pstat .l { font-size:10px; color:#5a6b82; font-weight:700; text-transform:uppercase; margin-top:2px; }
   .popup-btns { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .pbtn { padding:14px 8px; border-radius:10px; font-size:13px; font-weight:800;
-    cursor:pointer; border:none; text-align:center; line-height:1.2; color:#fff; }
+  .pbtn { padding:14px 8px; border-radius:10px; font-size:13px; font-weight:800; cursor:pointer; border:none; text-align:center; line-height:1.2; color:#fff; }
   .pbtn small { display:block; font-size:11px; opacity:0.9; margin-top:4px; font-weight:700; }
   .pbtn.upg { background:#2d8a84; }
   .pbtn.sell{ background:#c62828; }
@@ -104,34 +73,27 @@
   .tal-head { display:flex; align-items:center; gap:10px; margin-bottom:16px; color:#c77dff; }
   .tal-head h2 { font-size:22px; font-weight:900; flex:1; }
   .tal-ess { font-size:14px; font-weight:800; color:#c77dff; text-align:center; margin-bottom:16px; }
-  .tal-conv-box { background:#221c33; border:1px solid #c77dff; border-radius:12px;
-    padding:16px; display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+  .tal-conv-box { background:#221c33; border:1px solid #c77dff; border-radius:12px; padding:16px; display:flex; align-items:center; gap:12px; margin-bottom:16px; }
   .tal-conv-box .icon-box { background:#3d2b59; padding:10px; border-radius:50%; font-size:20px; }
   .tal-conv-box .info { flex:1; }
   .tal-conv-box .info b { font-weight:800; color:#ffd700; display:block; font-size:14px; }
   .tal-conv-box .info span { font-size:12px; color:#8fa3bd; }
-  .tal-conv-box button { background:#3d2b59; border:1px solid #5a3d82; color:#ffd700;
-    padding:8px 12px; border-radius:8px; font-weight:800; font-size:12px; cursor:pointer; }
+  .tal-conv-box button { background:#3d2b59; border:1px solid #5a3d82; color:#ffd700; padding:8px 12px; border-radius:8px; font-weight:800; font-size:12px; cursor:pointer; }
   .tal-conv-box button:disabled { opacity:0.4; }
   .tal-list { flex:1; display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
-  .tal-item { display:flex; align-items:center; gap:12px; padding:14px;
-    background:#141c2e; border:1px solid rgba(255,255,255,0.08); border-radius:16px; }
+  .tal-item { display:flex; align-items:center; gap:12px; padding:14px; background:#141c2e; border:1px solid rgba(255,255,255,0.08); border-radius:16px; }
   .tal-item .tico { font-size:28px; }
   .tal-item .tinfo { flex:1; }
   .tal-item .tnm { font-size:15px; font-weight:800; }
   .tal-item .tdesc { font-size:11px; color:#8fa3bd; font-weight:600; margin-top:2px; }
-  .tal-buy { background:#7b42bc; border:none; color:#fff; padding:10px 14px;
-    border-radius:10px; font-weight:900; font-size:13px; cursor:pointer; }
+  .tal-buy { background:#7b42bc; border:none; color:#fff; padding:10px 14px; border-radius:10px; font-weight:900; font-size:13px; cursor:pointer; }
   .tal-buy:disabled { background:#2d1f3d; color:#8855aa; }
   .tal-bottom { display:flex; gap:10px; margin-top:10px; }
-  .tal-close, .tal-rank { flex:1; padding:16px; border-radius:14px; border:none;
-    font-weight:900; font-size:15px; color:#fff; cursor:pointer; text-align:center; }
+  .tal-close, .tal-rank { flex:1; padding:16px; border-radius:14px; border:none; font-weight:900; font-size:15px; color:#fff; cursor:pointer; text-align:center; }
   .tal-close { background:#3a506b; }
   .tal-rank { background:#ab47bc; }
-  .tal-save { width:100%; padding:16px; margin-top:10px; border-radius:14px; border:none;
-    font-weight:900; font-size:15px; background:#2e7d32; color:#fff; cursor:pointer; }
-  .rk-item { display:flex; gap:8px; padding:10px 12px; background:#141c2e;
-    border-radius:8px; font-size:13px; margin-bottom:6px; align-items:center; }
+  .tal-save { width:100%; padding:16px; margin-top:10px; border-radius:14px; border:none; font-weight:900; font-size:15px; background:#2e7d32; color:#fff; cursor:pointer; }
+  .rk-item { display:flex; gap:8px; padding:10px 12px; background:#141c2e; border-radius:8px; font-size:13px; margin-bottom:6px; align-items:center; }
   .rk-pos { font-weight:900; color:#ffd700; min-width:26px; font-size:14px; }
   .rk-name { flex:1; font-weight:700; text-align:left; }
   .rk-score { font-weight:900; color:#4ecdc4; }
@@ -143,28 +105,21 @@
   .ov-stat { background:#141c2e; padding:12px; border-radius:12px; }
   .ov-stat .v { font-size:20px; font-weight:900; color:#4ecdc4; }
   .ov-stat .l { font-size:10px; color:#8fa3bd; font-weight:700; text-transform:uppercase; }
-  .ov-input { width:100%; max-width:300px; padding:14px; border-radius:12px;
-    background:#141c2e; border:1px solid #3a506b; color:#fff; font-size:16px; font-weight:700;
-    text-align:center; margin-bottom:10px; outline:none; }
-  .ov-btn { width:100%; max-width:300px; padding:16px; border-radius:12px;
-    background:#4ecdc4; border:none; color:#0a1020; font-weight:900; font-size:16px; cursor:pointer; margin-bottom:8px; }
+  .ov-input { width:100%; max-width:300px; padding:14px; border-radius:12px; background:#141c2e; border:1px solid #3a506b; color:#fff; font-size:16px; font-weight:700; text-align:center; margin-bottom:10px; outline:none; }
+  .ov-btn { width:100%; max-width:300px; padding:16px; border-radius:12px; background:#4ecdc4; border:none; color:#0a1020; font-weight:900; font-size:16px; cursor:pointer; margin-bottom:8px; }
   .ov-ranking { width:100%; max-width:300px; max-height:140px; overflow-y:auto; margin:16px auto; }
   #ascendScreen { background:rgba(10,16,32,0.98); z-index:45; text-align:center; }
   .asc-title { font-size:28px; font-weight:900; color:#ab47bc; margin-bottom:8px; }
   .asc-sub { color:#8fa3bd; font-weight:700; font-size:13px; margin-bottom:20px; }
-  .asc-card { background:#141c2e; border:1px solid #ab47bc; border-radius:14px;
-    padding:16px; max-width:340px; margin:0 auto 12px; text-align:left; }
+  .asc-card { background:#141c2e; border:1px solid #ab47bc; border-radius:14px; padding:16px; max-width:340px; margin:0 auto 12px; text-align:left; }
   .asc-card .lbl { font-size:11px; color:#8fa3bd; font-weight:700; text-transform:uppercase; }
   .asc-card .val { font-size:20px; font-weight:900; color:#ffd700; }
-  .asc-bonus { display:flex; align-items:center; gap:10px; padding:10px; margin-top:8px;
-    background:rgba(171,71,188,0.1); border-radius:10px; border:1px solid rgba(171,71,188,0.3); }
+  .asc-bonus { display:flex; align-items:center; gap:10px; padding:10px; margin-top:8px; background:rgba(171,71,188,0.1); border-radius:10px; border:1px solid rgba(171,71,188,0.3); }
   .asc-bonus .ico { font-size:24px; }
   .asc-bonus .txt { flex:1; font-size:12px; font-weight:700; color:#e8ecf5; }
   .asc-btns { display:flex; flex-direction:column; gap:10px; max-width:340px; margin:16px auto 0; }
-  .asc-confirm { width:100%; padding:16px; border-radius:12px; border:none;
-    font-weight:900; font-size:15px; color:#fff; cursor:pointer; background:#ab47bc; }
-  .asc-cancel { width:100%; padding:14px; border-radius:12px; border:none;
-    font-weight:900; font-size:13px; color:#fff; cursor:pointer; background:#3a506b; }
+  .asc-confirm { width:100%; padding:16px; border-radius:12px; border:none; font-weight:900; font-size:15px; color:#fff; cursor:pointer; background:#ab47bc; }
+  .asc-cancel { width:100%; padding:14px; border-radius:12px; border:none; font-weight:900; font-size:13px; color:#fff; cursor:pointer; background:#3a506b; }
 </style>
 </head>
 <body>
@@ -292,7 +247,7 @@
 </div>
 <script>
 "use strict";
-const SAVE_KEY = "fortalezaEternaV2";
+const SAVE_KEY = "fortalezaEternaV3"; // Nova versão para evitar conflitos
 const TILE = 36;
 const BASE_MAX_TOWERS = 10;
 const MAX_RANKING = 20;
@@ -304,8 +259,7 @@ const WORLDS = [
 ];
 
 const BASE_TOWER = {
-  ico: "🏹",
-  cost: 80,
+  ico: "🏹", cost: 80,
   levels: [
     { name:"Arqueiro", dmg:3,  range:120, rate:28, color:"#4ecdc4", size:0.30 },
     { name:"Besteiro", dmg:8,  range:130, rate:26, color:"#26a69a", size:0.35 }
@@ -314,8 +268,7 @@ const BASE_TOWER = {
 
 const BRANCHES = {
   damage: {
-    ico: "🎯", name: "Atirador", color: "#4ecdc4", tagline: "Dano puro. Anti-boss.",
-    special: null, unlockAsc: 0,
+    ico: "🎯", name: "Atirador", color: "#4ecdc4", tagline: "Dano puro. Anti-boss.", special: null, unlockAsc: 0,
     levels: [
       { name:"Atirador de Elite", dmg:25, range:145, rate:24, color:"#00897b", size:0.40 },
       { name:"Sniper",            dmg:60, range:165, rate:22, color:"#00695c", size:0.46 },
@@ -328,8 +281,7 @@ const BRANCHES = {
     ]
   },
   ice: {
-    ico: "❄️", name: "Caçador", color: "#81d4fa", tagline: "Gelo. Abranda todos.",
-    special: "slow", slow: 0.5, unlockAsc: 0,
+    ico: "❄️", name: "Caçador", color: "#81d4fa", tagline: "Gelo. Abranda todos.", special: "slow", slow: 0.5, unlockAsc: 0,
     levels: [
       { name:"Caçador",     dmg:10, range:130, rate:38, color:"#4fc3f7", size:0.40 },
       { name:"Congelador",  dmg:28, range:145, rate:35, color:"#29b6f6", size:0.46 },
@@ -342,8 +294,7 @@ const BRANCHES = {
     ]
   },
   splash: {
-    ico: "💣", name: "Bombardeiro", color: "#ff9800", tagline: "Explosão em área.",
-    special: "splash", splash: 60, unlockAsc: 0,
+    ico: "💣", name: "Bombardeiro", color: "#ff9800", tagline: "Explosão em área.", special: "splash", splash: 60, unlockAsc: 0,
     levels: [
       { name:"Bombardeiro", dmg:20, range:120, rate:65, color:"#f57c00", size:0.42 },
       { name:"Artilharia",  dmg:55, range:135, rate:60, color:"#e65100", size:0.48 },
@@ -356,8 +307,7 @@ const BRANCHES = {
     ]
   },
   chain: {
-    ico: "⚡", name: "Eletricista", color: "#ffd700", tagline: "Salta entre inimigos.",
-    special: "chain", chain: 4, unlockAsc: 0,
+    ico: "⚡", name: "Eletricista", color: "#ffd700", tagline: "Salta entre inimigos.", special: "chain", chain: 4, unlockAsc: 0,
     levels: [
       { name:"Eletricista",      dmg:18, range:140, rate:42, color:"#ffb300", size:0.40 },
       { name:"Tempestade",       dmg:48, range:160, rate:38, color:"#ff8f00", size:0.46 },
@@ -370,8 +320,7 @@ const BRANCHES = {
     ]
   },
   poison: {
-    ico: "☠️", name: "Alquimista", color: "#9ccc65", tagline: "Veneno contínuo.",
-    special: "poison", poisonDmg: 5, unlockAsc: 0,
+    ico: "☠️", name: "Alquimista", color: "#9ccc65", tagline: "Veneno contínuo.", special: "poison", poisonDmg: 5, unlockAsc: 0,
     levels: [
       { name:"Alquimista",  dmg:12, range:125, rate:36, color:"#7cb342", size:0.40 },
       { name:"Envenenador", dmg:30, range:140, rate:34, color:"#689f38", size:0.46 },
@@ -384,8 +333,7 @@ const BRANCHES = {
     ]
   },
   fire: {
-    ico: "🔥", name: "Piromante", color: "#ff5722", tagline: "Fogo em área. Queima.",
-    special: "fire", unlockAsc: 5,
+    ico: "🔥", name: "Piromante", color: "#ff5722", tagline: "Fogo em área. Queima.", special: "fire", unlockAsc: 5,
     levels: [
       { name:"Piromante",    dmg:22, range:130, rate:45, color:"#ff5722", size:0.42 },
       { name:"Mago do Fogo", dmg:55, range:145, rate:42, color:"#e64a19", size:0.48 },
@@ -398,8 +346,7 @@ const BRANCHES = {
     ]
   },
   necro: {
-    ico: "💀", name: "Necromante", color: "#b39ddb", tagline: "Invoca esqueletos aliados.",
-    special: "necro", unlockAsc: 9,
+    ico: "💀", name: "Necromante", color: "#b39ddb", tagline: "Invoca esqueletos aliados.", special: "necro", unlockAsc: 9,
     levels: [
       { name:"Necromante",     dmg:15, range:125, rate:50, color:"#7e57c2", size:0.42 },
       { name:"Invocador",      dmg:40, range:140, rate:46, color:"#5e35b1", size:0.48 },
@@ -447,8 +394,7 @@ const TALENTS = [
 
 function defaultPersistent() {
   return {
-    essence:0, talents:{},
-    ascensionLevel:0,
+    essence:0, talents:{}, ascensionLevel:0,
     bestWave:0, bestScore:0, totalKills:0, totalGames:0, totalAscensions:0,
     ranking:[], savedState:null, playerName:""
   };
@@ -478,9 +424,7 @@ function saveProgress(force) {
   if (!force && now - lastSaveTime < 1000) { saveDirty = true; return; }
   lastSaveTime = now; saveDirty = false;
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(persistent)); }
-  catch(e) {
-    if (storageAvailable) { storageAvailable = false; try { showInfo("⚠️ Sem gravação"); } catch(_){} }
-  }
+  catch(e) { if (storageAvailable) { storageAvailable = false; try { showInfo("⚠️ Sem gravação"); } catch(_){} } }
 }
 
 let gold = 0, lives = 15, maxLives = 15, wave = 1, world = 1, score = 0;
@@ -489,11 +433,7 @@ let selectedTower = null;
 let towers = [], enemies = [], projectiles = [], particles = [], floats = [], skeletons = [];
 let spawnQueue = [], spawnTimer = 0, slots = [], PATH = [];
 let killsThisRun = 0, towersBuiltThisRun = 0;
-let speedMul = 1, hudDirty = true;
-let pendingSaleId = null;
-let waveTotalCount = 0;
-let pendingBranchTower = null;
-let pendingBuildSlot = null;
+let speedMul = 1, hudDirty = true, pendingSaleId = null, waveTotalCount = 0, pendingBranchTower = null, pendingBuildSlot = null;
 
 const $ = id => document.getElementById(id);
 const cv = $("cv"), ctx = cv.getContext("2d");
@@ -520,90 +460,53 @@ const goldLbl=$("goldLbl"), essLbl=$("essLbl"), scoreLbl=$("scoreLbl"), lifeLbl=
 function vibrate(ms){ if(navigator.vibrate){ try{ navigator.vibrate(ms); }catch(_){} } }
 function rand(a,b){ return a + Math.random()*(b-a); }
 function dist(a,b){ const dx=a.x-b.x, dy=a.y-b.y; return Math.hypot(dx,dy); }
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
 let infoTimer = 0;
-function showInfo(msg){
-  infoEl.textContent = msg; infoEl.classList.add("show");
-  clearTimeout(infoTimer);
-  infoTimer = setTimeout(()=>infoEl.classList.remove("show"), 1600);
-}
-function burst(x,y,color,n){
-  for(let i=0;i<n;i++){
-    const a=Math.random()*Math.PI*2, s=rand(1.2,3);
-    particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,decay:rand(0.03,0.06),color,size:rand(2,3)});
-  }
-}
+function showInfo(msg){ infoEl.textContent = msg; infoEl.classList.add("show"); clearTimeout(infoTimer); infoTimer = setTimeout(()=>infoEl.classList.remove("show"), 1600); }
+function burst(x,y,color,n){ for(let i=0;i<n;i++){ const a=Math.random()*Math.PI*2, s=rand(1.2,3); particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,decay:rand(0.03,0.06),color,size:rand(2,3)}); } }
 function floatText(x,y,txt,color){ floats.push({x,y,txt,color,life:1,vy:-0.8}); }
 
 function talentLvl(id){ return persistent.talents[id] || 0; }
 function ascLevel(){ return persistent.ascensionLevel || 0; }
 
-function ascHpFactor()    { return Math.pow(1.20, ascLevel()); }
-function ascSpeedFactor() { return 1 + ascLevel() * 0.04; }
-function ascGoldFactor()  { return Math.max(0.35, 1 - ascLevel() * 0.06); }
+// BALANCEAMENTO SUAVE: 12% de HP por nível em vez de 20%
+function ascHpFactor()    { return Math.pow(1.12, ascLevel()); }
+function ascSpeedFactor() { return 1 + ascLevel() * 0.03; }
+function ascGoldFactor()  { return Math.max(0.40, 1 - ascLevel() * 0.04); }
 
-function dmgMul()       { return (1 + talentLvl("force")*0.10) * (1 + ascLevel()*0.03); }
+function dmgMul()       { return (1 + talentLvl("force")*0.10) * (1 + ascLevel()*0.05); }
 function goldMul()      { return (1 + talentLvl("greed")*0.15) * (ascLevel()>=2?1.15:1) * (ascLevel()>=11?(1 + (ascLevel()-10)*0.05):1); }
 function rangeMul()     { return 1 + talentLvl("precision")*0.05; }
 function rateMul()      { return 1 - talentLvl("speed")*0.08; }
-function startGoldBonus(){ return talentLvl("heritage")*30; }
+function startGoldBonus(){ return talentLvl("heritage")*30 + (ascLevel() * 40); } // +40 ouro por ascensão para ajudar no início
 function startLivesBonus(){ return talentLvl("vital")*2; }
-function maxTowers()    {
-  let n = BASE_MAX_TOWERS;
-  if (ascLevel()>=1) n += 1;
-  if (ascLevel()>=3) n += 1;
-  if (ascLevel()>=6) n += 1;
-  if (ascLevel()>=11) n += Math.floor((ascLevel()-10)/2);
-  return n;
-}
+function maxTowers()    { let n = BASE_MAX_TOWERS; if (ascLevel()>=1) n += 1; if (ascLevel()>=3) n += 1; if (ascLevel()>=6) n += 1; if (ascLevel()>=11) n += Math.floor((ascLevel()-10)/2); return n; }
 function hpReduction()  { return ascLevel()>=7 ? 0.95 : 1.0; }
 function critMultiplier(){ return ascLevel()>=8 ? 1.25 : 1.0; }
-function unlockAllBranches(){ return ascLevel()>=10; }
 
 function getTowerLevelData(t){
   if (t.level <= 2) return BASE_TOWER.levels[t.level - 1];
   const branch = BRANCHES[t.branch];
   if (!branch) return BASE_TOWER.levels[1];
-  const idx = Math.min(t.level - 3, branch.levels.length - 1);
-  return branch.levels[idx];
+  return branch.levels[Math.min(t.level - 3, branch.levels.length - 1)];
 }
-function getTowerSpecial(t){
-  if (t.level < 3 || !t.branch) return null;
-  return BRANCHES[t.branch];
-}
+function getTowerSpecial(t){ return (t.level < 3 || !t.branch) ? null : BRANCHES[t.branch]; }
 function towerStats(t){
   const lvl = getTowerLevelData(t);
   const branch = getTowerSpecial(t);
-  const baseDmgBonus = (t.level <= 2 && ascLevel()>=4) ? 1.2 : 1.0;
   return {
-    dmg: lvl.dmg * dmgMul() * baseDmgBonus,
+    dmg: lvl.dmg * dmgMul() * ((t.level <= 2 && ascLevel()>=4) ? 1.2 : 1.0),
     range: lvl.range * rangeMul(),
     rate: Math.max(8, lvl.rate * rateMul()),
-    size: lvl.size,
-    color: lvl.color,
-    name: lvl.name,
-    ico: (branch && branch.ico) || BASE_TOWER.ico,
-    special: (branch && branch.special) || null,
-    splash: (branch && branch.splash) || 0,
-    slow: (branch && branch.slow) || 0,
-    chain: (branch && branch.chain) || 0,
-    poisonDmg: (branch && branch.poisonDmg) || 0
+    size: lvl.size, color: lvl.color, name: lvl.name,
+    ico: (branch && branch.ico) || BASE_TOWER.ico, special: (branch && branch.special) || null,
+    splash: (branch && branch.splash) || 0, slow: (branch && branch.slow) || 0,
+    chain: (branch && branch.chain) || 0, poisonDmg: (branch && branch.poisonDmg) || 0
   };
 }
-function towerUpgradeCost(t){
-  if (t.level >= 10) return Infinity;
-  return UPGRADE_COSTS[t.level] || 100000;
-}
-function towerSellValue(t){
-  let total = BASE_TOWER.cost;
-  for (let i=1; i<t.level; i++){
-    total += UPGRADE_COSTS[i] || 0;
-  }
-  return Math.floor(total * 0.7);
-}
+function towerUpgradeCost(t){ return t.level >= 10 ? Infinity : (UPGRADE_COSTS[t.level] || 100000); }
+function towerSellValue(t){ let total = BASE_TOWER.cost; for (let i=1; i<t.level; i++) total += UPGRADE_COSTS[i] || 0; return Math.floor(total * 0.7); }
 let COLS = 10, ROWS = 14, offX = 0, offY = 0;
 
 function resizeCanvas(){
@@ -618,117 +521,6 @@ function resizeCanvas(){
   cv.style.height = h + "px";
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   rebuildStrategicSlots(w, h);
-}
-
-function rebuildStrategicSlots(w,h){
-  const margin = 8;
-  const oldCols=COLS, oldRows=ROWS, oldOffX=offX, oldOffY=offY;
-  const previousTowers = towers.map(t => ({
-    tower:t,
-    nx: oldCols>0 ? (t.x-oldOffX)/(oldCols*TILE) : 0.5,
-    ny: oldRows>0 ? (t.y-oldOffY)/(oldRows*TILE) : 0.5,
-    col:t.col, row:t.row
-  }));
-
-  COLS = Math.max(7, Math.floor((w - margin*2)/TILE));
-  ROWS = Math.max(10, Math.floor((h - margin*2)/TILE));
-  offX = Math.floor((w - COLS*TILE)/2);
-  offY = Math.floor((h - ROWS*TILE)/2);
-
-  slots = []; towers = [];
-  for(let r=0;r<ROWS;r++){
-    for(let c=0;c<COLS;c++){
-      slots.push({
-        col:c, row:r,
-        x: offX + c*TILE + TILE/2,
-        y: offY + r*TILE + TILE/2,
-        occupied:false, buildable:false
-      });
-    }
-  }
-
-  PATH = buildPath(offX, offY);
-
-  const c1 = Math.max(1, Math.floor(COLS * 0.15));
-  const c2 = COLS - 1 - Math.max(1, Math.floor(COLS * 0.15));
-  const r1 = Math.max(1, Math.floor(ROWS * 0.30));
-  const r2 = Math.max(r1 + 2, Math.floor(ROWS * 0.65));
-
-  const desiredSlots = [
-    { col: c1+1, row: Math.max(1, Math.floor(r1*0.3)) },
-    { col: c1-1, row: Math.max(1, Math.floor(r1*0.3)) },
-    { col: Math.floor(COLS*0.4), row: r1-1 },
-    { col: Math.floor(COLS*0.6), row: r1-1 },
-    { col: c2-2, row: r1+1 },
-    { col: c2-2, row: r2-1 },
-    { col: Math.floor(COLS*0.5), row: r2+1 },
-    { col: Math.floor(COLS*0.3), row: r2+1 },
-    { col: c1+1, row: ROWS-3 },
-    { col: c1-1, row: ROWS-3 }
-  ];
-
-  const extraNeeded = Math.max(0, maxTowers() - 10);
-  const extraCandidates = [
-    { col: c1+2, row: r1-1 },
-    { col: c1-2, row: r1-1 },
-    { col: Math.floor(COLS*0.45), row: r2+1 },
-    { col: Math.floor(COLS*0.55), row: r2+1 },
-    { col: c2+1, row: r1+2 },
-    { col: c2-1, row: r2+2 },
-    { col: c1+2, row: ROWS-4 },
-    { col: c1-2, row: ROWS-4 }
-  ];
-  for (let i = 0; i < extraNeeded && i < extraCandidates.length; i++) {
-    desiredSlots.push(extraCandidates[i]);
-  }
-
-  desiredSlots.forEach(d => {
-    if (d.col < 0 || d.col >= COLS || d.row < 0 || d.row >= ROWS) return;
-    const slot = slots.find(s => s.col === d.col && s.row === d.row);
-    if (slot) slot.buildable = true;
-  });
-
-  const minSlots = maxTowers();
-  if (slots.filter(s => s.buildable).length < minSlots) {
-    const nearPath = slots
-      .filter(s => !s.buildable)
-      .map(s => {
-        let minD = Infinity;
-        for(let i=0;i<PATH.length-1;i++){
-          const d = distToSegment(s, PATH[i], PATH[i+1]);
-          if (d < minD) minD = d;
-        }
-        return { slot: s, d: minD };
-      })
-      .filter(x => x.d > TILE * 0.85 && x.d < TILE * 2)
-      .sort((a,b) => a.d - b.d);
-
-    for (let i = 0; i < nearPath.length && slots.filter(s=>s.buildable).length < minSlots; i++) {
-      nearPath[i].slot.buildable = true;
-    }
-  }
-
-  previousTowers.forEach(item => {
-    const t = item.tower;
-    let slot = slots.find(s => s.buildable && !s.occupied && s.col === item.col && s.row === item.row);
-    if (!slot) {
-      const targetX = offX + Math.max(0, Math.min(1, item.nx)) * COLS * TILE;
-      const targetY = offY + Math.max(0, Math.min(1, item.ny)) * ROWS * TILE;
-      let best = Infinity;
-      slots.forEach(s => {
-        if (!s.buildable || s.occupied) return;
-        const d = (s.x - targetX) ** 2 + (s.y - targetY) ** 2;
-        if (d < best) { best = d; slot = s; }
-      });
-    }
-    if (slot) {
-      slot.occupied = true;
-      t.slot = slot;
-      t.col = slot.col; t.row = slot.row;
-      t.x = slot.x; t.y = slot.y;
-      towers.push(t);
-    }
-  });
 }
 
 function distToSegment(p, v, w){
@@ -748,37 +540,90 @@ function buildPath(offX, offY){
     { col:c1, row:0 }, { col:c1, row:r1 }, { col:c2, row:r1 },
     { col:c2, row:r2 }, { col:c1, row:r2 }, { col:c1, row:ROWS-1 }
   ];
-  return pts.map(p => ({
-    x: offX + p.col*TILE + TILE/2,
-    y: offY + p.row*TILE + TILE/2
+  return pts.map(p => ({ x: offX + p.col*TILE + TILE/2, y: offY + p.row*TILE + TILE/2 }));
+}
+
+function rebuildStrategicSlots(w,h){
+  const margin = 8;
+  const oldCols=COLS, oldRows=ROWS, oldOffX=offX, oldOffY=offY;
+  const previousTowers = towers.map(t => ({
+    tower:t, nx: oldCols>0 ? (t.x-oldOffX)/(oldCols*TILE) : 0.5, ny: oldRows>0 ? (t.y-oldOffY)/(oldRows*TILE) : 0.5, col:t.col, row:t.row
   }));
+
+  COLS = Math.max(7, Math.floor((w - margin*2)/TILE));
+  ROWS = Math.max(10, Math.floor((h - margin*2)/TILE));
+  offX = Math.floor((w - COLS*TILE)/2);
+  offY = Math.floor((h - ROWS*TILE)/2);
+
+  slots = []; towers = [];
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      slots.push({ col:c, row:r, x: offX + c*TILE + TILE/2, y: offY + r*TILE + TILE/2, occupied:false, buildable:false });
+    }
+  }
+
+  PATH = buildPath(offX, offY);
+
+  // 1. Marcar caminho como NÃO construível (com margem segura de 1 tile)
+  slots.forEach(s => {
+    let distToPath = Infinity;
+    for(let i=0;i<PATH.length-1;i++){
+      const d = distToSegment(s, PATH[i], PATH[i+1]);
+      if (d < distToPath) distToPath = d;
+    }
+    // Só é construível se estiver a pelo menos 1.2 tiles do caminho (evita sobreposição)
+    if (distToPath > TILE * 1.2) s.buildable = true;
+  });
+
+  // 2. Selecionar os melhores slots (espalhados) para garantir que não ficam escondidos
+  const availableSlots = slots.filter(s => s.buildable);
+  // Ordenar por distância ao caminho (os mais próximos do caminho são melhores para torres)
+  availableSlots.sort((a,b) => {
+    let distA = Infinity, distB = Infinity;
+    for(let i=0;i<PATH.length-1;i++){
+      distA = Math.min(distA, distToSegment(a, PATH[i], PATH[i+1]));
+      distB = Math.min(distB, distToSegment(b, PATH[i], PATH[i+1]));
+    }
+    return distA - distB; // Mais perto do caminho primeiro
+  });
+
+  // Limpar buildable de todos e reativar apenas os melhores
+  slots.forEach(s => s.buildable = false);
+  const maxSlots = maxTowers();
+  for(let i=0; i<Math.min(maxSlots, availableSlots.length); i++){
+    availableSlots[i].buildable = true;
+  }
+
+  // 3. Restaurar torres
+  previousTowers.forEach(item => {
+    const t = item.tower;
+    let slot = slots.find(s => s.buildable && !s.occupied && s.col === item.col && s.row === item.row);
+    if (!slot) {
+      const targetX = offX + Math.max(0, Math.min(1, item.nx)) * COLS * TILE;
+      const targetY = offY + Math.max(0, Math.min(1, item.ny)) * ROWS * TILE;
+      let best = Infinity;
+      slots.forEach(s => {
+        if (!s.buildable || s.occupied) return;
+        const d = (s.x - targetX) ** 2 + (s.y - targetY) ** 2;
+        if (d < best) { best = d; slot = s; }
+      });
+    }
+    if (slot) {
+      slot.occupied = true; t.slot = slot; t.col = slot.col; t.row = slot.row; t.x = slot.x; t.y = slot.y; towers.push(t);
+    }
+  });
 }
 
 function showBuildMenu(slot){
   if (slot.occupied || !slot.buildable) return;
-  pendingBuildSlot = slot;
-  buildMenu.classList.add("show");
-  buildList.innerHTML = "";
-
+  pendingBuildSlot = slot; buildMenu.classList.add("show"); buildList.innerHTML = "";
   const btn = document.createElement("button");
   btn.className = "build-item" + (gold < BASE_TOWER.cost ? " disabled" : "");
-  btn.innerHTML =
-    '<div class="bico">🏹</div>' +
-    '<div class="binfo">' +
-      '<div class="bnm">Arqueiro</div>' +
-      '<div class="bdesc">Evolui para 7 ramos únicos</div>' +
-    '</div>' +
-    '<div class="bcost">' + BASE_TOWER.cost + '🪙</div>';
-
+  btn.innerHTML = '<div class="bico">🏹</div><div class="binfo"><div class="bnm">Arqueiro</div><div class="bdesc">Evolui para 7 ramos únicos</div></div><div class="bcost">' + BASE_TOWER.cost + '🪙</div>';
   if (gold >= BASE_TOWER.cost && towers.length < maxTowers()) {
-    btn.addEventListener("click", () => {
-      buildTower(pendingBuildSlot);
-      hideBuildMenu();
-    });
+    btn.addEventListener("click", () => { buildTower(pendingBuildSlot); hideBuildMenu(); });
   }
-
   buildList.appendChild(btn);
-
   if (towers.length >= maxTowers()) {
     const warn = document.createElement("div");
     warn.style.cssText = "padding:10px;background:rgba(255,82,82,0.15);border-radius:8px;font-size:12px;color:#ff5252;text-align:center;margin-top:8px;";
@@ -787,11 +632,7 @@ function showBuildMenu(slot){
   }
 }
 
-function hideBuildMenu(){
-  buildMenu.classList.remove("show");
-  pendingBuildSlot = null;
-}
-
+function hideBuildMenu(){ buildMenu.classList.remove("show"); pendingBuildSlot = null; }
 buildClose.addEventListener("click", hideBuildMenu);
 buildCancel.addEventListener("click", hideBuildMenu);
 
@@ -801,128 +642,69 @@ function buildTower(slot){
   if (towers.length >= maxTowers()) { showInfo("🚫 Limite de torres"); return; }
 
   gold -= BASE_TOWER.cost;
-  const t = {
-    type: "archer", level: 1, branch: null,
-    col: slot.col, row: slot.row, x: slot.x, y: slot.y,
-    slot, cooldown: 0, angle: 0, extraDmg: 0
-  };
-  slot.occupied = true;
-  towers.push(t);
-  towersBuiltThisRun++;
-  hudDirty = true;
-  vibrate(15);
-  burst(t.x, t.y, BASE_TOWER.levels[0].color, 8);
-  saveProgress(false);
+  const t = { type: "archer", level: 1, branch: null, col: slot.col, row: slot.row, x: slot.x, y: slot.y, slot, cooldown: 0, angle: 0 };
+  slot.occupied = true; towers.push(t); towersBuiltThisRun++; hudDirty = true; vibrate(15); burst(t.x, t.y, BASE_TOWER.levels[0].color, 8); saveProgress(false);
 }
 
 function upgradeTower(t){
   if (t.level >= 10) { showInfo("⭐ Nível máximo (10)"); return; }
-
   if (t.level === 2 && !t.branch) {
     if (gold < UPGRADE_COSTS[2]) { showInfo("🪙 Precisas de " + UPGRADE_COSTS[2]); return; }
-    pendingBranchTower = t;
-    showBranchChoice();
-    return;
+    pendingBranchTower = t; showBranchChoice(); return;
   }
-
   const cost = towerUpgradeCost(t);
   if (gold < cost) { showInfo("🪙 Ouro insuficiente"); return; }
-  gold -= cost;
-  t.level++;
+  gold -= cost; t.level++;
   const data = getTowerLevelData(t);
-  hudDirty = true; vibrate(15);
-  burst(t.x, t.y, data.color, 12);
-  floatText(t.x, t.y-22, data.name, "#ffd700");
-  refreshPopup(); saveProgress(false);
+  hudDirty = true; vibrate(15); burst(t.x, t.y, data.color, 12); floatText(t.x, t.y-22, data.name, "#ffd700"); refreshPopup(); saveProgress(false);
 }
 
 function showBranchChoice(){
-  branchScreen.classList.add("show");
-  branchList.innerHTML = "";
+  branchScreen.classList.add("show"); branchList.innerHTML = "";
   Object.keys(BRANCHES).forEach(key => {
     const b = BRANCHES[key];
     if (b.unlockAsc > ascLevel()) return;
     const lvl3 = b.levels[0];
     const div = document.createElement("div");
     div.className = "build-item";
-    div.innerHTML =
-      '<div class="bico">' + b.ico + '</div>' +
-      '<div class="binfo">' +
-        '<div class="bnm" style="color:' + lvl3.color + '">' + lvl3.name + '</div>' +
-        '<div class="bdesc">' + b.tagline + '</div>' +
-        '<div class="bdesc" style="color:#ffd700;margin-top:2px;">Dano ' + lvl3.dmg + ' · Alcance ' + lvl3.range + '</div>' +
-      '</div>';
+    div.innerHTML = '<div class="bico">' + b.ico + '</div><div class="binfo"><div class="bnm" style="color:' + lvl3.color + '">' + lvl3.name + '</div><div class="bdesc">' + b.tagline + '</div><div class="bdesc" style="color:#ffd700;margin-top:2px;">Dano ' + lvl3.dmg + ' · Alcance ' + lvl3.range + '</div></div>';
     div.addEventListener("click", () => {
       if (gold < UPGRADE_COSTS[2]) { showInfo("🪙 Ouro insuficiente"); return; }
-      gold -= UPGRADE_COSTS[2];
-      pendingBranchTower.branch = key;
-      pendingBranchTower.level = 3;
+      gold -= UPGRADE_COSTS[2]; pendingBranchTower.branch = key; pendingBranchTower.level = 3;
       const t = pendingBranchTower;
-      hudDirty = true; vibrate(20);
-      burst(t.x, t.y, lvl3.color, 16);
-      floatText(t.x, t.y-22, lvl3.name, "#ffd700");
-      branchScreen.classList.remove("show");
-      pendingBranchTower = null;
-      refreshPopup(); saveProgress(false);
+      hudDirty = true; vibrate(20); burst(t.x, t.y, lvl3.color, 16); floatText(t.x, t.y-22, lvl3.name, "#ffd700");
+      branchScreen.classList.remove("show"); pendingBranchTower = null; refreshPopup(); saveProgress(false);
     });
     branchList.appendChild(div);
   });
 }
 
-branchCancel.addEventListener("click", () => {
-  branchScreen.classList.remove("show");
-  pendingBranchTower = null;
-});
+branchCancel.addEventListener("click", () => { branchScreen.classList.remove("show"); pendingBranchTower = null; });
 
 function sellTower(t){
-  const val = towerSellValue(t);
-  gold += val;
-  t.slot.occupied = false;
-  towers = towers.filter(x => x !== t);
-  selectedTower = null; hidePopup(); hudDirty = true;
-  burst(t.x, t.y, "#ffd700", 10);
-  floatText(t.x, t.y-16, "+" + val, "#ffd700");
-  saveProgress(false);
+  const val = towerSellValue(t); gold += val; t.slot.occupied = false; towers = towers.filter(x => x !== t);
+  selectedTower = null; hidePopup(); hudDirty = true; burst(t.x, t.y, "#ffd700", 10); floatText(t.x, t.y-16, "+" + val, "#ffd700"); saveProgress(false);
 }
 
 function showPopup(t){ selectedTower = t; popup.classList.add("show"); refreshPopup(); }
-function hidePopup(){
-  popup.classList.remove("show"); selectedTower = null;
-  pendingSaleId = null;
-  sellBtn.classList.remove("confirm");
-  sellBtn.innerHTML = 'Vender<small id="sellVal">0</small>';
-}
+function hidePopup(){ popup.classList.remove("show"); selectedTower = null; pendingSaleId = null; sellBtn.classList.remove("confirm"); sellBtn.innerHTML = 'Vender<small id="sellVal">0</small>'; }
 
 function refreshPopup(){
-  const t = selectedTower;
-  if (!t) return;
+  const t = selectedTower; if (!t) return;
   const st = towerStats(t);
   popTitle.textContent = st.ico + " " + st.name + " · Nv." + t.level;
-  psDmg.textContent = st.dmg.toFixed(1);
-  psRng.textContent = Math.round(st.range);
-  psRate.textContent = Math.round(st.rate) + "f";
-
+  psDmg.textContent = st.dmg.toFixed(1); psRng.textContent = Math.round(st.range); psRate.textContent = Math.round(st.rate) + "f";
   let starsHtml = "";
-  for (let i=1;i<=10;i++){
-    starsHtml += '<span class="star ' + (i <= t.level ? "on" : "") + '">' + (i<=5?"★":"✦") + '</span>';
-  }
+  for (let i=1;i<=10;i++) starsHtml += '<span class="star ' + (i <= t.level ? "on" : "") + '">' + (i<=5?"★":"✦") + '</span>';
   popStars.innerHTML = starsHtml;
-
   const upCost = towerUpgradeCost(t), sv = towerSellValue(t);
   if (t.level >= 10) { upgBtn.disabled = true; upgCost.textContent = "MAX"; }
-  else {
-    upgBtn.disabled = gold < upCost;
-    const label = (t.level === 2 && !t.branch) ? "Escolher ramo" : "Melhorar";
-    upgBtn.innerHTML = label + '<small id="upgCost">🪙 ' + upCost + '</small>';
-  }
-  sellBtn.disabled = false;
-  sellBtn.classList.remove("confirm");
-  sellBtn.innerHTML = 'Vender<small id="sellVal">🪙 ' + sv + '</small>';
-  pendingSaleId = null;
+  else { upgBtn.disabled = gold < upCost; upgBtn.innerHTML = ((t.level === 2 && !t.branch) ? "Escolher ramo" : "Melhorar") + '<small id="upgCost">🪙 ' + upCost + '</small>'; }
+  sellBtn.disabled = false; sellBtn.classList.remove("confirm"); sellBtn.innerHTML = 'Vender<small id="sellVal">🪙 ' + sv + '</small>'; pendingSaleId = null;
 }
+
 function spawnEnemy(type, waveNum, worldNum){
-  const base = ENEMY_TYPES[type];
-  if (!base) return;
+  const base = ENEMY_TYPES[type]; if (!base) return;
   const worldFactor = 1 + (worldNum - 1) * 0.5;
   let baseScale = 0.18 + Math.floor((waveNum - 1) / 5) * 0.06;
   if (waveNum > 25) baseScale *= 1.35;
@@ -932,304 +714,128 @@ function spawnEnemy(type, waveNum, worldNum){
   const hpScale = (1 + (waveNum - 1) * baseScale * tierBonus) * worldFactor;
   let hp = Math.ceil(base.hp * hpScale * hpReduction());
   hp = Math.ceil(hp * ascHpFactor());
-
-  if (type === "boss") {
-    hp = Math.ceil(hp * (1 + Math.floor(waveNum / 10) * 0.5));
-  }
-
-  let speed = base.speed * (1 + (worldNum - 1) * 0.10) * (1 + Math.floor(waveNum / 8) * 0.05);
-  speed *= ascSpeedFactor();
+  if (type === "boss") hp = Math.ceil(hp * (1 + Math.floor(waveNum / 10) * 0.5));
+  let speed = base.speed * (1 + (worldNum - 1) * 0.10) * (1 + Math.floor(waveNum / 8) * 0.05) * ascSpeedFactor();
 
   let shield = 0, regen = 0;
   if (waveNum >= 35 && type !== "boss" && Math.random() < 0.25) shield = Math.ceil(hp * 0.4);
   if (waveNum >= 40 && type !== "boss" && Math.random() < 0.20) regen = Math.ceil(hp * 0.02);
 
-  enemies.push({
-    type, hp, maxHp: hp, gold: Math.ceil(base.gold * (1 + (worldNum-1)*0.2)),
-    speed, radius: base.radius, color: base.color, x: PATH[0].x, y: PATH[0].y,
-    waypoint: 1, slow: 0, poison: 0, poisonDmg: 0, alive: true, hitFlash: 0,
-    shield, shieldMax: shield, regen
-  });
+  enemies.push({ type, hp, maxHp: hp, gold: Math.ceil(base.gold * (1 + (worldNum-1)*0.2)), speed, radius: base.radius, color: base.color, x: PATH[0].x, y: PATH[0].y, waypoint: 1, slow: 0, poison: 0, poisonDmg: 0, alive: true, hitFlash: 0, shield, shieldMax: shield, regen });
 }
 
 function startWave(){
-  if (running) return;
-  running = true; paused = false;
-  spawnQueue = []; spawnTimer = 0;
+  if (running) return; running = true; paused = false; spawnQueue = []; spawnTimer = 0;
   const isBoss = wave % 5 === 0;
   const waveTierMult = 1 + Math.floor(wave / 10) * 0.15;
-  const ascBonusCount = ascLevel();
-  const count = isBoss
-    ? (7 + Math.floor(wave * 0.6 * waveTierMult) + ascBonusCount)
-    : (5 + Math.floor(wave * 0.85 * waveTierMult) + ascBonusCount);
-
+  const count = (isBoss ? (7 + Math.floor(wave * 0.6 * waveTierMult)) : (5 + Math.floor(wave * 0.85 * waveTierMult))) + ascLevel();
   for (let i = 0; i < count; i++) {
-    let type = "goblin";
-    if (wave >= 3 && Math.random() < 0.35) type = "orc";
-    if (wave >= 5 && Math.random() < 0.25) type = "swift";
-    if (wave >= 7 && Math.random() < 0.25) type = "tank";
-    const delayStep = Math.max(14, 40 - Math.floor(wave / 3) * 2);
-    spawnQueue.push({ type, delay: i === 0 ? 0 : delayStep });
+    let type = "goblin"; if (wave >= 3 && Math.random() < 0.35) type = "orc"; if (wave >= 5 && Math.random() < 0.25) type = "swift"; if (wave >= 7 && Math.random() < 0.25) type = "tank";
+    spawnQueue.push({ type, delay: i === 0 ? 0 : Math.max(14, 40 - Math.floor(wave / 3) * 2) });
   }
   if (isBoss) spawnQueue.push({ type: "boss", delay: 30 });
-  waveTotalCount = spawnQueue.length;
-  startBtn.disabled = true;
-  updateStartBtn();
-
+  waveTotalCount = spawnQueue.length; startBtn.disabled = true; updateStartBtn();
   if (wave % 5 === 0) showInfo("👑 BOSS · Vaga " + wave);
-  else if (wave >= 35) showInfo("🛡️ Vaga " + wave + " · Escudos!");
-  else if (wave >= 30) showInfo("⚠️ Vaga " + wave);
-  else if (wave % 4 === 0) showInfo("🛡️ TANQUES");
-  else if (wave % 3 === 0) showInfo("🌊 ENXAME");
+  else if (wave >= 35) showInfo("🛡️ Escudos · Vaga " + wave);
+  else if (wave >= 30) showInfo("⚠️ Difícil · Vaga " + wave);
 }
 
 function hitEnemy(e, dmg){
   if (!e.alive) return;
-  if (critMultiplier() > 1 && Math.random() < 0.15) {
-    dmg *= critMultiplier();
-    floatText(e.x, e.y - e.radius - 8, "CRIT!", "#ffd700");
-  }
-  if (e.shield > 0) {
-    e.shield -= dmg;
-    if (e.shield < 0) {
-      e.hp += e.shield;
-      e.shield = 0;
-    }
-  } else {
-    e.hp -= dmg;
-  }
-  e.hitFlash = 2;
-  if (e.hp <= 0) killEnemy(e);
+  if (critMultiplier() > 1 && Math.random() < 0.15) { dmg *= critMultiplier(); floatText(e.x, e.y - e.radius - 8, "CRIT!", "#ffd700"); }
+  if (e.shield > 0) { e.shield -= dmg; if (e.shield < 0) { e.hp += e.shield; e.shield = 0; } } else { e.hp -= dmg; }
+  e.hitFlash = 2; if (e.hp <= 0) killEnemy(e);
 }
 
 function killEnemy(e){
-  if (!e.alive) return;
-  e.alive = false;
-  enemies = enemies.filter(x => x !== e);
-  let g = Math.round(e.gold * goldMul());
-  if (wave > 30) g = Math.round(g * 0.6);
-  g = Math.round(g * ascGoldFactor());
-  gold += g; score += g; killsThisRun++;
-  hudDirty = true;
-  burst(e.x, e.y, e.color, 4);
-  if (e.type === "boss") {
-    persistent.essence += 2 + world;
-    saveProgress(false);
-    showInfo("👑 Boss derrotado! +" + (2+world) + " 💎");
-  }
+  if (!e.alive) return; e.alive = false; enemies = enemies.filter(x => x !== e);
+  let g = Math.round(e.gold * goldMul()); if (wave > 30) g = Math.round(g * 0.6); g = Math.round(g * ascGoldFactor());
+  gold += g; score += g; killsThisRun++; hudDirty = true; burst(e.x, e.y, e.color, 4);
+  if (e.type === "boss") { persistent.essence += 2 + world; saveProgress(false); showInfo("👑 Boss! +" + (2+world) + " 💎"); }
 }
 
 function damageBase(e){
-  if (!e.alive) return;
-  const livesCfg = e.type === "boss" ? (wave <= 5 ? 3 : 5) : 1;
-  lives -= livesCfg; vibrate(40);
-  e.alive = false;
-  enemies = enemies.filter(x => x !== e);
-  hudDirty = true;
-  burst(e.x, e.y, "#ff5252", 10);
-  if (lives <= 0) endGame();
+  if (!e.alive) return; lives -= (e.type === "boss" ? (wave <= 5 ? 3 : 5) : 1); vibrate(40);
+  e.alive = false; enemies = enemies.filter(x => x !== e); hudDirty = true; burst(e.x, e.y, "#ff5252", 10); if (lives <= 0) endGame();
 }
 
 function fireProjectile(t, target){
-  const st = towerStats(t);
-  t.angle = Math.atan2(target.y - t.y, target.x - t.x);
-  projectiles.push({
-    x:t.x, y:t.y, target, speed:18, dmg:st.dmg,
-    color:st.color, special:st.special,
-    splash:st.splash, slow:st.slow,
-    chain:st.chain, poisonDmg:st.poisonDmg, hit:false
-  });
+  const st = towerStats(t); t.angle = Math.atan2(target.y - t.y, target.x - t.x);
+  projectiles.push({ x:t.x, y:t.y, target, speed:18, dmg:st.dmg, color:st.color, special:st.special, splash:st.splash, slow:st.slow, chain:st.chain, poisonDmg:st.poisonDmg, hit:false });
 }
 
 function hitProjectile(p){
-  if (p.hit) return;
-  p.hit = true;
-  const tgt = p.target;
-  if (!tgt || !tgt.alive) return;
-  const isBoss = tgt.type === "boss";
-  if (p.special === "chain" && isBoss) p.dmg *= 1.8;
+  if (p.hit) return; p.hit = true; const tgt = p.target; if (!tgt || !tgt.alive) return;
+  const isBoss = tgt.type === "boss"; if (p.special === "chain" && isBoss) p.dmg *= 1.8;
 
-  if (p.special === "splash") {
-    enemies.forEach(e => {
-      if (!e.alive) return;
-      if (dist(e, tgt) <= p.splash) hitEnemy(e, p.dmg);
-    });
-    burst(tgt.x, tgt.y, p.color, 8);
-  } else if (p.special === "chain") {
-    hitEnemy(tgt, p.dmg);
-    if (isBoss) floatText(tgt.x, tgt.y - tgt.radius - 10, Math.round(p.dmg), "#ffd700");
+  if (p.special === "splash") { enemies.forEach(e => { if (e.alive && dist(e, tgt) <= p.splash) hitEnemy(e, p.dmg); }); burst(tgt.x, tgt.y, p.color, 8); }
+  else if (p.special === "chain") {
+    hitEnemy(tgt, p.dmg); if (isBoss) floatText(tgt.x, tgt.y - tgt.radius - 10, Math.round(p.dmg), "#ffd700");
     let last = tgt, chained = [tgt];
-    for (let i=0;i<p.chain-1;i++){
-      let next = null, bestD = 70;
-      enemies.forEach(e => {
-        if (!e.alive || chained.includes(e)) return;
-        const d = dist(e, last); if (d < bestD) { bestD = d; next = e; }
-      });
-      if (!next) break;
-      hitEnemy(next, p.dmg * 0.7);
-      chained.push(next); last = next;
-    }
+    for (let i=0;i<p.chain-1;i++){ let next = null, bestD = 70; enemies.forEach(e => { if (!e.alive || chained.includes(e)) return; const d = dist(e, last); if (d < bestD) { bestD = d; next = e; } }); if (!next) break; hitEnemy(next, p.dmg * 0.7); chained.push(next); last = next; }
     burst(tgt.x, tgt.y, p.color, 5);
-  } else if (p.special === "slow") {
-    hitEnemy(tgt, p.dmg);
-    if (tgt.alive) tgt.slow = Math.max(tgt.slow, 90);
-    burst(tgt.x, tgt.y, p.color, 3);
-  } else if (p.special === "poison") {
-    hitEnemy(tgt, p.dmg);
-    if (tgt.alive) { tgt.poison = 90; tgt.poisonDmg = p.poisonDmg; }
-    burst(tgt.x, tgt.y, p.color, 3);
-  } else if (p.special === "fire") {
-    enemies.forEach(e => {
-      if (!e.alive) return;
-      if (dist(e, tgt) <= 55) {
-        hitEnemy(e, p.dmg);
-        if (e.alive) { e.poison = 60; e.poisonDmg = p.dmg * 0.15; }
-      }
-    });
-    burst(tgt.x, tgt.y, "#ff5722", 10);
-  } else if (p.special === "necro") {
-    hitEnemy(tgt, p.dmg);
-    if (Math.random() < 0.3) {
-      skeletons.push({
-        x: tgt.x + rand(-20, 20), y: tgt.y + rand(-20, 20),
-        target: null, cooldown: 0, life: 300
-      });
-    }
-    burst(tgt.x, tgt.y, "#b39ddb", 6);
-  } else {
-    hitEnemy(tgt, p.dmg);
-    if (isBoss) floatText(tgt.x, tgt.y - tgt.radius - 10, Math.round(p.dmg), "#e8ecf5");
-    burst(tgt.x, tgt.y, p.color, 2);
-  }
+  } else if (p.special === "slow") { hitEnemy(tgt, p.dmg); if (tgt.alive) tgt.slow = Math.max(tgt.slow, 90); burst(tgt.x, tgt.y, p.color, 3); }
+  else if (p.special === "poison") { hitEnemy(tgt, p.dmg); if (tgt.alive) { tgt.poison = 90; tgt.poisonDmg = p.poisonDmg; } burst(tgt.x, tgt.y, p.color, 3); }
+  else if (p.special === "fire") { enemies.forEach(e => { if (e.alive && dist(e, tgt) <= 55) { hitEnemy(e, p.dmg); if (e.alive) { e.poison = 60; e.poisonDmg = p.dmg * 0.15; } } }); burst(tgt.x, tgt.y, "#ff5722", 10); }
+  else if (p.special === "necro") { hitEnemy(tgt, p.dmg); if (Math.random() < 0.3) skeletons.push({ x: tgt.x + rand(-20, 20), y: tgt.y + rand(-20, 20), target: null, cooldown: 0, life: 300 }); burst(tgt.x, tgt.y, "#b39ddb", 6); }
+  else { hitEnemy(tgt, p.dmg); if (isBoss) floatText(tgt.x, tgt.y - tgt.radius - 10, Math.round(p.dmg), "#e8ecf5"); burst(tgt.x, tgt.y, p.color, 2); }
 }
 
 function update(){
   if (paused || !running) return;
-
-  const remaining = spawnQueue.length + enemies.length;
-  const done = Math.max(0, waveTotalCount - remaining);
-  const pct = waveTotalCount > 0 ? (done / waveTotalCount) * 100 : 0;
-  const wpEl = document.getElementById("waveProgress");
-  if (wpEl) wpEl.style.width = pct + "%";
+  const remaining = spawnQueue.length + enemies.length, done = Math.max(0, waveTotalCount - remaining), pct = waveTotalCount > 0 ? (done / waveTotalCount) * 100 : 0;
+  const wpEl = document.getElementById("waveProgress"); if (wpEl) wpEl.style.width = pct + "%";
 
   if (spawnQueue.length > 0) {
-    spawnTimer++;
-    if (spawnTimer >= spawnQueue[0].delay) {
-      spawnTimer = 0;
-      const s = spawnQueue.shift();
-      spawnEnemy(s.type, wave, world);
-    }
+    spawnTimer++; if (spawnTimer >= spawnQueue[0].delay) { spawnTimer = 0; spawnEnemy(spawnQueue.shift().type, wave, world); }
   } else if (enemies.length === 0 && running) {
-    running = false;
-    let bonus = 18 + wave * 3 * world;
-    if (wave > 30) bonus = 50;
-    gold += bonus; score += bonus;
-    persistent.essence += 1 + talentLvl("greed");
-    const prevBest = persistent.bestWave;
-    if (wave > persistent.bestWave) persistent.bestWave = wave;
-    const isNewRecord = wave > prevBest;
-
-    if (wave % 5 === 0) {
-      persistent.essence += 3;
-      world++;
-      const wname = (WORLDS[(world-1)%WORLDS.length]?.name) || "Extra";
-      showInfo("🌍 Mundo " + world + ": " + wname + "!");
-    } else if (isNewRecord && prevBest > 0) {
-      showInfo("🏆 NOVO RECORDE! Vaga " + wave);
-    } else {
-      showInfo("✅ Vaga concluída! +" + bonus + " 🪙");
-    }
-    wave++;
-    hudDirty = true;
-    vibrate(25);
-    startBtn.disabled = false;
-    updateStartBtn();
-    saveProgress(true);
-    return;
+    running = false; let bonus = 18 + wave * 3 * world; if (wave > 30) bonus = 50; gold += bonus; score += bonus; persistent.essence += 1 + talentLvl("greed");
+    const prevBest = persistent.bestWave; if (wave > persistent.bestWave) persistent.bestWave = wave; const isNewRecord = wave > prevBest;
+    if (wave % 5 === 0) { persistent.essence += 3; world++; const wname = (WORLDS[(world-1)%WORLDS.length]?.name) || "Extra"; showInfo("🌍 Mundo " + world + ": " + wname + "!"); }
+    else if (isNewRecord && prevBest > 0) showInfo("🏆 NOVO RECORDE! Vaga " + wave);
+    else showInfo("✅ Vaga concluída! +" + bonus + " 🪙");
+    wave++; hudDirty = true; vibrate(25); startBtn.disabled = false; updateStartBtn(); saveProgress(true); return;
   }
 
   for (let i = enemies.length - 1; i >= 0; i--) {
-    const e = enemies[i];
-    if (!e.alive) continue;
+    const e = enemies[i]; if (!e.alive) continue;
     if (e.hitFlash > 0) e.hitFlash--;
-    if (e.poison > 0) {
-      e.poison--; e.hp -= e.poisonDmg;
-      if (e.hp <= 0) { killEnemy(e); continue; }
-    }
-    if (e.regen > 0 && e.hp < e.maxHp) {
-      e.hp = Math.min(e.maxHp, e.hp + e.regen);
-    }
-    let sp = e.speed;
-    if (e.slow > 0) { e.slow--; sp *= 0.5; }
+    if (e.poison > 0) { e.poison--; e.hp -= e.poisonDmg; if (e.hp <= 0) { killEnemy(e); continue; } }
+    if (e.regen > 0 && e.hp < e.maxHp) e.hp = Math.min(e.maxHp, e.hp + e.regen);
+    let sp = e.speed; if (e.slow > 0) { e.slow--; sp *= 0.5; }
     if (e.waypoint < PATH.length) {
-      const wp = PATH[e.waypoint];
-      const dx = wp.x - e.x, dy = wp.y - e.y;
-      const d = Math.hypot(dx, dy);
-      if (d < 4) e.waypoint++;
-      else { e.x += (dx/d)*sp; e.y += (dy/d)*sp; }
-    } else {
-      damageBase(e);
-      if (gameOverFlag) return;
-    }
+      const wp = PATH[e.waypoint], dx = wp.x - e.x, dy = wp.y - e.y, d = Math.hypot(dx, dy);
+      if (d < 4) e.waypoint++; else { e.x += (dx/d)*sp; e.y += (dy/d)*sp; }
+    } else { damageBase(e); if (gameOverFlag) return; }
   }
 
   skeletons = skeletons.filter(s => {
-    s.life--;
-    if (s.life <= 0) return false;
-    s.cooldown--;
+    s.life--; if (s.life <= 0) return false; s.cooldown--;
     if (s.cooldown <= 0) {
-      let target = null, bestD = 150;
-      enemies.forEach(e => {
-        if (!e.alive) return;
-        const d = dist(s, e);
-        if (d < bestD) { bestD = d; target = e; }
-      });
-      if (target) {
-        hitEnemy(target, 50);
-        s.cooldown = 30;
-      }
+      let target = null, bestD = 150; enemies.forEach(e => { if (e.alive) { const d = dist(s, e); if (d < bestD) { bestD = d; target = e; } } });
+      if (target) { hitEnemy(target, 50); s.cooldown = 30; }
     }
-    if (s.target && s.target.alive) {
-      const dx = s.target.x - s.x, dy = s.target.y - s.y;
-      const d = Math.hypot(dx, dy);
-      if (d > 20) { s.x += (dx/d)*1.5; s.y += (dy/d)*1.5; }
-    }
+    if (s.target && s.target.alive) { const dx = s.target.x - s.x, dy = s.target.y - s.y, d = Math.hypot(dx, dy); if (d > 20) { s.x += (dx/d)*1.5; s.y += (dy/d)*1.5; } }
     return true;
   });
 
   if (gameOverFlag || !running) return;
 
   towers.forEach(t => {
-    t.cooldown--;
-    if (t.cooldown > 0) return;
-    const st = towerStats(t);
-    let target = null, bestD = st.range;
-    enemies.forEach(e => {
-      if (!e.alive) return;
-      const d = dist(e, t);
-      if (d < bestD) { bestD = d; target = e; }
-    });
+    t.cooldown--; if (t.cooldown > 0) return;
+    const st = towerStats(t); let target = null, bestD = st.range;
+    enemies.forEach(e => { if (e.alive) { const d = dist(e, t); if (d < bestD) { bestD = d; target = e; } } });
     if (target) { fireProjectile(t, target); t.cooldown = st.rate; }
   });
 
   projectiles = projectiles.filter(p => {
-    if (p.hit) return false;
-    const tgt = p.target;
-    if (!tgt || !tgt.alive) return false;
-    const dx = tgt.x - p.x, dy = tgt.y - p.y;
-    const d = Math.hypot(dx, dy);
-    if (d < p.speed) { hitProjectile(p); return false; }
-    p.x += (dx/d)*p.speed; p.y += (dy/d)*p.speed;
-    return true;
+    if (p.hit) return false; const tgt = p.target; if (!tgt || !tgt.alive) return false;
+    const dx = tgt.x - p.x, dy = tgt.y - p.y, d = Math.hypot(dx, dy);
+    if (d < p.speed) { hitProjectile(p); return false; } p.x += (dx/d)*p.speed; p.y += (dy/d)*p.speed; return true;
   });
 
-  particles = particles.filter(p => {
-    p.x += p.vx; p.y += p.vy; p.vx *= 0.92; p.vy *= 0.92;
-    p.life -= p.decay; return p.life > 0;
-  });
-  floats = floats.filter(f => {
-    f.y += f.vy; f.life -= 0.025; return f.life > 0;
-  });
+  particles = particles.filter(p => { p.x += p.vx; p.y += p.vy; p.vx *= 0.92; p.vy *= 0.92; p.life -= p.decay; return p.life > 0; });
+  floats = floats.filter(f => { f.y += f.vy; f.life -= 0.025; return f.life > 0; });
 }
 function drawTower(ctx, t){
   const st = towerStats(t);
@@ -1269,149 +875,46 @@ function drawTower(ctx, t){
   ctx.rotate(angle);
 
   if (!t.branch || t.level < 3) {
-    ctx.strokeStyle = "#fff";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(0, 0, size*0.55, -Math.PI*0.4, Math.PI*0.4);
-    ctx.stroke();
+    ctx.strokeStyle = "#fff"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(0, 0, size*0.55, -Math.PI*0.4, Math.PI*0.4); ctx.stroke();
     const arrows = t.level >= 2 ? 2 : 1;
-    for (let i=0;i<arrows;i++){
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(size*0.7, (i-arrows/2+0.5)*3);
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    }
+    for (let i=0;i<arrows;i++){ ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(size*0.7, (i-arrows/2+0.5)*3); ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.stroke(); }
   } else {
     const heavy = t.level >= 6;
     if (t.branch === "damage") {
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = heavy ? 3 : 2;
-      ctx.beginPath();
-      ctx.arc(0, 0, size*0.4, 0, Math.PI*2);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(0, 0); ctx.lineTo(size*0.9, 0);
-      ctx.stroke();
-      ctx.fillStyle = "#ffd700";
-      ctx.beginPath();
-      ctx.arc(size*0.9, 0, heavy ? 4 : 3, 0, Math.PI*2);
-      ctx.fill();
-      if (heavy) {
-        ctx.beginPath();
-        ctx.arc(size*0.9, 0, 7, 0, Math.PI*2);
-        ctx.strokeStyle = "#ffd700";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
+      ctx.strokeStyle = "#fff"; ctx.lineWidth = heavy ? 3 : 2;
+      ctx.beginPath(); ctx.arc(0, 0, size*0.4, 0, Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(size*0.9, 0); ctx.stroke();
+      ctx.fillStyle = "#ffd700"; ctx.beginPath(); ctx.arc(size*0.9, 0, heavy ? 4 : 3, 0, Math.PI*2); ctx.fill();
+      if (heavy) { ctx.beginPath(); ctx.arc(size*0.9, 0, 7, 0, Math.PI*2); ctx.strokeStyle = "#ffd700"; ctx.lineWidth = 1; ctx.stroke(); }
     } else if (t.branch === "ice") {
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = heavy ? 2.5 : 1.5;
-      for (let i=0;i<6;i++){
-        ctx.save();
-        ctx.rotate(i * Math.PI/3);
-        ctx.beginPath();
-        ctx.moveTo(0, 0); ctx.lineTo(size*0.7, 0);
-        ctx.stroke();
-        if (t.level >= 4) {
-          ctx.beginPath();
-          ctx.moveTo(size*0.5, 0); ctx.lineTo(size*0.65, -size*0.15);
-          ctx.moveTo(size*0.5, 0); ctx.lineTo(size*0.65, size*0.15);
-          ctx.stroke();
-        }
-        ctx.restore();
-      }
+      ctx.strokeStyle = "#fff"; ctx.lineWidth = heavy ? 2.5 : 1.5;
+      for (let i=0;i<6;i++){ ctx.save(); ctx.rotate(i * Math.PI/3); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(size*0.7, 0); ctx.stroke(); if (t.level >= 4) { ctx.beginPath(); ctx.moveTo(size*0.5, 0); ctx.lineTo(size*0.65, -size*0.15); ctx.moveTo(size*0.5, 0); ctx.lineTo(size*0.65, size*0.15); ctx.stroke(); } ctx.restore(); }
     } else if (t.branch === "splash") {
-      ctx.fillStyle = "#333";
-      ctx.fillRect(size*0.15, -size*0.3, size*0.85, size*0.6);
-      ctx.beginPath();
-      ctx.arc(size*0.95, 0, size*0.2, 0, Math.PI*2);
-      ctx.fillStyle = "#1a1a1a";
-      ctx.fill();
-      if (heavy) {
-        ctx.strokeStyle = "#ffd700";
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(size*0.15, -size*0.3, size*0.85, size*0.6);
-      }
+      ctx.fillStyle = "#333"; ctx.fillRect(size*0.15, -size*0.3, size*0.85, size*0.6);
+      ctx.beginPath(); ctx.arc(size*0.95, 0, size*0.2, 0, Math.PI*2); ctx.fillStyle = "#1a1a1a"; ctx.fill();
+      if (heavy) { ctx.strokeStyle = "#ffd700"; ctx.lineWidth = 1.5; ctx.strokeRect(size*0.15, -size*0.3, size*0.85, size*0.6); }
     } else if (t.branch === "chain") {
-      ctx.fillStyle = heavy ? "#fff8b0" : "#fff";
-      ctx.beginPath();
-      ctx.moveTo(size*0.3, -size*0.6);
-      ctx.lineTo(-size*0.1, 0);
-      ctx.lineTo(size*0.15, 0);
-      ctx.lineTo(-size*0.3, size*0.6);
-      ctx.lineTo(0, size*0.1);
-      ctx.lineTo(-size*0.2, size*0.1);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = "#333";
-      ctx.lineWidth = 1;
-      ctx.stroke();
+      ctx.fillStyle = heavy ? "#fff8b0" : "#fff"; ctx.beginPath(); ctx.moveTo(size*0.3, -size*0.6); ctx.lineTo(-size*0.1, 0); ctx.lineTo(size*0.15, 0); ctx.lineTo(-size*0.3, size*0.6); ctx.lineTo(0, size*0.1); ctx.lineTo(-size*0.2, size*0.1); ctx.closePath(); ctx.fill(); ctx.strokeStyle = "#333"; ctx.lineWidth = 1; ctx.stroke();
     } else if (t.branch === "poison") {
-      ctx.fillStyle = "#1a1a1a";
-      ctx.beginPath();
-      ctx.arc(0, -size*0.15, size*0.35, 0, Math.PI*2);
-      ctx.fill();
-      ctx.fillStyle = heavy ? "#ff5252" : "#9ccc65";
-      ctx.beginPath();
-      ctx.arc(-size*0.15, -size*0.2, size*0.08, 0, Math.PI*2);
-      ctx.arc(size*0.15, -size*0.2, size*0.08, 0, Math.PI*2);
-      ctx.fill();
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(0, -size*0.05, size*0.15, 0, Math.PI);
-      ctx.stroke();
+      ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(0, -size*0.15, size*0.35, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = heavy ? "#ff5252" : "#9ccc65"; ctx.beginPath(); ctx.arc(-size*0.15, -size*0.2, size*0.08, 0, Math.PI*2); ctx.arc(size*0.15, -size*0.2, size*0.08, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = "#fff"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(0, -size*0.05, size*0.15, 0, Math.PI); ctx.stroke();
     } else if (t.branch === "fire") {
-      ctx.fillStyle = "#ff5722";
-      ctx.beginPath();
-      ctx.moveTo(0, -size*0.7);
-      ctx.lineTo(size*0.3, 0);
-      ctx.lineTo(size*0.15, 0);
-      ctx.lineTo(size*0.4, size*0.5);
-      ctx.lineTo(-size*0.1, size*0.1);
-      ctx.lineTo(-size*0.35, size*0.6);
-      ctx.lineTo(-size*0.15, 0);
-      ctx.lineTo(-size*0.3, 0);
-      ctx.closePath();
-      ctx.fill();
-      ctx.fillStyle = "#ffeb3b";
-      ctx.beginPath();
-      ctx.moveTo(0, -size*0.4);
-      ctx.lineTo(size*0.15, 0);
-      ctx.lineTo(-size*0.15, 0);
-      ctx.closePath();
-      ctx.fill();
+      ctx.fillStyle = "#ff5722"; ctx.beginPath(); ctx.moveTo(0, -size*0.7); ctx.lineTo(size*0.3, 0); ctx.lineTo(size*0.15, 0); ctx.lineTo(size*0.4, size*0.5); ctx.lineTo(-size*0.1, size*0.1); ctx.lineTo(-size*0.35, size*0.6); ctx.lineTo(-size*0.15, 0); ctx.lineTo(-size*0.3, 0); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = "#ffeb3b"; ctx.beginPath(); ctx.moveTo(0, -size*0.4); ctx.lineTo(size*0.15, 0); ctx.lineTo(-size*0.15, 0); ctx.closePath(); ctx.fill();
     } else if (t.branch === "necro") {
-      ctx.fillStyle = "#1a1a1a";
-      ctx.beginPath();
-      ctx.arc(0, 0, size*0.45, 0, Math.PI*2);
-      ctx.fill();
-      ctx.fillStyle = heavy ? "#e1bee7" : "#b39ddb";
-      ctx.beginPath();
-      ctx.arc(-size*0.15, -size*0.1, size*0.1, 0, Math.PI*2);
-      ctx.arc(size*0.15, -size*0.1, size*0.1, 0, Math.PI*2);
-      ctx.fill();
-      ctx.strokeStyle = "#e1bee7";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(-size*0.2, size*0.2);
-      ctx.lineTo(size*0.2, size*0.2);
-      ctx.stroke();
+      ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(0, 0, size*0.45, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = heavy ? "#e1bee7" : "#b39ddb"; ctx.beginPath(); ctx.arc(-size*0.15, -size*0.1, size*0.1, 0, Math.PI*2); ctx.arc(size*0.15, -size*0.1, size*0.1, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = "#e1bee7"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(-size*0.2, size*0.2); ctx.lineTo(size*0.2, size*0.2); ctx.stroke();
     }
   }
-
   ctx.restore();
   ctx.restore();
 
   if (t.level > 1) {
-    ctx.fillStyle = "#ffd700";
-    ctx.font = "bold 9px sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    const levelStr = t.level <= 5 ? "★".repeat(t.level-1) : "✦" + t.level;
-    ctx.fillText(levelStr, t.x, t.y - size - 6);
+    ctx.fillStyle = "#ffd700"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(t.level <= 5 ? "★".repeat(t.level-1) : "✦" + t.level, t.x, t.y - size - 6);
   }
 }
 
@@ -1420,624 +923,219 @@ function render(){
   const h = cv.height / (window.devicePixelRatio || 1);
   ctx.clearRect(0, 0, w, h);
   const theme = WORLDS[(world - 1) % WORLDS.length];
-  ctx.fillStyle = theme.bg;
-  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = theme.bg; ctx.fillRect(0, 0, w, h);
 
-  ctx.strokeStyle = theme.path;
-  ctx.lineWidth = TILE * 0.9;
-  ctx.lineCap = "round"; ctx.lineJoin = "round";
-  ctx.beginPath();
-  PATH.forEach((p, i) => { i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); });
-  ctx.stroke();
+  ctx.strokeStyle = theme.path; ctx.lineWidth = TILE * 0.9; ctx.lineCap = "round"; ctx.lineJoin = "round";
+  ctx.beginPath(); PATH.forEach((p, i) => { i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); }); ctx.stroke();
 
-  ctx.strokeStyle = theme.pathDash;
-  ctx.lineWidth = 4;
-  ctx.setLineDash([12, 16]);
-  ctx.beginPath();
-  PATH.forEach((p, i) => { i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); });
-  ctx.stroke();
-  ctx.setLineDash([]);
+  ctx.strokeStyle = theme.pathDash; ctx.lineWidth = 4; ctx.setLineDash([12, 16]);
+  ctx.beginPath(); PATH.forEach((p, i) => { i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); }); ctx.stroke(); ctx.setLineDash([]);
 
   slots.forEach(s => {
-    if (!s.buildable) return;
-    if (s.occupied) return;
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, TILE*0.35, 0, Math.PI*2);
-    ctx.fillStyle = "rgba(78,205,196,0.08)";
-    ctx.fill();
-    ctx.strokeStyle = "rgba(78,205,196,0.5)";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([4, 4]);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = "rgba(78,205,196,0.7)";
-    ctx.font = "bold 14px sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("+", s.x, s.y);
+    if (!s.buildable || s.occupied) return;
+    ctx.beginPath(); ctx.arc(s.x, s.y, TILE*0.35, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(78,205,196,0.08)"; ctx.fill();
+    ctx.strokeStyle = "rgba(78,205,196,0.5)"; ctx.lineWidth = 2; ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = "rgba(78,205,196,0.7)"; ctx.font = "bold 14px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("+", s.x, s.y);
   });
 
   const last = PATH[PATH.length-1];
-  ctx.font = "32px sans-serif";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("🏰", last.x, last.y - TILE*0.6);
+  ctx.font = "32px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("🏰", last.x, last.y - TILE*0.6);
 
   if (selectedTower) {
     const st = towerStats(selectedTower);
-    ctx.beginPath();
-    ctx.arc(selectedTower.x, selectedTower.y, st.range, 0, Math.PI*2);
-    ctx.fillStyle = "rgba(78,205,196,0.06)";
-    ctx.fill();
-    ctx.strokeStyle = "rgba(78,205,196,0.45)";
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+    ctx.beginPath(); ctx.arc(selectedTower.x, selectedTower.y, st.range, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(78,205,196,0.06)"; ctx.fill();
+    ctx.strokeStyle = "rgba(78,205,196,0.45)"; ctx.lineWidth = 1.5; ctx.stroke();
   }
 
   towers.forEach(t => drawTower(ctx, t));
 
   skeletons.forEach(s => {
-    ctx.fillStyle = "#e1bee7";
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, 6, 0, Math.PI*2);
-    ctx.fill();
-    ctx.strokeStyle = "#7e57c2";
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-    ctx.fillStyle = "#1a1a1a";
-    ctx.beginPath();
-    ctx.arc(s.x-2, s.y-1, 1.5, 0, Math.PI*2);
-    ctx.arc(s.x+2, s.y-1, 1.5, 0, Math.PI*2);
-    ctx.fill();
+    ctx.fillStyle = "#e1bee7"; ctx.beginPath(); ctx.arc(s.x, s.y, 6, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = "#7e57c2"; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(s.x-2, s.y-1, 1.5, 0, Math.PI*2); ctx.arc(s.x+2, s.y-1, 1.5, 0, Math.PI*2); ctx.fill();
   });
 
   enemies.forEach(e => {
     if (!e.alive) return;
-    const isFlash = e.hitFlash > 0;
-    ctx.beginPath();
-    ctx.arc(e.x, e.y, e.radius, 0, Math.PI*2);
-    ctx.fillStyle = isFlash ? "#ffffff" : e.color;
-    ctx.fill();
-    ctx.strokeStyle = "#0a1020"; ctx.lineWidth = 2; ctx.stroke();
-
-    if (e.shield > 0) {
-      ctx.beginPath();
-      ctx.arc(e.x, e.y, e.radius + 4, 0, Math.PI*2);
-      ctx.strokeStyle = "rgba(100,200,255,0.8)";
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
-    }
-
-    if (e.hp < e.maxHp) {
-      const bw = e.radius*2;
-      ctx.fillStyle = "rgba(0,0,0,0.6)";
-      ctx.fillRect(e.x - bw/2, e.y - e.radius - 8, bw, 3);
-      ctx.fillStyle = e.type === "boss" ? "#ff5252" : "#4ecdc4";
-      ctx.fillRect(e.x - bw/2, e.y - e.radius - 8, bw * (Math.max(0, e.hp)/e.maxHp), 3);
-    }
-    if (e.shield > 0 && e.shieldMax > 0) {
-      const bw = e.radius*2;
-      ctx.fillStyle = "rgba(100,200,255,0.7)";
-      ctx.fillRect(e.x - bw/2, e.y - e.radius - 12, bw * (e.shield/e.shieldMax), 2);
-    }
-
-    if (e.slow > 0) {
-      ctx.beginPath(); ctx.arc(e.x, e.y, e.radius+3, 0, Math.PI*2);
-      ctx.strokeStyle = "rgba(129,212,250,0.6)"; ctx.lineWidth = 1.5; ctx.stroke();
-    }
-    if (e.poison > 0) {
-      ctx.beginPath(); ctx.arc(e.x, e.y, e.radius+4, 0, Math.PI*2);
-      ctx.strokeStyle = "rgba(156,204,101,0.6)"; ctx.lineWidth = 1.5; ctx.stroke();
-    }
-    if (e.regen > 0) {
-      ctx.font = "10px sans-serif";
-      ctx.fillStyle = "#4caf50";
-      ctx.textAlign = "center";
-      ctx.fillText("+", e.x - 6, e.y - e.radius - 14);
-    }
+    ctx.beginPath(); ctx.arc(e.x, e.y, e.radius, 0, Math.PI*2); ctx.fillStyle = e.hitFlash > 0 ? "#fff" : e.color; ctx.fill(); ctx.strokeStyle = "#0a1020"; ctx.lineWidth = 2; ctx.stroke();
+    if (e.shield > 0) { ctx.beginPath(); ctx.arc(e.x, e.y, e.radius + 4, 0, Math.PI*2); ctx.strokeStyle = "rgba(100,200,255,0.8)"; ctx.lineWidth = 2.5; ctx.stroke(); }
+    if (e.hp < e.maxHp) { const bw = e.radius*2; ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(e.x - bw/2, e.y - e.radius - 8, bw, 3); ctx.fillStyle = e.type === "boss" ? "#ff5252" : "#4ecdc4"; ctx.fillRect(e.x - bw/2, e.y - e.radius - 8, bw * (Math.max(0, e.hp)/e.maxHp), 3); }
+    if (e.slow > 0) { ctx.beginPath(); ctx.arc(e.x, e.y, e.radius+3, 0, Math.PI*2); ctx.strokeStyle = "rgba(129,212,250,0.6)"; ctx.lineWidth = 1.5; ctx.stroke(); }
+    if (e.poison > 0) { ctx.beginPath(); ctx.arc(e.x, e.y, e.radius+4, 0, Math.PI*2); ctx.strokeStyle = "rgba(156,204,101,0.6)"; ctx.lineWidth = 1.5; ctx.stroke(); }
+    if (e.regen > 0) { ctx.font = "10px sans-serif"; ctx.fillStyle = "#4caf50"; ctx.textAlign = "center"; ctx.fillText("+", e.x - 6, e.y - e.radius - 14); }
   });
 
-  projectiles.forEach(p => {
-    ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
-    ctx.fillStyle = p.color; ctx.fill();
-  });
-
-  particles.forEach(p => {
-    ctx.globalAlpha = p.life * 0.7; ctx.fillStyle = p.color;
-    ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
-  });
+  projectiles.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fillStyle = p.color; ctx.fill(); });
+  particles.forEach(p => { ctx.globalAlpha = p.life * 0.7; ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill(); });
   ctx.globalAlpha = 1;
-
-  floats.forEach(f => {
-    ctx.globalAlpha = f.life; ctx.fillStyle = f.color;
-    ctx.font = "bold 14px sans-serif"; ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(f.txt, f.x, f.y);
-  });
+  floats.forEach(f => { ctx.globalAlpha = f.life; ctx.fillStyle = f.color; ctx.font = "bold 14px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(f.txt, f.x, f.y); });
   ctx.globalAlpha = 1;
 }
+
 function updateHUD(){
-  goldLbl.textContent = Math.floor(gold || 0);
-  essLbl.textContent = persistent.essence;
-  scoreLbl.textContent = Math.floor(score || 0);
-  lifeLbl.textContent = Math.max(0, lives || 0);
-  waveLbl.textContent = wave || 1;
-  ascLbl.textContent = ascLevel();
-  speedBtn.textContent = speedMul + "x";
-  convGoldTxt.textContent = Math.floor(gold || 0);
-  if (!running) {
-    const wpEl = document.getElementById("waveProgress");
-    if (wpEl) wpEl.style.width = "0%";
-  }
+  goldLbl.textContent = Math.floor(gold || 0); essLbl.textContent = persistent.essence; scoreLbl.textContent = Math.floor(score || 0);
+  lifeLbl.textContent = Math.max(0, lives || 0); waveLbl.textContent = wave || 1; ascLbl.textContent = ascLevel();
+  speedBtn.textContent = speedMul + "x"; convGoldTxt.textContent = Math.floor(gold || 0);
+  if (!running) { const wpEl = document.getElementById("waveProgress"); if (wpEl) wpEl.style.width = "0%"; }
   hudDirty = false;
 }
 
 function updateStartBtn(){
-  if (running) {
-    startBtnTxt.textContent = "⏳ A jogar";
-    startBtnSub.textContent = "";
-    startBtn.classList.remove("boss");
-    startBtn.disabled = true;
-    return;
-  }
+  if (running) { startBtnTxt.textContent = "⏳ A jogar"; startBtnSub.textContent = ""; startBtn.classList.remove("boss"); startBtn.disabled = true; return; }
   const canAscend = (towers.filter(t => t.level >= 5).length >= 3 || wave >= 25);
   if (canAscend) {
-    startBtnTxt.textContent = "🌟 ASCENDER";
-    startBtnSub.textContent = "+" + calcAscendPoints() + " pts";
-    startBtn.classList.remove("boss");
-    startBtn.classList.add("boss");
-    startBtn.disabled = false;
-    return;
+    startBtnTxt.textContent = "🌟 ASCENDER"; startBtnSub.textContent = "+" + calcAscendPoints() + " pts";
+    startBtn.classList.remove("boss"); startBtn.classList.add("boss"); startBtn.disabled = false; return;
   }
   const isBoss = wave % 5 === 0;
-  if (isBoss) {
-    startBtnTxt.textContent = "CHEFE " + wave;
-    startBtnSub.textContent = "👑 boss";
-    startBtn.classList.add("boss");
-  } else {
-    startBtnTxt.textContent = "VAGA " + wave;
-    startBtnSub.textContent = "iniciar";
-    startBtn.classList.remove("boss");
-  }
+  if (isBoss) { startBtnTxt.textContent = "CHEFE " + wave; startBtnSub.textContent = "👑 boss"; startBtn.classList.add("boss"); }
+  else { startBtnTxt.textContent = "VAGA " + wave; startBtnSub.textContent = "iniciar"; startBtn.classList.remove("boss"); }
   startBtn.disabled = false;
 }
 
-function calcAscendPoints(){
-  let pts = Math.floor(wave / 5);
-  pts += towers.filter(t => t.level >= 5).length * 2;
-  pts += Math.floor(score / 5000);
-  return Math.max(1, pts);
-}
+function calcAscendPoints(){ return Math.max(1, Math.floor(wave / 5) + towers.filter(t => t.level >= 5).length * 2 + Math.floor(score / 5000)); }
 
-function canvasCoords(evt){
-  const r = cv.getBoundingClientRect();
-  const pt = evt.touches ? evt.touches[0] : evt;
-  return { x: pt.clientX - r.left, y: pt.clientY - r.top };
-}
+function canvasCoords(evt){ const r = cv.getBoundingClientRect(); const pt = evt.touches ? evt.touches[0] : evt; return { x: pt.clientX - r.left, y: pt.clientY - r.top }; }
 
 cv.addEventListener("pointerdown", evt => {
-  evt.preventDefault();
-  if (paused || gameOverFlag) return;
-  const p = canvasCoords(evt);
-
-  for (let i = 0; i < towers.length; i++) {
-    if (dist(p, towers[i]) < TILE*0.5) { showPopup(towers[i]); return; }
-  }
-
+  evt.preventDefault(); if (paused || gameOverFlag) return; const p = canvasCoords(evt);
+  for (let i = 0; i < towers.length; i++) { if (dist(p, towers[i]) < TILE*0.5) { showPopup(towers[i]); return; } }
   const slot = slots.find(s => s.buildable && !s.occupied && dist(p, s) < TILE/2);
-  if (slot) {
-    showBuildMenu(slot);
-    return;
-  }
-
+  if (slot) { showBuildMenu(slot); return; }
   hidePopup();
 });
 
 startBtn.addEventListener("click", () => {
   if (running) return;
-  const canAscend = (towers.filter(t => t.level >= 5).length >= 3 || wave >= 25);
-  if (canAscend) {
-    showAscendScreen();
-  } else {
-    startWave();
-  }
+  if (towers.filter(t => t.level >= 5).length >= 3 || wave >= 25) showAscendScreen();
+  else startWave();
 });
 
 popClose.addEventListener("click", hidePopup);
 upgBtn.addEventListener("click", () => { if (selectedTower) upgradeTower(selectedTower); });
 sellBtn.addEventListener("click", () => {
-  if (!selectedTower) return;
-  const t = selectedTower;
-  if (pendingSaleId === t) {
-    pendingSaleId = null;
-    sellTower(t);
-    return;
-  }
-  pendingSaleId = t;
-  sellBtn.classList.add("confirm");
-  sellBtn.innerHTML = 'Confirmar<small>Toca de novo</small>';
-  setTimeout(() => {
-    if (pendingSaleId === t) {
-      pendingSaleId = null;
-      if (selectedTower === t) {
-        sellBtn.classList.remove("confirm");
-        const sv = towerSellValue(t);
-        sellBtn.innerHTML = 'Vender<small>🪙 ' + sv + '</small>';
-      }
-    }
-  }, 3000);
+  if (!selectedTower) return; const t = selectedTower;
+  if (pendingSaleId === t) { pendingSaleId = null; sellTower(t); return; }
+  pendingSaleId = t; sellBtn.classList.add("confirm"); sellBtn.innerHTML = 'Confirmar<small>Toca de novo</small>';
+  setTimeout(() => { if (pendingSaleId === t) { pendingSaleId = null; if (selectedTower === t) { sellBtn.classList.remove("confirm"); sellBtn.innerHTML = 'Vender<small>🪙 ' + towerSellValue(t) + '</small>'; } } }, 3000);
 });
 
-speedBtn.addEventListener("click", () => {
-  speedMul = speedMul === 1 ? 2 : speedMul === 2 ? 3 : 1;
-  vibrate(8);
-  showInfo("⏩ Velocidade " + speedMul + "x");
-  updateHUD();
-});
+speedBtn.addEventListener("click", () => { speedMul = speedMul === 1 ? 2 : speedMul === 2 ? 3 : 1; vibrate(8); showInfo("⏩ Velocidade " + speedMul + "x"); updateHUD(); });
 
 function showAscendScreen(){
-  const pts = calcAscendPoints();
-  ascPoints.textContent = "+" + pts;
-  ascCurrent.textContent = ascLevel();
-
-  const nextLvl = ascLevel() + 1;
-  const nextBonus = ASCENSION_BONUSES.find(b => b.lvl === nextLvl);
-  if (nextBonus) {
-    ascNextBonus.innerHTML = '<div class="ico">' + nextBonus.ico + '</div><div class="txt">' + nextBonus.desc + '</div>';
-  } else {
-    ascNextBonus.innerHTML = '<div class="ico">🏰</div><div class="txt">+1 slot de torre (infinito)</div>';
-  }
-
-  ascendScreen.classList.add("show");
-  paused = true;
-  pauseBadge.classList.add("show");
+  ascPoints.textContent = "+" + calcAscendPoints(); ascCurrent.textContent = ascLevel();
+  const nextBonus = ASCENSION_BONUSES.find(b => b.lvl === ascLevel() + 1);
+  ascNextBonus.innerHTML = nextBonus ? '<div class="ico">' + nextBonus.ico + '</div><div class="txt">' + nextBonus.desc + '</div>' : '<div class="ico">🏰</div><div class="txt">+1 slot (infinito)</div>';
+  ascendScreen.classList.add("show"); paused = true; pauseBadge.classList.add("show");
 }
 
-ascCancel.addEventListener("click", () => {
-  ascendScreen.classList.remove("show");
-  paused = false;
-  pauseBadge.classList.remove("show");
-  lastTime = 0;
-});
-
+ascCancel.addEventListener("click", () => { ascendScreen.classList.remove("show"); paused = false; pauseBadge.classList.remove("show"); lastTime = 0; });
 ascConfirm.addEventListener("click", () => {
-  const pts = calcAscendPoints();
-  persistent.ascensionLevel += pts;
-  persistent.totalAscensions++;
-  persistent.essence += 5 + Math.floor(wave / 5);
-  saveProgress(true);
-
-  ascendScreen.classList.remove("show");
-  paused = false;
-  pauseBadge.classList.remove("show");
-
-  const oldLvl = ascLevel() - pts;
-  const newLvl = ascLevel();
-
-  const unlockedBranches = [];
-  ASCENSION_BONUSES.forEach(b => {
-    if (b.lvl > oldLvl && b.lvl <= newLvl) {
-      if (b.ico === "🔥") unlockedBranches.push("Piromante 🔥");
-      if (b.ico === "💀" && b.lvl === 9) unlockedBranches.push("Necromante 💀");
-    }
-  });
-
-  if (unlockedBranches.length > 0) {
-    showInfo("🌟 " + unlockedBranches.join(" + ") + " desbloqueado!");
-  } else {
-    showInfo("🌟 Ascensão! Nível " + newLvl);
-  }
-
+  const pts = calcAscendPoints(); persistent.ascensionLevel += pts; persistent.totalAscensions++; persistent.essence += 5 + Math.floor(wave / 5); saveProgress(true);
+  ascendScreen.classList.remove("show"); paused = false; pauseBadge.classList.remove("show");
+  const oldLvl = ascLevel() - pts, newLvl = ascLevel(); const unlocked = [];
+  ASCENSION_BONUSES.forEach(b => { if (b.lvl > oldLvl && b.lvl <= newLvl) { if (b.ico === "🔥") unlocked.push("Piromante"); if (b.ico === "💀" && b.lvl === 9) unlocked.push("Necromante"); } });
+  showInfo(unlocked.length ? "🌟 " + unlocked.join(" + ") + " desbloqueado!" : "🌟 Ascensão! Nível " + newLvl);
   startNewGame(true);
 });
 
-function openTalents(){
-  paused = true;
-  pauseBadge.classList.add("show");
-  talentScreen.classList.add("show");
-  renderTalentList();
-  forceSave();
-}
-function closeTalents(){
-  paused = false;
-  pauseBadge.classList.remove("show");
-  talentScreen.classList.remove("show");
-  saveProgress(true);
-}
+function openTalents(){ paused = true; pauseBadge.classList.add("show"); talentScreen.classList.add("show"); renderTalentList(); forceSave(); }
+function closeTalents(){ paused = false; pauseBadge.classList.remove("show"); talentScreen.classList.remove("show"); saveProgress(true); }
 
 function renderTalentList(){
-  talEss.textContent = persistent.essence;
-  talAsc.textContent = ascLevel();
-  talList.innerHTML = "";
+  talEss.textContent = persistent.essence; talAsc.textContent = ascLevel(); talList.innerHTML = "";
   TALENTS.forEach(tal => {
-    const lvl = talentLvl(tal.id);
-    const cost = tal.cost(lvl);
-    const maxed = lvl >= tal.max;
-    const canBuy = !maxed && persistent.essence >= cost;
-    const div = document.createElement("div");
-    div.className = "tal-item";
-    div.innerHTML = '<div class="tico">' + tal.ico + '</div>' +
-      '<div class="tinfo">' +
-        '<div class="tnm">' + tal.name + ' <span style="color:#c77dff;font-weight:700;font-size:12px;">(' + lvl + '/' + tal.max + ')</span></div>' +
-        '<div class="tdesc">' + tal.desc + '</div>' +
-      '</div>' +
-      '<button class="tal-buy" ' + (canBuy ? "" : "disabled") + '>' +
-        (maxed ? "MAX" : "💎 " + cost) +
-      '</button>';
-    const btn = div.querySelector(".tal-buy");
-    btn.addEventListener("click", () => {
+    const lvl = talentLvl(tal.id), cost = tal.cost(lvl), maxed = lvl >= tal.max, canBuy = !maxed && persistent.essence >= cost;
+    const div = document.createElement("div"); div.className = "tal-item";
+    div.innerHTML = '<div class="tico">' + tal.ico + '</div><div class="tinfo"><div class="tnm">' + tal.name + ' <span style="color:#c77dff;font-weight:700;font-size:12px;">(' + lvl + '/' + tal.max + ')</span></div><div class="tdesc">' + tal.desc + '</div></div><button class="tal-buy" ' + (canBuy ? "" : "disabled") + '>' + (maxed ? "MAX" : "💎 " + cost) + '</button>';
+    div.querySelector(".tal-buy").addEventListener("click", () => {
       if (persistent.essence < cost) { showInfo("💎 Essência insuficiente"); return; }
-      persistent.essence -= cost;
-      persistent.talents[tal.id] = lvl + 1;
-      vibrate(15);
-      showInfo("✨ " + tal.name + " Nv." + (lvl+1));
-      saveProgress(true);
-      renderTalentList();
-      updateHUD();
+      persistent.essence -= cost; persistent.talents[tal.id] = lvl + 1; vibrate(15); showInfo("✨ " + tal.name + " Nv." + (lvl+1)); saveProgress(true); renderTalentList(); updateHUD();
     });
     talList.appendChild(div);
   });
 }
 
-menuBtn.addEventListener("click", openTalents);
-talClose.addEventListener("click", closeTalents);
-
-function convertGold(){
-  if (gold < 250) { showInfo("🪙 Precisas de 250 ouro"); return; }
-  gold -= 250; persistent.essence++;
-  hudDirty = true; vibrate(10);
-  showInfo("💎 +1 essência");
-  if (talentScreen.classList.contains("show")) renderTalentList();
-  saveProgress(true);
-}
+menuBtn.addEventListener("click", openTalents); talClose.addEventListener("click", closeTalents);
+function convertGold(){ if (gold < 250) { showInfo("🪙 Precisas de 250 ouro"); return; } gold -= 250; persistent.essence++; hudDirty = true; vibrate(10); showInfo("💎 +1 essência"); if (talentScreen.classList.contains("show")) renderTalentList(); saveProgress(true); }
 talConv.addEventListener("click", convertGold);
 
-function resumeGame(){
-  if (talentScreen.classList.contains("show") || gameOverFlag ||
-      branchScreen.classList.contains("show") || rankingScreen.classList.contains("show") ||
-      ascendScreen.classList.contains("show") || buildMenu.classList.contains("show") ||
-      popup.classList.contains("show")) return;
-  paused = false;
-  pauseBadge.classList.remove("show");
-  lastTime = 0;
-}
-pauseBadge.addEventListener("click", resumeGame);
-pauseBadge.addEventListener("keydown", event => {
-  if (event.key === "Enter" || event.key === " ") { event.preventDefault(); resumeGame(); }
-});
-
+function resumeGame(){ if (talentScreen.classList.contains("show") || gameOverFlag || branchScreen.classList.contains("show") || rankingScreen.classList.contains("show") || ascendScreen.classList.contains("show") || buildMenu.classList.contains("show") || popup.classList.contains("show")) return; paused = false; pauseBadge.classList.remove("show"); lastTime = 0; }
+pauseBadge.addEventListener("click", resumeGame); pauseBadge.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); resumeGame(); } });
 talSave.addEventListener("click", () => { forceSave(); showInfo("💾 Guardado!"); vibrate(20); });
 
 function renderGlobalRanking(){
-  globalRankingList.innerHTML = "";
-  const sorted = persistent.ranking.slice().sort((a,b) => b.score - a.score).slice(0, 10);
-  if (sorted.length === 0) {
-    globalRankingList.innerHTML = '<div style="text-align:center;color:#5a6b82;font-size:13px;padding:20px;">Ainda sem recordes</div>';
-    return;
-  }
-  sorted.forEach((r, i) => {
-    const d = document.createElement("div");
-    d.className = "rk-item";
-    d.innerHTML = '<div class="rk-pos">#' + (i+1) + '</div>' +
-      '<div class="rk-name">' + escapeHtml(r.name || "Anónimo") + '</div>' +
-      '<div class="rk-score">' + r.score + ' pts</div>' +
-      '<div class="rk-wave">vaga ' + r.wave + '</div>';
-    globalRankingList.appendChild(d);
-  });
+  globalRankingList.innerHTML = ""; const sorted = persistent.ranking.slice().sort((a,b) => b.score - a.score).slice(0, 10);
+  if (!sorted.length) { globalRankingList.innerHTML = '<div style="text-align:center;color:#5a6b82;font-size:13px;padding:20px;">Ainda sem recordes</div>'; return; }
+  sorted.forEach((r, i) => { const d = document.createElement("div"); d.className = "rk-item"; d.innerHTML = '<div class="rk-pos">#' + (i+1) + '</div><div class="rk-name">' + escapeHtml(r.name || "Anónimo") + '</div><div class="rk-score">' + r.score + ' pts</div><div class="rk-wave">vaga ' + r.wave + '</div>'; globalRankingList.appendChild(d); });
 }
-
 function renderGameOverRanking(){
-  ovRanking.innerHTML = "";
-  const sorted = persistent.ranking.slice().sort((a,b) => b.score - a.score).slice(0, 10);
-  if (sorted.length === 0) {
-    ovRanking.innerHTML = '<div style="text-align:center;color:#5a6b82;font-size:13px;padding:10px;">Ainda sem recordes</div>';
-    return;
-  }
-  sorted.forEach((r, i) => {
-    const d = document.createElement("div");
-    d.className = "rk-item";
-    d.innerHTML = '<div class="rk-pos">#' + (i+1) + '</div>' +
-      '<div class="rk-name">' + escapeHtml(r.name || "Anónimo") + '</div>' +
-      '<div class="rk-score">' + r.score + '</div>';
-    ovRanking.appendChild(d);
-  });
+  ovRanking.innerHTML = ""; const sorted = persistent.ranking.slice().sort((a,b) => b.score - a.score).slice(0, 10);
+  if (!sorted.length) { ovRanking.innerHTML = '<div style="text-align:center;color:#5a6b82;font-size:13px;padding:10px;">Ainda sem recordes</div>'; return; }
+  sorted.forEach((r, i) => { const d = document.createElement("div"); d.className = "rk-item"; d.innerHTML = '<div class="rk-pos">#' + (i+1) + '</div><div class="rk-name">' + escapeHtml(r.name || "Anónimo") + '</div><div class="rk-score">' + r.score + '</div>'; ovRanking.appendChild(d); });
 }
+btnRanking.addEventListener("click", () => { talentScreen.classList.remove("show"); renderGlobalRanking(); rankingScreen.classList.add("show"); });
+rankClose.addEventListener("click", () => { rankingScreen.classList.remove("show"); talentScreen.classList.add("show"); });
 
-btnRanking.addEventListener("click", () => {
-  talentScreen.classList.remove("show");
-  renderGlobalRanking();
-  rankingScreen.classList.add("show");
-});
-
-rankClose.addEventListener("click", () => {
-  rankingScreen.classList.remove("show");
-  talentScreen.classList.add("show");
-});
-function showGameOver(){
-  overlay.classList.add("show");
-  ovWave.textContent = Math.max(0, wave - 1);
-  ovWave2.textContent = Math.max(0, wave - 1);
-  ovScore.textContent = Math.floor(score);
-  ovKills.textContent = killsThisRun;
-  ovTowers.textContent = towersBuiltThisRun;
-  ovName.value = persistent.playerName || "";
-  renderGameOverRanking();
-}
+function showGameOver(){ overlay.classList.add("show"); ovWave.textContent = Math.max(0, wave - 1); ovWave2.textContent = Math.max(0, wave - 1); ovScore.textContent = Math.floor(score); ovKills.textContent = killsThisRun; ovTowers.textContent = towersBuiltThisRun; ovName.value = persistent.playerName || ""; renderGameOverRanking(); }
 
 function endGame(){
-  if (gameOverFlag) return;
-  gameOverFlag = true; running = false;
-  persistent.totalGames++;
-  persistent.totalKills += killsThisRun;
-  if (wave - 1 > persistent.bestWave) persistent.bestWave = wave - 1;
-  if (score > persistent.bestScore) persistent.bestScore = Math.floor(score);
-  const bonusEss = Math.floor((gold || 0) * 0.005);
-  persistent.essence += bonusEss;
-  persistent.savedState = null;
-  saveProgress(true);
-  showGameOver();
+  if (gameOverFlag) return; gameOverFlag = true; running = false; persistent.totalGames++; persistent.totalKills += killsThisRun;
+  if (wave - 1 > persistent.bestWave) persistent.bestWave = wave - 1; if (score > persistent.bestScore) persistent.bestScore = Math.floor(score);
+  persistent.essence += Math.floor((gold || 0) * 0.005); persistent.savedState = null; saveProgress(true); showGameOver();
 }
 
 ovBtn.addEventListener("click", () => {
   const name = (ovName.value || "").trim().replace(/[<>]/g, "").slice(0, 16) || "Anónimo";
-  persistent.playerName = name;
-  persistent.ranking.push({ name, score: Math.floor(score), wave: wave - 1, date: Date.now() });
-  persistent.ranking.sort((a,b) => b.score - a.score);
-  persistent.ranking = persistent.ranking.slice(0, MAX_RANKING);
-  saveProgress(true);
-  startNewGame(false);
+  persistent.playerName = name; persistent.ranking.push({ name, score: Math.floor(score), wave: wave - 1, date: Date.now() });
+  persistent.ranking.sort((a,b) => b.score - a.score); persistent.ranking = persistent.ranking.slice(0, MAX_RANKING); saveProgress(true); startNewGame(false);
 });
 
 function startNewGame(fromAscension){
-  overlay.classList.remove("show");
-  branchScreen.classList.remove("show");
-  rankingScreen.classList.remove("show");
-  ascendScreen.classList.remove("show");
-  buildMenu.classList.remove("show");
-  popup.classList.remove("show");
-  gameOverFlag = false; paused = false;
-  pauseBadge.classList.remove("show");
-  persistent.savedState = null;
-  gold = 120 + startGoldBonus();
-  maxLives = 15 + startLivesBonus();
-  lives = maxLives;
-  wave = 1; world = 1; score = 0; running = false;
-  selectedTower = null; pendingBranchTower = null; pendingBuildSlot = null;
-  enemies = []; projectiles = []; particles = []; floats = []; skeletons = [];
-  spawnQueue = []; spawnTimer = 0;
-  killsThisRun = 0; towersBuiltThisRun = 0; speedMul = 1;
-  slots.forEach(s => { s.occupied = false; });
-  towers = [];
-  startBtn.classList.remove("boss");
-  hudDirty = true;
-
-  setTimeout(() => {
-    resizeCanvas();
-    updateHUD();
-    updateStartBtn();
-    hidePopup();
-    hideBuildMenu();
-  }, 50);
-
-  saveProgress(true);
+  overlay.classList.remove("show"); branchScreen.classList.remove("show"); rankingScreen.classList.remove("show"); ascendScreen.classList.remove("show"); buildMenu.classList.remove("show"); popup.classList.remove("show");
+  gameOverFlag = false; paused = false; pauseBadge.classList.remove("show"); persistent.savedState = null;
+  gold = 150 + startGoldBonus(); maxLives = 15 + startLivesBonus(); lives = maxLives; wave = 1; world = 1; score = 0; running = false;
+  selectedTower = null; pendingBranchTower = null; pendingBuildSlot = null; enemies = []; projectiles = []; particles = []; floats = []; skeletons = []; spawnQueue = []; spawnTimer = 0;
+  killsThisRun = 0; towersBuiltThisRun = 0; speedMul = 1; slots.forEach(s => { s.occupied = false; }); towers = []; startBtn.classList.remove("boss"); hudDirty = true;
+  setTimeout(() => { resizeCanvas(); updateHUD(); updateStartBtn(); hidePopup(); hideBuildMenu(); }, 50); saveProgress(true);
 }
 
-let lastTime = 0, acc = 0;
-const FRAME = 1000 / 60;
+let lastTime = 0, acc = 0; const FRAME = 1000 / 60;
 function loop(now){
-  requestAnimationFrame(loop);
-  if (!lastTime) lastTime = now;
-  const dt = now - lastTime;
-  lastTime = now;
-  if (!paused) {
-    acc += dt * speedMul;
-    let steps = 0;
-    while (acc >= FRAME && steps < 6) { update(); acc -= FRAME; steps++; }
-    if (acc > FRAME * 6) acc = 0;
-  }
-  if (hudDirty) updateHUD();
-  render();
+  requestAnimationFrame(loop); if (!lastTime) lastTime = now; const dt = now - lastTime; lastTime = now;
+  if (!paused) { acc += dt * speedMul; let steps = 0; while (acc >= FRAME && steps < 6) { update(); acc -= FRAME; steps++; } if (acc > FRAME * 6) acc = 0; }
+  if (hudDirty) updateHUD(); render();
 }
 
 let resizeTimer = 0;
-function onResize(){
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => { resizeCanvas(); }, 120);
-}
-window.addEventListener("resize", onResize);
-window.addEventListener("orientationchange", onResize);
+function onResize(){ clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { resizeCanvas(); }, 120); }
+window.addEventListener("resize", onResize); window.addEventListener("orientationchange", onResize);
 
-function forceSave(){
-  if (gameOverFlag) return;
-  persistent.savedState = {
-    wave, world, gold, lives, score,
-    towers: towers.map(t => ({
-      type: t.type, level: t.level, branch: t.branch,
-      col: t.col, row: t.row
-    }))
-  };
-  saveProgress(true);
-}
+function forceSave(){ if (gameOverFlag) return; persistent.savedState = { wave, world, gold, lives, score, towers: towers.map(t => ({ type: t.type, level: t.level, branch: t.branch, col: t.col, row: t.row })) }; saveProgress(true); }
 
-setInterval(() => {
-  if (running && !paused) forceSave();
-  else if (saveDirty) saveProgress(true);
-}, 5000);
-
+setInterval(() => { if (running && !paused) forceSave(); else if (saveDirty) saveProgress(true); }, 5000);
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") {
-    forceSave();
-    if (running && !paused) { paused = true; pauseBadge.classList.add("show"); }
-  } else if (document.visibilityState === "visible") {
-    if (!talentScreen.classList.contains("show") &&
-        !branchScreen.classList.contains("show") &&
-        !rankingScreen.classList.contains("show") &&
-        !ascendScreen.classList.contains("show") &&
-        !buildMenu.classList.contains("show") &&
-        !popup.classList.contains("show") && !gameOverFlag) {
-      paused = false;
-      pauseBadge.classList.remove("show");
-      lastTime = 0;
-    }
-  }
+  if (document.visibilityState === "hidden") { forceSave(); if (running && !paused) { paused = true; pauseBadge.classList.add("show"); } }
+  else if (document.visibilityState === "visible") { if (!talentScreen.classList.contains("show") && !branchScreen.classList.contains("show") && !rankingScreen.classList.contains("show") && !ascendScreen.classList.contains("show") && !buildMenu.classList.contains("show") && !popup.classList.contains("show") && !gameOverFlag) { paused = false; pauseBadge.classList.remove("show"); lastTime = 0; } }
 });
 window.addEventListener("pagehide", forceSave);
 
 function initGame(){
   loadProgress();
-
   if (persistent.savedState) {
-    const s = persistent.savedState;
-    wave = s.wave || 1;
-    world = s.world || 1;
-    gold = s.gold || 120;
-    lives = Math.max(1, s.lives || 15);
-    score = s.score || 0;
-    maxLives = Math.max(lives, 15 + startLivesBonus());
-    running = false; gameOverFlag = false; paused = false;
-    enemies = []; projectiles = []; particles = []; floats = []; skeletons = [];
-    spawnQueue = []; spawnTimer = 0;
-    killsThisRun = 0; towersBuiltThisRun = 0; speedMul = 1;
-    selectedTower = null; pendingBranchTower = null; pendingBuildSlot = null;
-
-    setTimeout(() => {
-      resizeCanvas();
-      if (Array.isArray(s.towers)) {
-        s.towers.flat().forEach(st => {
-          const slot = slots.find(x => x.col === st.col && x.row === st.row && x.buildable && !x.occupied);
-          if (slot && !slot.occupied) {
-            slot.occupied = true;
-            towers.push({
-              type: "archer", level: st.level || 1, branch: st.branch || null,
-              col: st.col, row: st.row, x: slot.x, y: slot.y,
-              slot, cooldown: 0, angle: 0, extraDmg: 0
-            });
-          }
-        });
-      }
-    }, 50);
+    const s = persistent.savedState; wave = s.wave || 1; world = s.world || 1; gold = s.gold || 150; lives = Math.max(1, s.lives || 15); score = s.score || 0; maxLives = Math.max(lives, 15 + startLivesBonus());
+    running = false; gameOverFlag = false; paused = false; enemies = []; projectiles = []; particles = []; floats = []; skeletons = []; spawnQueue = []; spawnTimer = 0;
+    killsThisRun = 0; towersBuiltThisRun = 0; speedMul = 1; selectedTower = null; pendingBranchTower = null; pendingBuildSlot = null;
+    setTimeout(() => { resizeCanvas(); if (Array.isArray(s.towers)) { s.towers.flat().forEach(st => { const slot = slots.find(x => x.col === st.col && x.row === st.row && x.buildable && !x.occupied); if (slot && !slot.occupied) { slot.occupied = true; towers.push({ type: "archer", level: st.level || 1, branch: st.branch || null, col: st.col, row: st.row, x: slot.x, y: slot.y, slot, cooldown: 0, angle: 0 }); } }); } }, 50);
   } else {
-    gold = 120 + startGoldBonus();
-    maxLives = 15 + startLivesBonus();
-    lives = maxLives;
-    wave = 1; world = 1; score = 0; running = false;
-    gameOverFlag = false; paused = false;
-    enemies = []; projectiles = []; particles = []; floats = []; skeletons = [];
-    spawnQueue = []; spawnTimer = 0;
-    killsThisRun = 0; towersBuiltThisRun = 0; speedMul = 1;
-    selectedTower = null; pendingBranchTower = null; pendingBuildSlot = null;
-    towers = [];
+    gold = 150 + startGoldBonus(); maxLives = 15 + startLivesBonus(); lives = maxLives; wave = 1; world = 1; score = 0; running = false;
+    gameOverFlag = false; paused = false; enemies = []; projectiles = []; particles = []; floats = []; skeletons = []; spawnQueue = []; spawnTimer = 0;
+    killsThisRun = 0; towersBuiltThisRun = 0; speedMul = 1; selectedTower = null; pendingBranchTower = null; pendingBuildSlot = null; towers = [];
   }
-
-  resizeCanvas();
-  setTimeout(resizeCanvas, 50);
-  setTimeout(resizeCanvas, 200);
-
-  updateHUD();
-  updateStartBtn();
-  renderTalentList();
-  ovName.value = persistent.playerName || "";
-  requestAnimationFrame(loop);
+  resizeCanvas(); setTimeout(resizeCanvas, 50); setTimeout(resizeCanvas, 200);
+  updateHUD(); updateStartBtn(); renderTalentList(); ovName.value = persistent.playerName || ""; requestAnimationFrame(loop);
 }
 
 initGame();
