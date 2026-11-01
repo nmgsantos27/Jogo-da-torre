@@ -499,7 +499,8 @@ function buildTower(slot){
   if (towers.length >= maxTowers()) { showInfo("🚫 Limite de torres"); return; }
   gold -= BASE_TOWER.cost;
   const t = { type: "archer", level: 1, branch: null, col: slot.col, row: slot.row, x: slot.x, y: slot.y, slot, cooldown: 0, angle: 0 };
-  slot.occupied = true; towers.push(t); towersBuiltThisRun++; hudDirty = true; vibrate(15); burst(t.x, t.y, BASE_TOWER.levels[0].color, 8); saveProgress(false);
+  slot.occupied = true; towers.push(t); towersBuiltThisRun++; hudDirty = true; vibrate(15); burst(t.x, t.y, BASE_TOWER.levels[0].color, 8); 
+  forceSave(); // GRAVA IMEDIATAMENTE
 }
 
 function upgradeTower(t){
@@ -512,7 +513,8 @@ function upgradeTower(t){
   if (gold < cost) { showInfo("🪙 Ouro insuficiente"); return; }
   gold -= cost; t.level++;
   const data = getTowerLevelData(t);
-  hudDirty = true; vibrate(15); burst(t.x, t.y, data.color, 12); floatText(t.x, t.y-22, data.name, "#ffd700"); refreshPopup(); saveProgress(false);
+  hudDirty = true; vibrate(15); burst(t.x, t.y, data.color, 12); floatText(t.x, t.y-22, data.name, "#ffd700"); refreshPopup(); 
+  forceSave(); // GRAVA IMEDIATAMENTE
 }
 
 function showBranchChoice(){
@@ -538,7 +540,8 @@ branchCancel.addEventListener("click", () => { branchScreen.classList.remove("sh
 
 function sellTower(t){
   const val = towerSellValue(t); gold += val; t.slot.occupied = false; towers = towers.filter(x => x !== t);
-  selectedTower = null; hidePopup(); hudDirty = true; burst(t.x, t.y, "#ffd700", 10); floatText(t.x, t.y-16, "+" + val, "#ffd700"); saveProgress(false);
+  selectedTower = null; hidePopup(); hudDirty = true; burst(t.x, t.y, "#ffd700", 10); floatText(t.x, t.y-16, "+" + val, "#ffd700"); 
+  forceSave(); // GRAVA IMEDIATAMENTE
 }
 
 function showPopup(t){ selectedTower = t; popup.classList.add("show"); refreshPopup(); }
@@ -593,6 +596,7 @@ function startWave(){
   if (wave % 5 === 0) showInfo("👑 BOSS · Vaga " + wave);
   else if (wave >= 35) showInfo("🛡️ Escudos · Vaga " + wave);
   else if (wave >= 30) showInfo("⚠️ Difícil · Vaga " + wave);
+  forceSave(); // GRAVA AO COMEÇAR A VAGA
 }
 
 function hitEnemy(e, dmg){
@@ -903,7 +907,15 @@ let resizeTimer = 0;
 function onResize(){ clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { resizeCanvas(); }, 120); }
 window.addEventListener("resize", onResize); window.addEventListener("orientationchange", onResize);
 
-function forceSave(){ if (gameOverFlag) return; persistent.savedState = { wave, world, gold, lives, score, towers: towers.map(t => ({ type: t.type, level: t.level, branch: t.branch, col: t.col, row: t.row })) }; saveProgress(true); }
+function forceSave(){ 
+  if (gameOverFlag) return; 
+  persistent.savedState = { 
+    wave, world, gold, lives, score, 
+    towers: towers.map(t => ({ type: t.type, level: t.level, branch: t.branch, col: t.col, row: t.row })) 
+  }; 
+  // Usa a gravação síncrona imediata em vez do debounce para garantir que o telemóvel não a apaga
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(persistent)); } catch(e) {}
+}
 
 setInterval(() => { if (running && !paused) forceSave(); else if (saveDirty) saveProgress(true); }, 5000);
 document.addEventListener("visibilitychange", () => {
