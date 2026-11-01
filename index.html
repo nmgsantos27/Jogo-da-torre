@@ -7,9 +7,7 @@
 <title>Fortaleza Eterna</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html, body { width:100%; height:100%; overflow:hidden; background:#0a1020; color:#e8ecf5;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-    touch-action:none; user-select:none; -webkit-user-select:none; }
+  html, body { width:100%; height:100%; overflow:hidden; background:#0a1020; color:#e8ecf5; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; touch-action:none; user-select:none; -webkit-user-select:none; }
   body { display:flex; justify-content:center; align-items:center; }
   #app { width:100%; max-width:500px; height:100vh; height:100dvh; display:flex; flex-direction:column; position:relative; background:#0a1020; overflow:hidden; }
   #hud { display:flex; align-items:center; gap:5px; padding:8px 10px; background:#0f1626; border-bottom:1px solid rgba(255,255,255,0.05); flex-shrink:0; z-index:5; }
@@ -247,7 +245,7 @@
 </div>
 <script>
 "use strict";
-const SAVE_KEY = "fortalezaEternaV3"; // Nova versão para evitar conflitos
+const SAVE_KEY = "fortalezaEternaV5"; 
 const TILE = 36;
 const BASE_MAX_TOWERS = 10;
 const MAX_RANKING = 20;
@@ -267,112 +265,22 @@ const BASE_TOWER = {
 };
 
 const BRANCHES = {
-  damage: {
-    ico: "🎯", name: "Atirador", color: "#4ecdc4", tagline: "Dano puro. Anti-boss.", special: null, unlockAsc: 0,
-    levels: [
-      { name:"Atirador de Elite", dmg:25, range:145, rate:24, color:"#00897b", size:0.40 },
-      { name:"Sniper",            dmg:60, range:165, rate:22, color:"#00695c", size:0.46 },
-      { name:"Lenda Viva",        dmg:150,range:190, rate:20, color:"#004d40", size:0.52 },
-      { name:"Caçador de Deuses", dmg:380,range:210, rate:18, color:"#1a237e", size:0.56 },
-      { name:"Semideus",          dmg:950,range:235, rate:16, color:"#311b92", size:0.60 },
-      { name:"Divindade",         dmg:2400,range:260,rate:14, color:"#ffd700", size:0.64 },
-      { name:"Titã",              dmg:6000,range:290,rate:12, color:"#ff6f00", size:0.68 },
-      { name:"Mito",              dmg:15000,range:320,rate:10,color:"#ff1744", size:0.72 }
-    ]
-  },
-  ice: {
-    ico: "❄️", name: "Caçador", color: "#81d4fa", tagline: "Gelo. Abranda todos.", special: "slow", slow: 0.5, unlockAsc: 0,
-    levels: [
-      { name:"Caçador",     dmg:10, range:130, rate:38, color:"#4fc3f7", size:0.40 },
-      { name:"Congelador",  dmg:28, range:145, rate:35, color:"#29b6f6", size:0.46 },
-      { name:"Era Glacial", dmg:70, range:165, rate:32, color:"#0288d1", size:0.52 },
-      { name:"Inverno Eterno", dmg:180, range:180, rate:30, color:"#01579b", size:0.56 },
-      { name:"Zero Absoluto",  dmg:450, range:200, rate:28, color:"#0d47a1", size:0.60 },
-      { name:"Era do Gelo",    dmg:1100,range:220, rate:26, color:"#000051", size:0.64 },
-      { name:"Glaciação",      dmg:2800,range:245, rate:24, color:"#00b8d4", size:0.68 },
-      { name:"Fim dos Tempos", dmg:7000,range:270, rate:22, color:"#00e5ff", size:0.72 }
-    ]
-  },
-  splash: {
-    ico: "💣", name: "Bombardeiro", color: "#ff9800", tagline: "Explosão em área.", special: "splash", splash: 60, unlockAsc: 0,
-    levels: [
-      { name:"Bombardeiro", dmg:20, range:120, rate:65, color:"#f57c00", size:0.42 },
-      { name:"Artilharia",  dmg:55, range:135, rate:60, color:"#e65100", size:0.48 },
-      { name:"Cataclismo",  dmg:140,range:155, rate:55, color:"#bf360c", size:0.55 },
-      { name:"Meteoro",     dmg:350,range:175, rate:50, color:"#8d2f00", size:0.58 },
-      { name:"Apocalipse",  dmg:850,range:195, rate:45, color:"#4a1500", size:0.62 },
-      { name:"Extinção",    dmg:2100,range:215,rate:42, color:"#ff3d00", size:0.66 },
-      { name:"Big Bang",    dmg:5200,range:240,rate:38, color:"#ff9100", size:0.70 },
-      { name:"Juízo Final", dmg:13000,range:265,rate:35,color:"#ffea00", size:0.74 }
-    ]
-  },
-  chain: {
-    ico: "⚡", name: "Eletricista", color: "#ffd700", tagline: "Salta entre inimigos.", special: "chain", chain: 4, unlockAsc: 0,
-    levels: [
-      { name:"Eletricista",      dmg:18, range:140, rate:42, color:"#ffb300", size:0.40 },
-      { name:"Tempestade",       dmg:48, range:160, rate:38, color:"#ff8f00", size:0.46 },
-      { name:"Fúria dos Deuses", dmg:130,range:185, rate:34, color:"#e65100", size:0.52 },
-      { name:"Trovão",           dmg:320,range:205, rate:32, color:"#ff6f00", size:0.56 },
-      { name:"Relâmpago Eterno", dmg:800,range:225, rate:30, color:"#ffca28", size:0.60 },
-      { name:"Tempestade Cósmica",dmg:2000,range:250,rate:28,color:"#ffee58", size:0.64 },
-      { name:"Fúria Celestial",  dmg:5000,range:275, rate:26, color:"#fff59d", size:0.68 },
-      { name:"Deus do Trovão",   dmg:12000,range:300,rate:24,color:"#ffff00", size:0.72 }
-    ]
-  },
-  poison: {
-    ico: "☠️", name: "Alquimista", color: "#9ccc65", tagline: "Veneno contínuo.", special: "poison", poisonDmg: 5, unlockAsc: 0,
-    levels: [
-      { name:"Alquimista",  dmg:12, range:125, rate:36, color:"#7cb342", size:0.40 },
-      { name:"Envenenador", dmg:30, range:140, rate:34, color:"#689f38", size:0.46 },
-      { name:"Apocalipse",  dmg:80, range:160, rate:30, color:"#33691e", size:0.52 },
-      { name:"Praga",       dmg:200,range:180, rate:28, color:"#1b5e20", size:0.56 },
-      { name:"Peste Negra", dmg:500,range:200, rate:26, color:"#004d40", size:0.60 },
-      { name:"Toxina Final",dmg:1300,range:220,rate:24, color:"#66bb6a", size:0.64 },
-      { name:"Pandemia",    dmg:3300,range:245,rate:22, color:"#00e676", size:0.68 },
-      { name:"Fim da Vida", dmg:8000,range:270,rate:20, color:"#b2ff59", size:0.72 }
-    ]
-  },
-  fire: {
-    ico: "🔥", name: "Piromante", color: "#ff5722", tagline: "Fogo em área. Queima.", special: "fire", unlockAsc: 5,
-    levels: [
-      { name:"Piromante",    dmg:22, range:130, rate:45, color:"#ff5722", size:0.42 },
-      { name:"Mago do Fogo", dmg:55, range:145, rate:42, color:"#e64a19", size:0.48 },
-      { name:"Senhor das Chamas", dmg:140,range:165,rate:38,color:"#bf360c", size:0.54 },
-      { name:"Inferno",      dmg:350,range:185, rate:34, color:"#8d2f00", size:0.58 },
-      { name:"Fogueira Eterna",dmg:850,range:205,rate:30,color:"#ff3d00", size:0.62 },
-      { name:"Apocalipse Ígneo",dmg:2100,range:225,rate:28,color:"#ff6e40", size:0.66 },
-      { name:"Sol Vivo",     dmg:5200,range:250, rate:26, color:"#ff9100", size:0.70 },
-      { name:"Estrela",      dmg:13000,range:275,rate:24,color:"#ffea00", size:0.74 }
-    ]
-  },
-  necro: {
-    ico: "💀", name: "Necromante", color: "#b39ddb", tagline: "Invoca esqueletos aliados.", special: "necro", unlockAsc: 9,
-    levels: [
-      { name:"Necromante",     dmg:15, range:125, rate:50, color:"#7e57c2", size:0.42 },
-      { name:"Invocador",      dmg:40, range:140, rate:46, color:"#5e35b1", size:0.48 },
-      { name:"Senhor dos Mortos",dmg:100,range:160,rate:42,color:"#4527a0", size:0.54 },
-      { name:"Ceifador",       dmg:260,range:180, rate:38, color:"#311b92", size:0.58 },
-      { name:"Mestre das Almas",dmg:650,range:200,rate:34,color:"#6a1b9a", size:0.62 },
-      { name:"Deus da Morte",  dmg:1700,range:225,rate:30,color:"#8e24aa", size:0.66 },
-      { name:"Ceifador de Mundos",dmg:4200,range:250,rate:28,color:"#ab47bc", size:0.70 },
-      { name:"Necrosupremo",   dmg:11000,range:275,rate:26,color:"#ce93d8", size:0.74 }
-    ]
-  }
+  damage: { ico: "🎯", name: "Atirador", color: "#4ecdc4", tagline: "Dano puro. Anti-boss.", special: null, unlockAsc: 0, levels: [ { name:"Atirador Elite", dmg:25, range:145, rate:24, color:"#00897b", size:0.40 }, { name:"Sniper", dmg:60, range:165, rate:22, color:"#00695c", size:0.46 }, { name:"Lenda Viva", dmg:150,range:190, rate:20, color:"#004d40", size:0.52 }, { name:"Caçador Deuses", dmg:380,range:210, rate:18, color:"#1a237e", size:0.56 }, { name:"Semideus", dmg:950,range:235, rate:16, color:"#311b92", size:0.60 }, { name:"Divindade", dmg:2400,range:260,rate:14, color:"#ffd700", size:0.64 }, { name:"Titã", dmg:6000,range:290,rate:12, color:"#ff6f00", size:0.68 }, { name:"Mito", dmg:15000,range:320,rate:10,color:"#ff1744", size:0.72 } ] },
+  ice: { ico: "❄️", name: "Caçador", color: "#81d4fa", tagline: "Gelo. Abranda todos.", special: "slow", slow: 0.5, unlockAsc: 0, levels: [ { name:"Caçador", dmg:10, range:130, rate:38, color:"#4fc3f7", size:0.40 }, { name:"Congelador", dmg:28, range:145, rate:35, color:"#29b6f6", size:0.46 }, { name:"Era Glacial", dmg:70, range:165, rate:32, color:"#0288d1", size:0.52 }, { name:"Inverno Eterno", dmg:180, range:180, rate:30, color:"#01579b", size:0.56 }, { name:"Zero Absoluto", dmg:450, range:200, rate:28, color:"#0d47a1", size:0.60 }, { name:"Era Gelo", dmg:1100,range:220, rate:26, color:"#000051", size:0.64 }, { name:"Glaciação", dmg:2800,range:245, rate:24, color:"#00b8d4", size:0.68 }, { name:"Fim Tempos", dmg:7000,range:270, rate:22, color:"#00e5ff", size:0.72 } ] },
+  splash: { ico: "💣", name: "Bombardeiro", color: "#ff9800", tagline: "Explosão em área.", special: "splash", splash: 60, unlockAsc: 0, levels: [ { name:"Bombardeiro", dmg:20, range:120, rate:65, color:"#f57c00", size:0.42 }, { name:"Artilharia", dmg:55, range:135, rate:60, color:"#e65100", size:0.48 }, { name:"Cataclismo", dmg:140,range:155, rate:55, color:"#bf360c", size:0.55 }, { name:"Meteoro", dmg:350,range:175, rate:50, color:"#8d2f00", size:0.58 }, { name:"Apocalipse", dmg:850,range:195, rate:45, color:"#4a1500", size:0.62 }, { name:"Extinção", dmg:2100,range:215,rate:42, color:"#ff3d00", size:0.66 }, { name:"Big Bang", dmg:5200,range:240,rate:38, color:"#ff9100", size:0.70 }, { name:"Juízo Final", dmg:13000,range:265,rate:35,color:"#ffea00", size:0.74 } ] },
+  chain: { ico: "⚡", name: "Eletricista", color: "#ffd700", tagline: "Salta entre inimigos.", special: "chain", chain: 4, unlockAsc: 0, levels: [ { name:"Eletricista", dmg:18, range:140, rate:42, color:"#ffb300", size:0.40 }, { name:"Tempestade", dmg:48, range:160, rate:38, color:"#ff8f00", size:0.46 }, { name:"Fúria Deuses", dmg:130,range:185, rate:34, color:"#e65100", size:0.52 }, { name:"Trovão", dmg:320,range:205, rate:32, color:"#ff6f00", size:0.56 }, { name:"Relâmpago Eterno", dmg:800,range:225, rate:30, color:"#ffca28", size:0.60 }, { name:"Tempestade Cósmica",dmg:2000,range:250,rate:28,color:"#ffee58", size:0.64 }, { name:"Fúria Celestial", dmg:5000,range:275, rate:26, color:"#fff59d", size:0.68 }, { name:"Deus Trovão", dmg:12000,range:300,rate:24,color:"#ffff00", size:0.72 } ] },
+  poison: { ico: "☠️", name: "Alquimista", color: "#9ccc65", tagline: "Veneno contínuo.", special: "poison", poisonDmg: 5, unlockAsc: 0, levels: [ { name:"Alquimista", dmg:12, range:125, rate:36, color:"#7cb342", size:0.40 }, { name:"Envenenador", dmg:30, range:140, rate:34, color:"#689f38", size:0.46 }, { name:"Apocalipse", dmg:80, range:160, rate:30, color:"#33691e", size:0.52 }, { name:"Praga", dmg:200,range:180, rate:28, color:"#1b5e20", size:0.56 }, { name:"Peste Negra", dmg:500,range:200, rate:26, color:"#004d40", size:0.60 }, { name:"Toxina Final",dmg:1300,range:220,rate:24, color:"#66bb6a", size:0.64 }, { name:"Pandemia", dmg:3300,range:245,rate:22, color:"#00e676", size:0.68 }, { name:"Fim Vida", dmg:8000,range:270,rate:20, color:"#b2ff59", size:0.72 } ] },
+  fire: { ico: "🔥", name: "Piromante", color: "#ff5722", tagline: "Fogo em área. Queima.", special: "fire", unlockAsc: 5, levels: [ { name:"Piromante", dmg:22, range:130, rate:45, color:"#ff5722", size:0.42 }, { name:"Mago Fogo", dmg:55, range:145, rate:42, color:"#e64a19", size:0.48 }, { name:"Senhor Chamas", dmg:140,range:165,rate:38,color:"#bf360c", size:0.54 }, { name:"Inferno", dmg:350,range:185, rate:34, color:"#8d2f00", size:0.58 }, { name:"Fogueira Eterna",dmg:850,range:205,rate:30,color:"#ff3d00", size:0.62 }, { name:"Apocalipse Ígneo",dmg:2100,range:225,rate:28,color:"#ff6e40", size:0.66 }, { name:"Sol Vivo", dmg:5200,range:250, rate:26, color:"#ff9100", size:0.70 }, { name:"Estrela", dmg:13000,range:275,rate:24,color:"#ffea00", size:0.74 } ] },
+  necro: { ico: "💀", name: "Necromante", color: "#b39ddb", tagline: "Invoca esqueletos.", special: "necro", unlockAsc: 9, levels: [ { name:"Necromante", dmg:15, range:125, rate:50, color:"#7e57c2", size:0.42 }, { name:"Invocador", dmg:40, range:140, rate:46, color:"#5e35b1", size:0.48 }, { name:"Senhor Mortos", dmg:100,range:160,rate:42,color:"#4527a0", size:0.54 }, { name:"Ceifador", dmg:260,range:180, rate:38, color:"#311b92", size:0.58 }, { name:"Mestre Almas",dmg:650,range:200,rate:34,color:"#6a1b9a", size:0.62 }, { name:"Deus Morte", dmg:1700,range:225,rate:30,color:"#8e24aa", size:0.66 }, { name:"Ceifador Mundos",dmg:4200,range:250,rate:28,color:"#ab47bc", size:0.70 }, { name:"Necrosupremo", dmg:11000,range:275,rate:26,color:"#ce93d8", size:0.74 } ] }
 };
 
 const UPGRADE_COSTS = [0, 100, 180, 320, 600, 1200, 2400, 4800, 9600];
-
 const ASCENSION_BONUSES = [
-  { lvl:1, ico:"🏰", desc:"+1 slot de torre" },
-  { lvl:2, ico:"🪙", desc:"+15% ouro ganho" },
-  { lvl:3, ico:"🏰", desc:"+1 slot de torre" },
-  { lvl:4, ico:"⚔️", desc:"Arqueiro base +20% dano" },
-  { lvl:5, ico:"🔥", desc:"Novo ramo: Piromante" },
-  { lvl:6, ico:"🏰", desc:"+1 slot de torre" },
-  { lvl:7, ico:"💀", desc:"Inimigos -5% HP" },
-  { lvl:8, ico:"⚡", desc:"+25% dano crítico" },
-  { lvl:9, ico:"💀", desc:"Novo ramo: Necromante" },
-  { lvl:10,ico:"🎁", desc:"Todos os ramos desde Nv.1" }
+  { lvl:1, ico:"🏰", desc:"+1 slot de torre" }, { lvl:2, ico:"🪙", desc:"+15% ouro ganho" },
+  { lvl:3, ico:"🏰", desc:"+1 slot de torre" }, { lvl:4, ico:"⚔️", desc:"Arqueiro base +20% dano" },
+  { lvl:5, ico:"🔥", desc:"Novo ramo: Piromante" }, { lvl:6, ico:"🏰", desc:"+1 slot de torre" },
+  { lvl:7, ico:"💀", desc:"Inimigos -5% HP" }, { lvl:8, ico:"⚡", desc:"+25% dano crítico" },
+  { lvl:9, ico:"💀", desc:"Novo ramo: Necromante" }, { lvl:10,ico:"🎁", desc:"Todos os ramos desde Nv.1" }
 ];
 
 const ENEMY_TYPES = {
@@ -393,11 +301,7 @@ const TALENTS = [
 ];
 
 function defaultPersistent() {
-  return {
-    essence:0, talents:{}, ascensionLevel:0,
-    bestWave:0, bestScore:0, totalKills:0, totalGames:0, totalAscensions:0,
-    ranking:[], savedState:null, playerName:""
-  };
+  return { essence:0, talents:{}, ascensionLevel:0, bestWave:0, bestScore:0, totalKills:0, totalGames:0, totalAscensions:0, ranking:[], savedState:null, playerName:"" };
 }
 let persistent = defaultPersistent();
 let storageAvailable = true;
@@ -437,25 +341,7 @@ let speedMul = 1, hudDirty = true, pendingSaleId = null, waveTotalCount = 0, pen
 
 const $ = id => document.getElementById(id);
 const cv = $("cv"), ctx = cv.getContext("2d");
-const goldLbl=$("goldLbl"), essLbl=$("essLbl"), scoreLbl=$("scoreLbl"), lifeLbl=$("lifeLbl"),
-      waveLbl=$("waveLbl"), ascLbl=$("ascLbl"), speedBtn=$("speedBtn"),
-      menuBtn=$("menuBtn"), pauseBadge=$("pauseBadge"), infoEl=$("info"),
-      startBtn=$("startBtn"), startBtnTxt=$("startBtnTxt"), startBtnSub=$("startBtnSub"),
-      buildMenu=$("buildMenu"), buildList=$("buildList"), buildClose=$("buildClose"), buildCancel=$("buildCancel"),
-      popup=$("popup"), popTitle=$("popTitle"), popClose=$("popClose"), psDmg=$("psDmg"),
-      psRng=$("psRng"), psRate=$("psRate"), upgBtn=$("upgBtn"), upgCost=$("upgCost"),
-      sellBtn=$("sellBtn"), sellVal=$("sellVal"), popStars=$("popStars"),
-      branchScreen=$("branchScreen"), branchList=$("branchList"), branchCancel=$("branchCancel"),
-      ascendScreen=$("ascendScreen"), ascPoints=$("ascPoints"), ascCurrent=$("ascCurrent"),
-      ascNextBonus=$("ascNextBonus"), ascConfirm=$("ascConfirm"), ascCancel=$("ascCancel"),
-      talentScreen=$("talentScreen"), talEss=$("talEss"), talAsc=$("talAsc"),
-      talConv=$("talConv"), talList=$("talList"), talClose=$("talClose"), talSave=$("talSave"),
-      convGoldTxt=$("convGoldTxt"),
-      rankingScreen=$("rankingScreen"), btnRanking=$("btnRanking"),
-      rankClose=$("rankClose"), globalRankingList=$("globalRankingList"),
-      overlay=$("overlay"), ovWave=$("ovWave"), ovWave2=$("ovWave2"),
-      ovScore=$("ovScore"), ovKills=$("ovKills"), ovTowers=$("ovTowers"),
-      ovName=$("ovName"), ovBtn=$("ovBtn"), ovRanking=$("ovRanking");
+const goldLbl=$("goldLbl"), essLbl=$("essLbl"), scoreLbl=$("scoreLbl"), lifeLbl=$("lifeLbl"), waveLbl=$("waveLbl"), ascLbl=$("ascLbl"), speedBtn=$("speedBtn"), menuBtn=$("menuBtn"), pauseBadge=$("pauseBadge"), infoEl=$("info"), startBtn=$("startBtn"), startBtnTxt=$("startBtnTxt"), startBtnSub=$("startBtnSub"), buildMenu=$("buildMenu"), buildList=$("buildList"), buildClose=$("buildClose"), buildCancel=$("buildCancel"), popup=$("popup"), popTitle=$("popTitle"), popClose=$("popClose"), psDmg=$("psDmg"), psRng=$("psRng"), psRate=$("psRate"), upgBtn=$("upgBtn"), upgCost=$("upgCost"), sellBtn=$("sellBtn"), sellVal=$("sellVal"), popStars=$("popStars"), branchScreen=$("branchScreen"), branchList=$("branchList"), branchCancel=$("branchCancel"), ascendScreen=$("ascendScreen"), ascPoints=$("ascPoints"), ascCurrent=$("ascCurrent"), ascNextBonus=$("ascNextBonus"), ascConfirm=$("ascConfirm"), ascCancel=$("ascCancel"), talentScreen=$("talentScreen"), talEss=$("talEss"), talAsc=$("talAsc"), talConv=$("talConv"), talList=$("talList"), talClose=$("talClose"), talSave=$("talSave"), convGoldTxt=$("convGoldTxt"), rankingScreen=$("rankingScreen"), btnRanking=$("btnRanking"), rankClose=$("rankClose"), globalRankingList=$("globalRankingList"), overlay=$("overlay"), ovWave=$("ovWave"), ovWave2=$("ovWave2"), ovScore=$("ovScore"), ovKills=$("ovKills"), ovTowers=$("ovTowers"), ovName=$("ovName"), ovBtn=$("ovBtn"), ovRanking=$("ovRanking");
 
 function vibrate(ms){ if(navigator.vibrate){ try{ navigator.vibrate(ms); }catch(_){} } }
 function rand(a,b){ return a + Math.random()*(b-a); }
@@ -469,17 +355,14 @@ function floatText(x,y,txt,color){ floats.push({x,y,txt,color,life:1,vy:-0.8}); 
 
 function talentLvl(id){ return persistent.talents[id] || 0; }
 function ascLevel(){ return persistent.ascensionLevel || 0; }
-
-// BALANCEAMENTO SUAVE: 12% de HP por nível em vez de 20%
 function ascHpFactor()    { return Math.pow(1.12, ascLevel()); }
 function ascSpeedFactor() { return 1 + ascLevel() * 0.03; }
 function ascGoldFactor()  { return Math.max(0.40, 1 - ascLevel() * 0.04); }
-
 function dmgMul()       { return (1 + talentLvl("force")*0.10) * (1 + ascLevel()*0.05); }
 function goldMul()      { return (1 + talentLvl("greed")*0.15) * (ascLevel()>=2?1.15:1) * (ascLevel()>=11?(1 + (ascLevel()-10)*0.05):1); }
 function rangeMul()     { return 1 + talentLvl("precision")*0.05; }
 function rateMul()      { return 1 - talentLvl("speed")*0.08; }
-function startGoldBonus(){ return talentLvl("heritage")*30 + (ascLevel() * 40); } // +40 ouro por ascensão para ajudar no início
+function startGoldBonus(){ return talentLvl("heritage")*30 + (ascLevel() * 40); }
 function startLivesBonus(){ return talentLvl("vital")*2; }
 function maxTowers()    { let n = BASE_MAX_TOWERS; if (ascLevel()>=1) n += 1; if (ascLevel()>=3) n += 1; if (ascLevel()>=6) n += 1; if (ascLevel()>=11) n += Math.floor((ascLevel()-10)/2); return n; }
 function hpReduction()  { return ascLevel()>=7 ? 0.95 : 1.0; }
@@ -493,17 +376,8 @@ function getTowerLevelData(t){
 }
 function getTowerSpecial(t){ return (t.level < 3 || !t.branch) ? null : BRANCHES[t.branch]; }
 function towerStats(t){
-  const lvl = getTowerLevelData(t);
-  const branch = getTowerSpecial(t);
-  return {
-    dmg: lvl.dmg * dmgMul() * ((t.level <= 2 && ascLevel()>=4) ? 1.2 : 1.0),
-    range: lvl.range * rangeMul(),
-    rate: Math.max(8, lvl.rate * rateMul()),
-    size: lvl.size, color: lvl.color, name: lvl.name,
-    ico: (branch && branch.ico) || BASE_TOWER.ico, special: (branch && branch.special) || null,
-    splash: (branch && branch.splash) || 0, slow: (branch && branch.slow) || 0,
-    chain: (branch && branch.chain) || 0, poisonDmg: (branch && branch.poisonDmg) || 0
-  };
+  const lvl = getTowerLevelData(t); const branch = getTowerSpecial(t);
+  return { dmg: lvl.dmg * dmgMul() * ((t.level <= 2 && ascLevel()>=4) ? 1.2 : 1.0), range: lvl.range * rangeMul(), rate: Math.max(8, lvl.rate * rateMul()), size: lvl.size, color: lvl.color, name: lvl.name, ico: (branch && branch.ico) || BASE_TOWER.ico, special: (branch && branch.special) || null, splash: (branch && branch.splash) || 0, slow: (branch && branch.slow) || 0, chain: (branch && branch.chain) || 0, poisonDmg: (branch && branch.poisonDmg) || 0 };
 }
 function towerUpgradeCost(t){ return t.level >= 10 ? Infinity : (UPGRADE_COSTS[t.level] || 100000); }
 function towerSellValue(t){ let total = BASE_TOWER.cost; for (let i=1; i<t.level; i++) total += UPGRADE_COSTS[i] || 0; return Math.floor(total * 0.7); }
@@ -536,19 +410,14 @@ function buildPath(offX, offY){
   const c2 = COLS - 1 - Math.max(1, Math.floor(COLS * 0.15));
   const r1 = Math.max(1, Math.floor(ROWS * 0.30));
   const r2 = Math.max(r1 + 2, Math.floor(ROWS * 0.65));
-  const pts = [
-    { col:c1, row:0 }, { col:c1, row:r1 }, { col:c2, row:r1 },
-    { col:c2, row:r2 }, { col:c1, row:r2 }, { col:c1, row:ROWS-1 }
-  ];
+  const pts = [{ col:c1, row:0 }, { col:c1, row:r1 }, { col:c2, row:r1 }, { col:c2, row:r2 }, { col:c1, row:r2 }, { col:c1, row:ROWS-1 }];
   return pts.map(p => ({ x: offX + p.col*TILE + TILE/2, y: offY + p.row*TILE + TILE/2 }));
 }
 
 function rebuildStrategicSlots(w,h){
   const margin = 8;
   const oldCols=COLS, oldRows=ROWS, oldOffX=offX, oldOffY=offY;
-  const previousTowers = towers.map(t => ({
-    tower:t, nx: oldCols>0 ? (t.x-oldOffX)/(oldCols*TILE) : 0.5, ny: oldRows>0 ? (t.y-oldOffY)/(oldRows*TILE) : 0.5, col:t.col, row:t.row
-  }));
+  const previousTowers = towers.map(t => ({ tower:t, nx: oldCols>0 ? (t.x-oldOffX)/(oldCols*TILE) : 0.5, ny: oldRows>0 ? (t.y-oldOffY)/(oldRows*TILE) : 0.5, col:t.col, row:t.row }));
 
   COLS = Math.max(7, Math.floor((w - margin*2)/TILE));
   ROWS = Math.max(10, Math.floor((h - margin*2)/TILE));
@@ -556,86 +425,43 @@ function rebuildStrategicSlots(w,h){
   offY = Math.floor((h - ROWS*TILE)/2);
 
   slots = []; towers = [];
-  for(let r=0;r<ROWS;r++){
-    for(let c=0;c<COLS;c++){
-      slots.push({ col:c, row:r, x: offX + c*TILE + TILE/2, y: offY + r*TILE + TILE/2, occupied:false, buildable:false });
-    }
-  }
+  for(let r=0;r<ROWS;r++){ for(let c=0;c<COLS;c++){ slots.push({ col:c, row:r, x: offX + c*TILE + TILE/2, y: offY + r*TILE + TILE/2, occupied:false, buildable:false }); } }
 
   PATH = buildPath(offX, offY);
 
-  // 1. Marcar caminho como NÃO construível
   slots.forEach(s => {
     let distToPath = Infinity;
-    for(let i=0;i<PATH.length-1;i++){
-      const d = distToSegment(s, PATH[i], PATH[i+1]);
-      if (d < distToPath) distToPath = d;
-    }
-    if (distToPath > TILE * 1.1) s.buildable = true; // Um pouco mais perto para ter mais opções
+    for(let i=0;i<PATH.length-1;i++){ const d = distToSegment(s, PATH[i], PATH[i+1]); if (d < distToPath) distToPath = d; }
+    if (distToPath > TILE * 1.1) s.buildable = true;
   });
 
-  // 2. NOVA DISTRIBUIÇÃO: Dividir o caminho em 5 zonas e escolher os melhores de cada
   const availableSlots = slots.filter(s => s.buildable);
   const numZones = 5;
   const slotsPerZone = Math.ceil(maxTowers() / numZones);
   const chosenSlots = [];
 
-  // Calcular a qual zona cada slot pertence (baseado na posição y ou x)
-  // Como o caminho faz um "S", vamos usar a distância percorrida no caminho (aprox por y)
   for (let z = 0; z < numZones; z++) {
     const zoneStartY = (ROWS / numZones) * z;
     const zoneEndY = (ROWS / numZones) * (z + 1);
-    
-    // Filtrar slots nesta zona
-    let zoneSlots = availableSlots.filter(s => 
-      s.row >= zoneStartY && s.row < zoneEndY && !chosenSlots.includes(s)
-    );
-
-    // Se não houver slots suficientes na zona (ex: zona vazia), pega os próximos disponíveis
+    let zoneSlots = availableSlots.filter(s => s.row >= zoneStartY && s.row < zoneEndY && !chosenSlots.includes(s));
     if (zoneSlots.length < slotsPerZone) {
       const extras = availableSlots.filter(s => !chosenSlots.includes(s) && !zoneSlots.includes(s));
       extras.sort((a,b) => Math.abs(a.row - (zoneStartY + (zoneEndY-zoneStartY)/2)) - Math.abs(b.row - (zoneStartY + (zoneEndY-zoneStartY)/2)));
       zoneSlots = zoneSlots.concat(extras.slice(0, slotsPerZone - zoneSlots.length));
     }
-
-    // Ordenar os slots da zona pela proximidade ao caminho (para escolher os melhores)
-    zoneSlots.sort((a,b) => {
-      let distA = Infinity, distB = Infinity;
-      for(let i=0;i<PATH.length-1;i++){
-        distA = Math.min(distA, distToSegment(a, PATH[i], PATH[i+1]));
-        distB = Math.min(distB, distToSegment(b, PATH[i], PATH[i+1]));
-      }
-      return distA - distB;
-    });
-
-    // Escolher os melhores desta zona
-    for (let i = 0; i < Math.min(slotsPerZone, zoneSlots.length); i++) {
-      chosenSlots.push(zoneSlots[i]);
-    }
+    zoneSlots.sort((a,b) => { let distA = Infinity, distB = Infinity; for(let i=0;i<PATH.length-1;i++){ distA = Math.min(distA, distToSegment(a, PATH[i], PATH[i+1])); distB = Math.min(distB, distToSegment(b, PATH[i], PATH[i+1])); } return distA - distB; });
+    for (let i = 0; i < Math.min(slotsPerZone, zoneSlots.length); i++) { chosenSlots.push(zoneSlots[i]); }
   }
 
-  // Limpar buildable e ativar apenas os escolhidos
   slots.forEach(s => s.buildable = false);
   chosenSlots.forEach(s => s.buildable = true);
 
-  // Fallback de segurança: se ainda faltarem slots (ex: colisão de zonas), preenche os melhores restantes
   if (chosenSlots.length < maxTowers()) {
     const remaining = availableSlots.filter(s => !s.buildable);
-    remaining.sort((a,b) => {
-      let distA = Infinity, distB = Infinity;
-      for(let i=0;i<PATH.length-1;i++){
-        distA = Math.min(distA, distToSegment(a, PATH[i], PATH[i+1]));
-        distB = Math.min(distB, distToSegment(b, PATH[i], PATH[i+1]));
-      }
-      return distA - distB;
-    });
-    for (let i = 0; i < remaining.length && chosenSlots.length < maxTowers(); i++) {
-      remaining[i].buildable = true;
-      chosenSlots.push(remaining[i]);
-    }
+    remaining.sort((a,b) => { let distA = Infinity, distB = Infinity; for(let i=0;i<PATH.length-1;i++){ distA = Math.min(distA, distToSegment(a, PATH[i], PATH[i+1])); distB = Math.min(distB, distToSegment(b, PATH[i], PATH[i+1])); } return distA - distB; });
+    for (let i = 0; i < remaining.length && chosenSlots.length < maxTowers(); i++) { remaining[i].buildable = true; chosenSlots.push(remaining[i]); }
   }
 
-  // 3. Restaurar torres
   previousTowers.forEach(item => {
     const t = item.tower;
     let slot = slots.find(s => s.buildable && !s.occupied && s.col === item.col && s.row === item.row);
@@ -643,15 +469,9 @@ function rebuildStrategicSlots(w,h){
       const targetX = offX + Math.max(0, Math.min(1, item.nx)) * COLS * TILE;
       const targetY = offY + Math.max(0, Math.min(1, item.ny)) * ROWS * TILE;
       let best = Infinity;
-      slots.forEach(s => {
-        if (!s.buildable || s.occupied) return;
-        const d = (s.x - targetX) ** 2 + (s.y - targetY) ** 2;
-        if (d < best) { best = d; slot = s; }
-      });
+      slots.forEach(s => { if (!s.buildable || s.occupied) return; const d = (s.x - targetX) ** 2 + (s.y - targetY) ** 2; if (d < best) { best = d; slot = s; } });
     }
-    if (slot) {
-      slot.occupied = true; t.slot = slot; t.col = slot.col; t.row = slot.row; t.x = slot.x; t.y = slot.y; towers.push(t);
-    }
+    if (slot) { slot.occupied = true; t.slot = slot; t.col = slot.col; t.row = slot.row; t.x = slot.x; t.y = slot.y; towers.push(t); }
   });
 }
 
@@ -661,27 +481,22 @@ function showBuildMenu(slot){
   const btn = document.createElement("button");
   btn.className = "build-item" + (gold < BASE_TOWER.cost ? " disabled" : "");
   btn.innerHTML = '<div class="bico">🏹</div><div class="binfo"><div class="bnm">Arqueiro</div><div class="bdesc">Evolui para 7 ramos únicos</div></div><div class="bcost">' + BASE_TOWER.cost + '🪙</div>';
-  if (gold >= BASE_TOWER.cost && towers.length < maxTowers()) {
-    btn.addEventListener("click", () => { buildTower(pendingBuildSlot); hideBuildMenu(); });
-  }
+  if (gold >= BASE_TOWER.cost && towers.length < maxTowers()) { btn.addEventListener("click", () => { buildTower(pendingBuildSlot); hideBuildMenu(); }); }
   buildList.appendChild(btn);
   if (towers.length >= maxTowers()) {
     const warn = document.createElement("div");
     warn.style.cssText = "padding:10px;background:rgba(255,82,82,0.15);border-radius:8px;font-size:12px;color:#ff5252;text-align:center;margin-top:8px;";
-    warn.textContent = "🚫 Limite de " + maxTowers() + " torres atingido";
-    buildList.appendChild(warn);
+    warn.textContent = "🚫 Limite de " + maxTowers() + " torres atingido"; buildList.appendChild(warn);
   }
 }
 
 function hideBuildMenu(){ buildMenu.classList.remove("show"); pendingBuildSlot = null; }
-buildClose.addEventListener("click", hideBuildMenu);
-buildCancel.addEventListener("click", hideBuildMenu);
+buildClose.addEventListener("click", hideBuildMenu); buildCancel.addEventListener("click", hideBuildMenu);
 
 function buildTower(slot){
   if (gold < BASE_TOWER.cost) { showInfo("🪙 Ouro insuficiente"); return; }
   if (slot.occupied || !slot.buildable) return;
   if (towers.length >= maxTowers()) { showInfo("🚫 Limite de torres"); return; }
-
   gold -= BASE_TOWER.cost;
   const t = { type: "archer", level: 1, branch: null, col: slot.col, row: slot.row, x: slot.x, y: slot.y, slot, cooldown: 0, angle: 0 };
   slot.occupied = true; towers.push(t); towersBuiltThisRun++; hudDirty = true; vibrate(15); burst(t.x, t.y, BASE_TOWER.levels[0].color, 8); saveProgress(false);
@@ -706,8 +521,7 @@ function showBranchChoice(){
     const b = BRANCHES[key];
     if (b.unlockAsc > ascLevel()) return;
     const lvl3 = b.levels[0];
-    const div = document.createElement("div");
-    div.className = "build-item";
+    const div = document.createElement("div"); div.className = "build-item";
     div.innerHTML = '<div class="bico">' + b.ico + '</div><div class="binfo"><div class="bnm" style="color:' + lvl3.color + '">' + lvl3.name + '</div><div class="bdesc">' + b.tagline + '</div><div class="bdesc" style="color:#ffd700;margin-top:2px;">Dano ' + lvl3.dmg + ' · Alcance ' + lvl3.range + '</div></div>';
     div.addEventListener("click", () => {
       if (gold < UPGRADE_COSTS[2]) { showInfo("🪙 Ouro insuficiente"); return; }
@@ -830,11 +644,17 @@ function update(){
   if (spawnQueue.length > 0) {
     spawnTimer++; if (spawnTimer >= spawnQueue[0].delay) { spawnTimer = 0; spawnEnemy(spawnQueue.shift().type, wave, world); }
   } else if (enemies.length === 0 && running) {
-    running = false; let bonus = 18 + wave * 3 * world; if (wave > 30) bonus = 50; gold += bonus; score += bonus; if (wave % 2 === 0) persistent.essence += 1; // Só dá 1 essência a cada 2 vagas
+    running = false; let bonus = 18 + wave * 3 * world; if (wave > 30) bonus = 50; gold += bonus; score += bonus; if (wave % 2 === 0) persistent.essence += 1;
     const prevBest = persistent.bestWave; if (wave > persistent.bestWave) persistent.bestWave = wave; const isNewRecord = wave > prevBest;
-    if (wave % 5 === 0) { persistent.essence += 1; world++; ... const wname = (WORLDS[(world-1)%WORLDS.length]?.name) || "Extra"; showInfo("🌍 Mundo " + world + ": " + wname + "!"); }
-    else if (isNewRecord && prevBest > 0) showInfo("🏆 NOVO RECORDE! Vaga " + wave);
-    else showInfo("✅ Vaga concluída! +" + bonus + " 🪙");
+    
+    if (wave % 5 === 0) { 
+      persistent.essence += 1; world++; const wname = (WORLDS[(world-1)%WORLDS.length]?.name) || "Extra"; showInfo("🌍 Mundo " + world + ": " + wname + "!"); 
+    } else if (isNewRecord && prevBest > 0) {
+      showInfo("🏆 NOVO RECORDE! Vaga " + wave);
+    } else {
+      showInfo("✅ Vaga concluída! +" + bonus + " 🪙");
+    }
+    
     wave++; hudDirty = true; vibrate(25); startBtn.disabled = false; updateStartBtn(); saveProgress(true); return;
   }
 
@@ -879,112 +699,55 @@ function update(){
   floats = floats.filter(f => { f.y += f.vy; f.life -= 0.025; return f.life > 0; });
 }
 function drawTower(ctx, t){
-  const st = towerStats(t);
-  const size = TILE * st.size;
-  const angle = t.angle || 0;
-
-  ctx.save();
-  ctx.translate(t.x, t.y);
-
-  if (t.level >= 5) {
-    const auraStrength = Math.min(1, (t.level - 4) / 6);
-    const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 300);
-    ctx.beginPath(); ctx.arc(0, 0, size + 6 + t.level, 0, Math.PI*2);
-    ctx.fillStyle = "rgba(255,215,0," + (0.1 + pulse*0.1*auraStrength) + ")"; ctx.fill();
-  }
-
-  if (t.level >= 3) {
-    const ringColors = ["#cd7f32", "#c0c0c0", "#ffd700", "#ff6f00", "#ff1744", "#ff1744", "#ff1744", "#ff1744"];
-    ctx.beginPath(); ctx.arc(0, 0, size + 2 + Math.min(t.level-3, 3), 0, Math.PI*2);
-    ctx.strokeStyle = ringColors[Math.min(t.level-3, 7)]; ctx.lineWidth = 2 + Math.min(t.level-3, 3)*0.5; ctx.stroke();
-  }
-
-  ctx.beginPath(); ctx.arc(0, 0, size, 0, Math.PI*2); ctx.fillStyle = st.color; ctx.fill();
-  ctx.strokeStyle = "#0a1020"; ctx.lineWidth = 2.5; ctx.stroke();
-
+  const st = towerStats(t); const size = TILE * st.size; const angle = t.angle || 0;
+  ctx.save(); ctx.translate(t.x, t.y);
+  if (t.level >= 5) { const auraStrength = Math.min(1, (t.level - 4) / 6); const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 300); ctx.beginPath(); ctx.arc(0, 0, size + 6 + t.level, 0, Math.PI*2); ctx.fillStyle = "rgba(255,215,0," + (0.1 + pulse*0.1*auraStrength) + ")"; ctx.fill(); }
+  if (t.level >= 3) { const ringColors = ["#cd7f32", "#c0c0c0", "#ffd700", "#ff6f00", "#ff1744", "#ff1744", "#ff1744", "#ff1744"]; ctx.beginPath(); ctx.arc(0, 0, size + 2 + Math.min(t.level-3, 3), 0, Math.PI*2); ctx.strokeStyle = ringColors[Math.min(t.level-3, 7)]; ctx.lineWidth = 2 + Math.min(t.level-3, 3)*0.5; ctx.stroke(); }
+  ctx.beginPath(); ctx.arc(0, 0, size, 0, Math.PI*2); ctx.fillStyle = st.color; ctx.fill(); ctx.strokeStyle = "#0a1020"; ctx.lineWidth = 2.5; ctx.stroke();
   ctx.save(); ctx.rotate(angle);
-
   if (!t.branch || t.level < 3) {
-    ctx.strokeStyle = "#fff"; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.arc(0, 0, size*0.55, -Math.PI*0.4, Math.PI*0.4); ctx.stroke();
-    const arrows = t.level >= 2 ? 2 : 1;
-    for (let i=0;i<arrows;i++){ ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(size*0.7, (i-arrows/2+0.5)*3); ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.stroke(); }
+    ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, size*0.55, -Math.PI*0.4, Math.PI*0.4); ctx.stroke();
+    const arrows = t.level >= 2 ? 2 : 1; for (let i=0;i<arrows;i++){ ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(size*0.7, (i-arrows/2+0.5)*3); ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.stroke(); }
   } else {
     const heavy = t.level >= 6;
-    if (t.branch === "damage") {
-      ctx.strokeStyle = "#fff"; ctx.lineWidth = heavy ? 3 : 2;
-      ctx.beginPath(); ctx.arc(0, 0, size*0.4, 0, Math.PI*2); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(size*0.9, 0); ctx.stroke();
-      ctx.fillStyle = "#ffd700"; ctx.beginPath(); ctx.arc(size*0.9, 0, heavy ? 4 : 3, 0, Math.PI*2); ctx.fill();
-      if (heavy) { ctx.beginPath(); ctx.arc(size*0.9, 0, 7, 0, Math.PI*2); ctx.strokeStyle = "#ffd700"; ctx.lineWidth = 1; ctx.stroke(); }
-    } else if (t.branch === "ice") {
-      ctx.strokeStyle = "#fff"; ctx.lineWidth = heavy ? 2.5 : 1.5;
-      for (let i=0;i<6;i++){ ctx.save(); ctx.rotate(i * Math.PI/3); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(size*0.7, 0); ctx.stroke(); if (t.level >= 4) { ctx.beginPath(); ctx.moveTo(size*0.5, 0); ctx.lineTo(size*0.65, -size*0.15); ctx.moveTo(size*0.5, 0); ctx.lineTo(size*0.65, size*0.15); ctx.stroke(); } ctx.restore(); }
-    } else if (t.branch === "splash") {
-      ctx.fillStyle = "#333"; ctx.fillRect(size*0.15, -size*0.3, size*0.85, size*0.6);
-      ctx.beginPath(); ctx.arc(size*0.95, 0, size*0.2, 0, Math.PI*2); ctx.fillStyle = "#1a1a1a"; ctx.fill();
-      if (heavy) { ctx.strokeStyle = "#ffd700"; ctx.lineWidth = 1.5; ctx.strokeRect(size*0.15, -size*0.3, size*0.85, size*0.6); }
-    } else if (t.branch === "chain") {
-      ctx.fillStyle = heavy ? "#fff8b0" : "#fff"; ctx.beginPath(); ctx.moveTo(size*0.3, -size*0.6); ctx.lineTo(-size*0.1, 0); ctx.lineTo(size*0.15, 0); ctx.lineTo(-size*0.3, size*0.6); ctx.lineTo(0, size*0.1); ctx.lineTo(-size*0.2, size*0.1); ctx.closePath(); ctx.fill(); ctx.strokeStyle = "#333"; ctx.lineWidth = 1; ctx.stroke();
-    } else if (t.branch === "poison") {
-      ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(0, -size*0.15, size*0.35, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = heavy ? "#ff5252" : "#9ccc65"; ctx.beginPath(); ctx.arc(-size*0.15, -size*0.2, size*0.08, 0, Math.PI*2); ctx.arc(size*0.15, -size*0.2, size*0.08, 0, Math.PI*2); ctx.fill();
-      ctx.strokeStyle = "#fff"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(0, -size*0.05, size*0.15, 0, Math.PI); ctx.stroke();
-    } else if (t.branch === "fire") {
-      ctx.fillStyle = "#ff5722"; ctx.beginPath(); ctx.moveTo(0, -size*0.7); ctx.lineTo(size*0.3, 0); ctx.lineTo(size*0.15, 0); ctx.lineTo(size*0.4, size*0.5); ctx.lineTo(-size*0.1, size*0.1); ctx.lineTo(-size*0.35, size*0.6); ctx.lineTo(-size*0.15, 0); ctx.lineTo(-size*0.3, 0); ctx.closePath(); ctx.fill();
-      ctx.fillStyle = "#ffeb3b"; ctx.beginPath(); ctx.moveTo(0, -size*0.4); ctx.lineTo(size*0.15, 0); ctx.lineTo(-size*0.15, 0); ctx.closePath(); ctx.fill();
-    } else if (t.branch === "necro") {
-      ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(0, 0, size*0.45, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = heavy ? "#e1bee7" : "#b39ddb"; ctx.beginPath(); ctx.arc(-size*0.15, -size*0.1, size*0.1, 0, Math.PI*2); ctx.arc(size*0.15, -size*0.1, size*0.1, 0, Math.PI*2); ctx.fill();
-      ctx.strokeStyle = "#e1bee7"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(-size*0.2, size*0.2); ctx.lineTo(size*0.2, size*0.2); ctx.stroke();
-    }
+    if (t.branch === "damage") { ctx.strokeStyle = "#fff"; ctx.lineWidth = heavy ? 3 : 2; ctx.beginPath(); ctx.arc(0, 0, size*0.4, 0, Math.PI*2); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(size*0.9, 0); ctx.stroke(); ctx.fillStyle = "#ffd700"; ctx.beginPath(); ctx.arc(size*0.9, 0, heavy ? 4 : 3, 0, Math.PI*2); ctx.fill(); if (heavy) { ctx.beginPath(); ctx.arc(size*0.9, 0, 7, 0, Math.PI*2); ctx.strokeStyle = "#ffd700"; ctx.lineWidth = 1; ctx.stroke(); } }
+    else if (t.branch === "ice") { ctx.strokeStyle = "#fff"; ctx.lineWidth = heavy ? 2.5 : 1.5; for (let i=0;i<6;i++){ ctx.save(); ctx.rotate(i * Math.PI/3); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(size*0.7, 0); ctx.stroke(); if (t.level >= 4) { ctx.beginPath(); ctx.moveTo(size*0.5, 0); ctx.lineTo(size*0.65, -size*0.15); ctx.moveTo(size*0.5, 0); ctx.lineTo(size*0.65, size*0.15); ctx.stroke(); } ctx.restore(); } }
+    else if (t.branch === "splash") { ctx.fillStyle = "#333"; ctx.fillRect(size*0.15, -size*0.3, size*0.85, size*0.6); ctx.beginPath(); ctx.arc(size*0.95, 0, size*0.2, 0, Math.PI*2); ctx.fillStyle = "#1a1a1a"; ctx.fill(); if (heavy) { ctx.strokeStyle = "#ffd700"; ctx.lineWidth = 1.5; ctx.strokeRect(size*0.15, -size*0.3, size*0.85, size*0.6); } }
+    else if (t.branch === "chain") { ctx.fillStyle = heavy ? "#fff8b0" : "#fff"; ctx.beginPath(); ctx.moveTo(size*0.3, -size*0.6); ctx.lineTo(-size*0.1, 0); ctx.lineTo(size*0.15, 0); ctx.lineTo(-size*0.3, size*0.6); ctx.lineTo(0, size*0.1); ctx.lineTo(-size*0.2, size*0.1); ctx.closePath(); ctx.fill(); ctx.strokeStyle = "#333"; ctx.lineWidth = 1; ctx.stroke(); }
+    else if (t.branch === "poison") { ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(0, -size*0.15, size*0.35, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = heavy ? "#ff5252" : "#9ccc65"; ctx.beginPath(); ctx.arc(-size*0.15, -size*0.2, size*0.08, 0, Math.PI*2); ctx.arc(size*0.15, -size*0.2, size*0.08, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle = "#fff"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(0, -size*0.05, size*0.15, 0, Math.PI); ctx.stroke(); }
+    else if (t.branch === "fire") { ctx.fillStyle = "#ff5722"; ctx.beginPath(); ctx.moveTo(0, -size*0.7); ctx.lineTo(size*0.3, 0); ctx.lineTo(size*0.15, 0); ctx.lineTo(size*0.4, size*0.5); ctx.lineTo(-size*0.1, size*0.1); ctx.lineTo(-size*0.35, size*0.6); ctx.lineTo(-size*0.15, 0); ctx.lineTo(-size*0.3, 0); ctx.closePath(); ctx.fill(); ctx.fillStyle = "#ffeb3b"; ctx.beginPath(); ctx.moveTo(0, -size*0.4); ctx.lineTo(size*0.15, 0); ctx.lineTo(-size*0.15, 0); ctx.closePath(); ctx.fill(); }
+    else if (t.branch === "necro") { ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(0, 0, size*0.45, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = heavy ? "#e1bee7" : "#b39ddb"; ctx.beginPath(); ctx.arc(-size*0.15, -size*0.1, size*0.1, 0, Math.PI*2); ctx.arc(size*0.15, -size*0.1, size*0.1, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle = "#e1bee7"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(-size*0.2, size*0.2); ctx.lineTo(size*0.2, size*0.2); ctx.stroke(); }
   }
   ctx.restore(); ctx.restore();
-
-  if (t.level > 1) {
-    ctx.fillStyle = "#ffd700"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.fillText(t.level <= 5 ? "★".repeat(t.level-1) : "✦" + t.level, t.x, t.y - size - 6);
-  }
+  if (t.level > 1) { ctx.fillStyle = "#ffd700"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(t.level <= 5 ? "★".repeat(t.level-1) : "✦" + t.level, t.x, t.y - size - 6); }
 }
 
 function render(){
-  const w = cv.width / (window.devicePixelRatio || 1);
-  const h = cv.height / (window.devicePixelRatio || 1);
-  ctx.clearRect(0, 0, w, h);
-  const theme = WORLDS[(world - 1) % WORLDS.length];
+  const w = cv.width / (window.devicePixelRatio || 1); const h = cv.height / (window.devicePixelRatio || 1);
+  ctx.clearRect(0, 0, w, h); const theme = WORLDS[(world - 1) % WORLDS.length];
   ctx.fillStyle = theme.bg; ctx.fillRect(0, 0, w, h);
-
   ctx.strokeStyle = theme.path; ctx.lineWidth = TILE * 0.9; ctx.lineCap = "round"; ctx.lineJoin = "round";
   ctx.beginPath(); PATH.forEach((p, i) => { i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); }); ctx.stroke();
-
   ctx.strokeStyle = theme.pathDash; ctx.lineWidth = 4; ctx.setLineDash([12, 16]);
   ctx.beginPath(); PATH.forEach((p, i) => { i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); }); ctx.stroke(); ctx.setLineDash([]);
-
   slots.forEach(s => {
     if (!s.buildable || s.occupied) return;
-    ctx.beginPath(); ctx.arc(s.x, s.y, TILE*0.35, 0, Math.PI*2);
-    ctx.fillStyle = "rgba(78,205,196,0.08)"; ctx.fill();
+    ctx.beginPath(); ctx.arc(s.x, s.y, TILE*0.35, 0, Math.PI*2); ctx.fillStyle = "rgba(78,205,196,0.08)"; ctx.fill();
     ctx.strokeStyle = "rgba(78,205,196,0.5)"; ctx.lineWidth = 2; ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
     ctx.fillStyle = "rgba(78,205,196,0.7)"; ctx.font = "bold 14px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("+", s.x, s.y);
   });
-
   const last = PATH[PATH.length-1];
   ctx.font = "32px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("🏰", last.x, last.y - TILE*0.6);
-
   if (selectedTower) {
-    const st = towerStats(selectedTower);
-    ctx.beginPath(); ctx.arc(selectedTower.x, selectedTower.y, st.range, 0, Math.PI*2);
-    ctx.fillStyle = "rgba(78,205,196,0.06)"; ctx.fill();
-    ctx.strokeStyle = "rgba(78,205,196,0.45)"; ctx.lineWidth = 1.5; ctx.stroke();
+    const st = towerStats(selectedTower); ctx.beginPath(); ctx.arc(selectedTower.x, selectedTower.y, st.range, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(78,205,196,0.06)"; ctx.fill(); ctx.strokeStyle = "rgba(78,205,196,0.45)"; ctx.lineWidth = 1.5; ctx.stroke();
   }
-
   towers.forEach(t => drawTower(ctx, t));
   skeletons.forEach(s => {
     ctx.fillStyle = "#e1bee7"; ctx.beginPath(); ctx.arc(s.x, s.y, 6, 0, Math.PI*2); ctx.fill();
     ctx.strokeStyle = "#7e57c2"; ctx.lineWidth = 1.5; ctx.stroke();
     ctx.fillStyle = "#1a1a1a"; ctx.beginPath(); ctx.arc(s.x-2, s.y-1, 1.5, 0, Math.PI*2); ctx.arc(s.x+2, s.y-1, 1.5, 0, Math.PI*2); ctx.fill();
   });
-
   enemies.forEach(e => {
     if (!e.alive) return;
     ctx.beginPath(); ctx.arc(e.x, e.y, e.radius, 0, Math.PI*2); ctx.fillStyle = e.hitFlash > 0 ? "#fff" : e.color; ctx.fill(); ctx.strokeStyle = "#0a1020"; ctx.lineWidth = 2; ctx.stroke();
@@ -994,7 +757,6 @@ function render(){
     if (e.poison > 0) { ctx.beginPath(); ctx.arc(e.x, e.y, e.radius+4, 0, Math.PI*2); ctx.strokeStyle = "rgba(156,204,101,0.6)"; ctx.lineWidth = 1.5; ctx.stroke(); }
     if (e.regen > 0) { ctx.font = "10px sans-serif"; ctx.fillStyle = "#4caf50"; ctx.textAlign = "center"; ctx.fillText("+", e.x - 6, e.y - e.radius - 14); }
   });
-
   projectiles.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fillStyle = p.color; ctx.fill(); });
   particles.forEach(p => { ctx.globalAlpha = p.life * 0.7; ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill(); });
   ctx.globalAlpha = 1;
@@ -1013,10 +775,7 @@ function updateHUD(){
 function updateStartBtn(){
   if (running) { startBtnTxt.textContent = "⏳ A jogar"; startBtnSub.textContent = ""; startBtn.classList.remove("boss"); startBtn.disabled = true; return; }
   const canAscend = (towers.filter(t => t.level >= 5).length >= 3 || wave >= 25);
-  if (canAscend) {
-    startBtnTxt.textContent = "🌟 ASCENDER"; startBtnSub.textContent = "+" + calcAscendPoints() + " pts";
-    startBtn.classList.remove("boss"); startBtn.classList.add("boss"); startBtn.disabled = false; return;
-  }
+  if (canAscend) { startBtnTxt.textContent = "🌟 ASCENDER"; startBtnSub.textContent = "+" + calcAscendPoints() + " pts"; startBtn.classList.remove("boss"); startBtn.classList.add("boss"); startBtn.disabled = false; return; }
   const isBoss = wave % 5 === 0;
   if (isBoss) { startBtnTxt.textContent = "CHEFE " + wave; startBtnSub.textContent = "👑 boss"; startBtn.classList.add("boss"); }
   else { startBtnTxt.textContent = "VAGA " + wave; startBtnSub.textContent = "iniciar"; startBtn.classList.remove("boss"); }
@@ -1024,7 +783,6 @@ function updateStartBtn(){
 }
 
 function calcAscendPoints(){ return Math.max(1, Math.floor(wave / 5) + towers.filter(t => t.level >= 5).length * 2 + Math.floor(score / 5000)); }
-
 function canvasCoords(evt){ const r = cv.getBoundingClientRect(); const pt = evt.touches ? evt.touches[0] : evt; return { x: pt.clientX - r.left, y: pt.clientY - r.top }; }
 
 cv.addEventListener("pointerdown", evt => {
@@ -1090,8 +848,7 @@ menuBtn.addEventListener("click", openTalents); talClose.addEventListener("click
 function convertGold(){
   if (gold < 1000) { showInfo("🪙 Precisas de 1000 ouro"); return; }
   gold -= 1000; persistent.essence++; hudDirty = true; vibrate(10); showInfo("💎 +1 essência");
-  if (talentScreen.classList.contains("show")) renderTalentList();
-  saveProgress(true);
+  if (talentScreen.classList.contains("show")) renderTalentList(); saveProgress(true);
 }
 talConv.addEventListener("click", convertGold);
 
